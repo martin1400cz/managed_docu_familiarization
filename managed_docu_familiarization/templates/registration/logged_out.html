@@ -1,0 +1,12 @@
+{% extends "layout/_grid.html" %}
+{% load i18n %}
+
+{% block content %}
+
+  <div class="alert alert-dismissible alert-success">
+    <p>{% translate "You were successfully logged out from the application" %}</p>
+     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <p><a href="{% url 'login' %}">{% translate 'Log in again' %}</a></p>
+  </div>
+
+{% endblock %}

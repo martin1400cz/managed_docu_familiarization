@@ -1,0 +1,1 @@
+# Managed document familiarization package

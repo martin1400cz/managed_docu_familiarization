@@ -1,0 +1,266 @@
+{% load static i18n %}
+
+{% block css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'datatables/datatables.min.css' %}"/>
+{% endblock css %}
+{% block javascript %}
+  <script type="text/javascript" src="{% static 'datatables/datatables.js' %}"></script>
+  <script type="text/javascript" src="{% static 'datatables/pagination-input.js' %}"></script>
+  <script type="text/javascript" src="{% static 'datatables/ellipsis.js' %}"></script>
+  <script type="text/javascript" src="{% static 'datatables/moment.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'datatables/czech-string.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'datatables/accent-neutralise.min.js' %}"></script>
+{% endblock javascript %}
+
+{% block inline_javascript %}
+  <script>
+
+    function getOptionsBySubstring(substring) {
+      // TODO https://live.datatables.net/nenoxoji/1/edit
+      var table = $("#{{ datatables_element_id }}").DataTable();
+      var options = table.rows().data().toArray();
+      var filteredArray = [];
+      for (var i = 0; i < options.length; i++) {
+        if (options[i].filter.toLowerCase().includes(substring)) {
+          filteredArray.push(options[i].filter);
+        }
+      }
+    }
+
+    // global variable that contains a reference to the DataTable instance
+    let dataTableInstance_{{ datatables_element_id }};
+
+    $(document).ready(function () {
+
+      //plugins: Buttons (HTML5 export full + Print View), DateTime, FixedColumns, FixedHeader, Responsive, SearchPanes, Select. Selected style: Bootstrap 4
+      dataTableInstance_{{ datatables_element_id }} = $("#{{ datatables_element_id }}").DataTable({
+        "stateSave": true, // save the filters, pagination etc.
+        "scrollX": true,
+        "info": true,
+        "pageLength": 25, // default page length
+        "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]], // options for selecting page length
+        "pagingType": "bootstrap_input", // pagination input plugin
+
+        dom: "<'datatable-buttons'<'float-left'B>>" +
+            "<'row'<'col-sm-12 col-md-2'l><'col-sm-12 col-md-4'f><'col-sm-12 col-md-6'p>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+
+        // https://datatables.net/extensions/searchpanes/ & https://datatables.net/reference/option/dom
+
+        fixedHeader: true, // https://datatables.net/extensions/fixedheader/
+        fixedColumns: {left: {{ fixed_columns|default:"1" }}}, // https://datatables.net/extensions/fixedcolumns/
+        select: { // https://datatables.net/extensions/select/
+          className: 'row-selected',
+          style: 'multi',
+        },
+
+        columnDefs: [
+          { type: 'czech', targets: [0,1] },
+          {% if columns_with_popups %}
+          {
+            targets: {{ columns_with_popups }},
+            render: DataTable.render.ellipsis(20, true),
+          }
+          {% endif %}
+        ],
+
+        buttons: [
+          {
+            extend: 'searchPanes',
+            config: {
+              threshold: 0.99, // large treshold to have search panes everywhere except global HIL ID
+              columns: {{search_panes_columns }}, // set which columns should be used for sorting and filtering
+              preSelect: [{ // TODO: https://datatables.net/forums/discussion/76673/button-searchpane-preselect-not-working-with-current-or-nightly-builds
+                {% if default_filter_column %} column: {{default_filter_column}}, {% endif %}
+                {% if default_filter_rows %} rows: {{default_filter_rows}},
+                {% elif default_filter_substring %}
+                  // TODO: filter by using substring rows: getOptionsBySubstring('{{default_filter_substring}}')
+                  rows: [''],
+                {% endif %}
+              }],
+            },
+            className: 'btn-primary filter_btn',
+            tooltipText: 'Filter overview table'
+          },
+          {
+            extend: 'copy',
+            tooltipText: 'Copy current state of overview table to clipboard (if filters are applied, it copies only filtered results)',
+            exportOptions: {
+              format: {
+                body: function (data, row, column, node) {
+                  // get the data-export-value attribute
+                  let export_value = $(node).data("export-value");
+
+                  // data-export-value is defined, use it in the export
+                  // also, give the Excel exporter decimal dot instead of a comma
+                  if (typeof export_value !== 'undefined' && export_value !== false) {
+                    return $.isNumeric(export_value.toString().replace(',', '.')) ? export_value.toString().replace(',', '.') : export_value.toString();
+                  } else { // data-export-value is not defined, use the cell content in the export
+                    let outputString = data.toString();
+                    let popupData = $(node).children().first().attr("data-bs-content");
+                    // When cells with popup are exported, it also exports the full html format (<span>...)
+                    if (typeof popupData !== 'undefined' && popupData !== false) {
+                      outputString = popupData;
+                    }
+                    return $.isNumeric(data.toString().replace(',', '.')) ? outputString.replace(',', '.') : outputString;
+                  }
+                }
+              },
+            },
+          },
+          {
+            extend: 'excelHtml5',
+            title: null, // remove the first line with the 'HILMAT' title https://datatables.net/extensions/buttons/examples/html5/titleMessage.html
+            autoFilter: true, // automatically add filters https://datatables.net/extensions/buttons/examples/html5/excelAutoFilter.html
+            exportOptions: {
+              format: {
+                body: function (data, row, column, node) {
+                  // get the data-export-value attribute
+                  let export_value = $(node).data("export-value");
+
+                  // data-export-value is defined, use it in the export
+                  // also, give the Excel exporter decimal dot instead of a comma
+                  if (typeof export_value !== 'undefined' && export_value !== false) {
+                    return $.isNumeric(export_value.toString().replace(',', '.')) ? export_value.toString().replace(',', '.') : export_value.toString();
+                  } else { // data-export-value is not defined, use the cell content in the export
+                    let outputString = data.toString();
+                    let popupData = $(node).children().first().attr("data-bs-content");
+                    // When cells with popup are exported, it also exports the full html format (<span>...)
+                    if (typeof popupData !== 'undefined' && popupData !== false) {
+                      outputString = popupData;
+                    }
+
+                    // Manually remove html tags, that are not removed automatically
+                    outputString = outputString.replaceAll(/<br\s*\/?>/gi, '\n');
+                    outputString = outputString.replaceAll(/(\r\n|\n|\r)/g, '\r\n');
+
+                    // Manually replace special characters
+                    outputString = outputString.replaceAll("&amp;", "&");
+
+                    return $.isNumeric(outputString.replace(',', '.')) ? outputString.replace(',', '.') : outputString;
+                  }
+                }
+              },
+            },
+            customize: function (xlsx) {
+              var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+              // Make the first row frozen
+              // NOTE: This modifies the Excel XML directly, so if anything won't work, search here
+              // NOTE: Obtained by comparison of the default XLSX and the XLSX after manually freezing the first row in Excel
+              // https://datatables.net/forums/discussion/60535/freeze-lock-first-row-in-datatables-excel-export-file
+              var f1 = `<sheetViews><sheetView tabSelected="1" workbookViewId="0">
+                        <pane ySplit="1" topLeftCell="A20" activePane="bottomLeft" state="frozen"/>
+                        <selection pane="bottomLeft" activeCell="E6" sqref="E6"/></sheetView></sheetViews>`;
+
+              $('worksheet', sheet).prepend(f1);
+            },
+            tooltipText: 'Copy current state of overview table to excel file (if filters are applied, it copies only filtered results)'
+          },
+          {% if pdf_export %}
+            {
+              extend: 'print',
+              text: 'Print / PDF',
+              exportOptions: {
+                format: {
+                  body: function (data, row, column, node) {
+                    // get the data-export-value attribute
+                    let export_value = $(node).data("export-value");
+
+                    // data-export-value is defined, use it in the export
+                    if (typeof export_value !== 'undefined' && export_value !== false) {
+                      return export_value;
+                    } else { // data-export-value is not defined, use the cell content in the export
+                      return data;
+                    }
+                  }
+                }
+            },
+            tooltipText: 'Display current state of overview table to PDF preview (if filters are applied, it copies only filtered results)'
+          },
+          {% endif %}
+        ], // show buttons for different export options
+        language: { // for a custom caption of the searchpanes button
+          searchPanes: {
+            clearMessage: '{% translate 'Clear all filters' %}',
+            collapse: {0: 'Filters', _: 'Filters (%d)'},
+          },
+        },
+        initComplete: function () {
+          $("#{{ datatables_element_id }}_div").show();
+          this.api().columns.adjust();
+
+          // after the table is completed, show the CAPA stats
+          if ($('#capa_stats').length) {
+            $('#capa_stats').show();
+          }
+
+        },
+        // before the Datatables init, initialize the pop-up on all the affected elements
+        // in these pop-ups, the cell's full content is displayed
+        "preDrawCallback": function (settings) {
+          // functionality to add a pop-up window
+          $('[data-bs-toggle="popover"]').popover({
+            html: true, // to allow HTML
+            sanitize: false, // to allow complex HTML,
+          });
+
+          // this function is called when a pop-up is fully shown
+          $('[data-bs-toggle="popover"]').on('shown.bs.popover', function () {
+            //hide all the other pop-ups
+            $('[data-bs-toggle="popover"]').not(this).popover('hide');
+          });
+        },
+        // function that highlights rows with a cancelled date, for IT Overview only
+      {% if highlight_cancelled %}
+        "createdRow": function (row, data, dataIndex) {
+          if (data[9].display) {
+            $(row).addClass('highlighted-cancelled-row');
+          }
+        }
+      {% endif %}
+
+      }); // end of the Datatables init
+
+      $("#{{ datatables_element_id }}").addClass('table-striped');
+
+      // In case that we need floating horizontal scrollbar
+      // $('.dataTables_scrollBody').floatingScrollbar();
+
+      // Put top scrollbar
+      $('.dataTables_scrollHead').css({
+        'overflow-x': 'scroll'
+      }).on('scroll', function (e) {
+        var scrollBody = $(this).parent().find('.dataTables_scrollBody').get(0);
+        scrollBody.scrollLeft = this.scrollLeft;
+        $(scrollBody).trigger('scroll');
+      });
+
+      {% if redirect_template %}
+        $('#{{ datatables_element_id }} tbody').on('click', 'tr', function (e) {
+
+          if (this.id != "" && this.id != 0) {
+            var urlStr = "{% url redirect_template id='row_id' %}".replace("row_id", this.id);
+
+            // Check if the click event originated from a span element (i.e. popup with more text)
+            if ($(e.target).is('span')) {
+              // If it did, stop event propagation
+              e.stopPropagation();
+              return false;
+            }
+
+            e.preventDefault();
+
+            // Open details in new tab if also "CTRL" key was pressed.
+            if (e.ctrlKey) {
+              window.open(urlStr, '_blank');
+            } else if (!e.shiftKey) {
+              window.location.href = urlStr;
+            }
+          }
+        });
+      {% endif %}
+    });
+  </script>
+{% endblock inline_javascript %}

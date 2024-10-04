@@ -1,0 +1,39 @@
+python-slugify==8.0.1  # https://github.com/un33k/python-slugify
+Pillow==9.5.0  # https://github.com/python-pillow/Pillow
+argon2-cffi==21.3.0  # https://github.com/hynek/argon2_cffi
+whitenoise==6.4.0  # https://github.com/evansd/whitenoise
+redis==4.5.5  # https://github.com/redis/redis-py
+hiredis==2.2.3  # https://github.com/redis/hiredis-py
+
+# Django
+# ------------------------------------------------------------------------------
+django==4.1.9  # pyup: < 4.2  # https://www.djangoproject.com/
+django-environ==0.10.0  # https://github.com/joke2k/django-environ
+django-model-utils==4.3.1  # https://github.com/jazzband/django-model-utils
+django-crispy-forms==2.0  # https://github.com/django-crispy-forms/django-crispy-forms
+crispy-bootstrap5==0.7  # https://github.com/django-crispy-forms/crispy-bootstrap5
+django-hijack==3.4.1  # https://django-hijack.readthedocs.io/en/stable/
+django-redis==5.2.0  # https://github.com/jazzband/django-redis
+django-forms-fieldset==1.0.2  # https://github.com/hadpro24/django-forms-fieldset
+django-simple-history==3.5.0  # https://github.com/jazzband/django-simple-history
+django-celery-results==2.5.1  # https://docs.celeryq.dev/en/v5.2.6/django/first-steps-with-django.html#django-celery-results-using-the-django-orm-cache-as-a-result-backend
+django-celery-beat==2.5.0  # https://docs.celeryq.dev/en/v5.2.6/userguide/periodic-tasks.html#using-custom-scheduler-classes
+
+# Django REST Framework
+djangorestframework==3.14.0  # https://github.com/encode/django-rest-framework
+django-cors-headers==4.1.0  # https://github.com/adamchainz/django-cors-headers
+
+# DRF-spectacular for api documentation
+drf-spectacular==0.26.2  # https://github.com/tfranzel/drf-spectacular
+
+# Login
+ldap3==2.9.1 # https://github.com/cannatag/ldap3
+
+# needed for data imports from Excel & generating CAPA Excels
+openpyxl==3.1.2
+
+# Periodic tasks
+celery==5.3.1 # https://pypi.org/project/celery/
+
+# Connection to MSSQL
+pymssql==2.2.11 # https://github.com/pymssql/pymssql

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+
+python manage.py migrate
+
+# start the periodic tasks, the & symbol sends the execution to background
+# (so the script continues to start the server)
+>&1 echo 'Starting Celery periodic tasks'
+celery -A managed_docu_familiarization worker -l info --concurrency 1 &
+celery -A managed_docu_familiarization beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler &
+
+exec python manage.py runserver_plus --reloader-interval 1 --reloader-type stat 0.0.0.0:8000

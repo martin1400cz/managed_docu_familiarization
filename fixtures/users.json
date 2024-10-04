@@ -1,0 +1,28 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+        "password": "ZADMIN",
+        "zf_id": "ZADMIN",
+        "email": "admin@zf.com",
+        "first_name": "Admin",
+        "last_name": "Account",
+        "is_superuser": true,
+        "is_staff": true
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+        "password": "ZUSER1",
+        "zf_id": "ZUSER1",
+        "email": "testUser1@zf.com",
+        "first_name": "TestUser1",
+        "last_name": "TestUser1",
+        "is_superuser": true,
+        "is_staff": true
+    }
+  }
+]

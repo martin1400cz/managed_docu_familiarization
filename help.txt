@@ -1,0 +1,27 @@
+# V případě změny modelu (v models.py) je potřeba udělat migrace
+docker-compose -f local.yml run --rm django python manage.py makemigrations <module_name>
+docker-compose -f local.yml run --rm django python manage.py makemigrations
+# A následně migrovat
+docker-compose -f local.yml run --rm django python manage.py migrate
+
+
+# Přidání základních hodnot do databáze (fixtures/users.json, nebo jiné)
+viz soubor "import_data.bat"
+nebo ručně: docker-compose -f local.yml run --rm django python manage.py loaddata <json_soubor>
+--> Admin účet (superuser) je ZADMIN. Pro vyzkoušení jak se systém chová pro různé role, je možné vytvořit další uživatele v administraci + využít Hijack funkci
+--> pokud bude potřeba se opravdu přihlásit na dalšího usera, tak mu přiřadit jméno přes databázi (například přes DBeavera)
+
+
+# Připojení k databázi (například DBeaver)
+host: localhost
+zbytek najdeš v souboru .envs/.local/.postgres
+
+
+# Celery task
+- viz emp/tasks.py
+- Vytvoří se task v souboru tasks.py, a následně se jde do admina, kde pod "PERIODIC TASKS/Periodic tasks" se vytvoří nový task
+
+
+# Signals.py
+- Definice signálů, který se spustí při úpravě objektu modelu - když například změním příjmení uživatele,
+- tak se spustí nejdřív signál pre_save (kde je možné získat jak aktuální hodnoty, tak i nové, co se budou ukládat), a poté post_save (po uložení nových hodnot do objektu)
