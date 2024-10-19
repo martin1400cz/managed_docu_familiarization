@@ -1,0 +1,52 @@
+{% extends 'layout/_grid.html' %}
+{% load static i18n user_tags %}
+
+{% block title %}- MDF base template for users{% endblock title %}
+
+{% block css %}
+{% endblock css %}
+
+{% block javascript %}
+{% endblock javascript %}
+
+
+{% block inline_javascript %}
+  {% include 'part/datatables.html' with datatables_element_id='managed_docu_familiarization_table' search_panes_columns='[1]' fixed_columns='1' %}
+{% endblock inline_javascript %}
+
+{% block content %}
+
+<div class="container">
+        <h1>Documents List</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Release Date</th>
+                    <th>Owner</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for document in documents %}
+                <tr>
+                    <td>{{ document.doc_id }}</td>
+                    <td>{{ document.doc_name }}</td>
+                    <td>{{ document.release_date }}</td>
+                    <td>{{ document.owner.username }}</td> <!-- Adjust according to your User model -->
+                    <td>
+                        <a href="{% url 'document_detail' document.doc_id %}">View</a>
+                        <a href="{% url 'document_edit' document.doc_id %}">Edit</a>
+                        <a href="{% url 'document_delete' document.doc_id %}">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No documents found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

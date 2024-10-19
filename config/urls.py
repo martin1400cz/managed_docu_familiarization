@@ -29,6 +29,8 @@ urlpatterns = [
     path('hijack/', include('hijack.urls')),
     # Your stuff: custom urls includes go here
     path("emp/", include("managed_docu_familiarization.emp.urls", namespace="emp")),
+    # My path to module MDF
+    path("mdf/", include("managed_docu_familiarization.mdf.urls", namespace="mdf")),
     # ...
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
