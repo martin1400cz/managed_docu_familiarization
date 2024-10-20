@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import Group  # Import your custom Group model from the authentication app
 from django.core.validators import validate_email
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -59,6 +60,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name=_('is staff'),
         help_text=_('staff status on top of the one granted by the role'),
         default=False,
+        )
+
+    groups = models.ManyToManyField(
+        Group, related_name='users',
+        blank=True
         )
 
     USERNAME_FIELD = "zf_id"

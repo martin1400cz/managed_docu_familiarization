@@ -18,7 +18,8 @@
 
 <div class="container">
         <h1>Documents List</h1>
-        <table>
+        <table aria-describedby="Overview of the Employees" id="emp_people_overview_table"
+             class="table overview-datatable">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -29,17 +30,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for document in documents %}
-                <tr>
+                {% for document in mdf_documents %}
+                <tr id="{{ document.doc_id }}">
                     <td>{{ document.doc_id }}</td>
                     <td>{{ document.doc_name }}</td>
                     <td>{{ document.release_date }}</td>
                     <td>{{ document.owner.username }}</td> <!-- Adjust according to your User model -->
-                    <td>
-                        <a href="{% url 'document_detail' document.doc_id %}">View</a>
-                        <a href="{% url 'document_edit' document.doc_id %}">Edit</a>
-                        <a href="{% url 'document_delete' document.doc_id %}">Delete</a>
-                    </td>
                 </tr>
                 {% empty %}
                 <tr>
