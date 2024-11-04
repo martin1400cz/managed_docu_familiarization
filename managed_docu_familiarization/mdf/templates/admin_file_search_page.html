@@ -1,0 +1,59 @@
+{% extends 'layout/_grid.html' %}
+{% load static i18n user_tags %}
+
+{% block title %}- MDF base template for users{% endblock title %}
+
+{% block css %}
+{% endblock css %}
+
+{% block javascript %}
+{% endblock javascript %}
+
+
+{% block inline_javascript %}
+  {% include 'part/datatables.html' with datatables_element_id='managed_docu_familiarization_table' search_panes_columns='[1]' fixed_columns='1' %}
+{% endblock inline_javascript %}
+
+{% block content %}
+  <h1>Document Selection for Sending</h1>
+  <form method="post" action="{% url 'mdf:admin_file_search_page' %}">
+    {% csrf_token %}
+    {{ form.document_path }}
+    <button type="submit">Send Document Link</button>
+  </form>
+
+  <h3>Available Documents</h3>
+  {% if generated_link %}
+    <p>Vygenerovaný odkaz pro vlastníka: <a href="{{ generated_link }}">{{ generated_link }}</a></p>
+  {% else %}
+  <table>
+        <thead>
+            <tr>
+                <th>Document Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in available_files %}
+            <tr>
+                <td>{{ file }}</td>
+                <td>
+                    <button type="button" onclick="setDocumentUrl('{{ file.url }}{{ file }}')">Nastavit URL</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">No files available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+  <script>
+    // JavaScript pro nastavení URL dokumentu do textového pole
+    function setDocumentUrl(url) {
+      document.querySelector('[name="document_path"]').value = url;
+    }
+  </script>
+
+{% endblock %}

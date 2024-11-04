@@ -18,9 +18,13 @@
 
 <div class="container">
         <h1>Documents List</h1>
+        {% if is_admin %}
+            <a href="{% url 'mdf:publishing_page' %}">Add New Document</a>
+        {% endif %}
         <table aria-describedby="Overview of the Employees" id="emp_people_overview_table"
              class="table overview-datatable">
             <thead>
+
                 <tr>
                     <th>ID</th>
                     <th>Name</th>

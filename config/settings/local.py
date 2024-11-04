@@ -77,3 +77,4 @@ INSTALLED_APPS += ["django_extensions"]
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+DOCUMENTS_DIRECTORY = 'C:\\Users\\Rodina\\Desktop\\TestDocs' #Documents base dir

@@ -1,10 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends 'layout/_grid.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block title %}- MDF base template for users{% endblock title %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+<div class="container">
+  <h2>Add a New Document</h2>
+    <form method="post" action="{% url 'mdf:publishing_page' %}">
+        <label for="document_div">Document info:</label>
+        <div id="document_div">
+            {% csrf_token %}
+            {{ form.media }}
+            <!-- Render the name field -->
+            {{ form.name.label_tag }} {{ form.name }}
+            {{ form.url.label_tag }} {{ form.url }}
+
+            <!-- Render the category radio buttons -->
+            <div>
+                {{ form.category.label_tag }}
+                {{ form.category }}
+            </div>
+
+            <!-- Render the group selection, initially hidden -->
+            <div id="group-selection" style="display: none;">
+                {{ form.groups.label_tag }}
+                {{ form.groups }}
+            </div>
+            <button type="submit">Add Document</button>
+
+        </div>
+    </form>
+
+    <script src="{% static 'admin/js/core.js' %}"></script>
+    <script src="{% static 'admin/js/SelectBox.js' %}"></script>
+    <script src="{% static 'admin/js/SelectFilter2.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
+
+    <script type="text/javascript">
+        // Initialize the FilteredSelectMultiple widget on page load
+        //window.addEventListener('load', function()
+        document.addEventListener('DOMContentLoaded', function(){
+            const groupSelectElement = document.getElementById("id_groups");
+            if (groupSelectElement) {
+                SelectFilter.init("id_groups", "Groups", 0);
+            }
+        });
+
+        // JavaScript to show/hide the group selection based on category choice
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get radio buttons and the group-selection div
+            const categoryChoices = document.querySelectorAll('.category-choice input');
+            const groupSelection = document.getElementById('group-selection');
+
+            // Function to toggle the visibility of the group-selection div
+            function toggleGroupSelection() {
+                const selectedCategory = document.querySelector('.category-choice input:checked');
+                if (selectedCategory && (selectedCategory.value === '2' || selectedCategory.value === '3')) {
+                    groupSelection.style.display = 'block';
+                } else {
+                    groupSelection.style.display = 'none';
+                }
+            }
+
+            // Attach event listeners to each radio button
+            categoryChoices.forEach(choice => choice.addEventListener('change', toggleGroupSelection));
+
+            // Initialize visibility based on the current selection
+            toggleGroupSelection();
+        });
+    </script>
+
+</div>
+{% endblock content %}

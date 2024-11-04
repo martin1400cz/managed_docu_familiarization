@@ -1,10 +1,17 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
+from managed_docu_familiarization.mdf import views
 #from managed_docu_familiarization.mdf.views import MDFView
-from managed_docu_familiarization.mdf.views import MDFDocumentsOverview
+from managed_docu_familiarization.mdf.views import MDFDocumentsOverview, MDFDocumentsAdding, MDFAdminSearchDocument
 
 app_name = "mdf"
 urlpatterns = [
     #path("", MDFView.as_view(), name="mdf_index"),
-    path("mdf-documents-overview", MDFDocumentsOverview.as_view(), name="managed_docu_familiarization"),
-]
+    path("mdfdocuments/overview/", MDFDocumentsOverview.as_view(), name="base_page"),
+    path("mdfdocuments/overview/add/", MDFDocumentsAdding.as_view(), name="publishing_page"),
+    path("mdfdocuments/overview/add/<str:file_name>/", MDFDocumentsAdding.as_view(), name="publishing_page"),
+    path('mdfdocuments/admin-file-search/', MDFAdminSearchDocument.as_view(), name='admin_file_search_page'),
+    path('mdfdocuments/admin-file-search/send-link/<str:file_name>/', views.send_link_to_owner, name='send_link_to_owner'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

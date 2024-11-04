@@ -1,20 +1,22 @@
 from django.contrib import admin
+
+from .forms import DocumentFormAdmin
 from .models import Document
-from managed_docu_familiarization.mdf.forms import DocumentForm
+
 
 # Register the Document model
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    add_form = DocumentForm
+    add_form = DocumentFormAdmin
     list_display = [
         'doc_name',
-        'release_date',
         'doc_url',
         'owner',
+        'category',
     ]
 
     list_filter = [
-        'release_date',
+        'owner',
     ]
 
     search_fields = [
@@ -26,7 +28,7 @@ class DocumentAdmin(admin.ModelAdmin):
     ]
 
     ordering = [
-        '-release_date',
+        '-doc_name',
     ]
 
     def get_form(self, request, obj=None, **kwargs):
