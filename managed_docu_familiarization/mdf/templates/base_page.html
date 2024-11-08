@@ -36,10 +36,11 @@
             <tbody>
                 {% for document in mdf_documents %}
                 <tr id="{{ document.doc_id }}">
-                    <td>{{ document.doc_id }}</td>
+                    <!--<td>{{ document.doc_id }}</td>-->
                     <td>{{ document.doc_name }}</td>
                     <td>{{ document.release_date }}</td>
-                    <td>{{ document.owner.username }}</td> <!-- Adjust according to your User model -->
+                    <td>{{ document.owner.full_name }}</td> <!-- Adjust according to your User model -->
+                    <td><a href="{% url 'mdf:document_page' %}?doc_url={{ document.doc_url }}">Zobrazit</a></td>
                 </tr>
                 {% empty %}
                 <tr>

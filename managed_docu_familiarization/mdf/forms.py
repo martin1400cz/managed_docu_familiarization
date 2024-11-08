@@ -7,7 +7,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 
 class FileSearchForm(forms.Form):
     document_path = forms.CharField(label="Document Path", max_length=255)
-    #owner = forms.ModelChoiceField(queryset=User.objects.all(), label="Select Owner")
+    owner = forms.ModelChoiceField(queryset=User.objects.all(), label="Select Owner")
 
 class DocumentForm(forms.ModelForm):
 

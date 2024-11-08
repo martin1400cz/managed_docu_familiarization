@@ -4,11 +4,14 @@ from django.conf.urls.static import static
 
 from managed_docu_familiarization.mdf import views
 #from managed_docu_familiarization.mdf.views import MDFView
-from managed_docu_familiarization.mdf.views import MDFDocumentsOverview, MDFDocumentsAdding, MDFAdminSearchDocument
+from managed_docu_familiarization.mdf.views import MDFDocumentsOverview, MDFDocumentsAdding, MDFAdminSearchDocument, \
+    MDFDocumentDetailView
 
 app_name = "mdf"
 urlpatterns = [
     #path("", MDFView.as_view(), name="mdf_index"),
+    path("mdfdocuments/document/", MDFDocumentDetailView.as_view(), name="document_page"),
+    #path("mdfdocuments/document/<str:file_name>/", MDFDocumentDetailView.as_view(), name="document_page"),
     path("mdfdocuments/overview/", MDFDocumentsOverview.as_view(), name="base_page"),
     path("mdfdocuments/overview/add/", MDFDocumentsAdding.as_view(), name="publishing_page"),
     path("mdfdocuments/overview/add/<str:file_name>/", MDFDocumentsAdding.as_view(), name="publishing_page"),

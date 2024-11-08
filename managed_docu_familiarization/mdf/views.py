@@ -2,8 +2,10 @@ import logging
 import os
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import FileSystemStorage
-from django.views.generic import View, TemplateView, FormView
+from django.http import Http404
+from django.views.generic import View, TemplateView, FormView, DetailView
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth.models import Group
 
@@ -15,6 +17,30 @@ import os
 from django.conf import settings
 from django.contrib import messages
 from .utils import send_document_link
+
+
+class MDFDocumentDetailView(TemplateView):
+    model = Document
+    template_name = 'doc_page.html'  # Šablona pro zobrazení dokumentu
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Získání doc_url z GET parametrů
+        doc_url = self.request.GET.get('doc_url')
+
+        if doc_url is None:
+            raise Http404("URL dokumentu nebyla poskytnuta.")
+
+        # Ověření, že dokument existuje
+        try:
+            document = Document.objects.get(doc_url=doc_url, owner=self.request.user)
+        except Document.DoesNotExist:
+            raise Http404("Dokument nebyl nalezen nebo k němu nemáte přístup.")
+
+        context['document'] = document
+        return context
+
 
 # Prepared function for sending document link to owner.
 # Not used!
@@ -31,7 +57,6 @@ def send_link_to_owner(request, file_name):
 
     # Redirect back to file search or admin page
     return redirect('mdf:admin_file_search_page')  # Change to the appropriate URL name
-
 
 # View for admin to search a document and generate link for owner
 # This is demo version - without using emails, just display the link!
@@ -106,6 +131,7 @@ class MDFAdminSearchDocument(TemplateView):
         generated_link = None
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         DOCUMENTS_DIRECTORY = os.path.join(BASE_DIR, 'TestDocs/')
+        #DOCUMENTS_DIRECTORY = settings.DOCUMENTS_DIRECTORY
         context = super().get_context_data(**kwargs)
         context['form'] = FileSearchForm()
 
@@ -154,9 +180,16 @@ class MDFDocumentsOverview(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             #mdf_documents = Document.objects.all()
-            mdf_documents = Document.objects.filter(groups__users=request.user).distinct()
+            #mdf_documents = None
             is_admin = request.user.groups.filter(name="MDF_authors").exists()
+            #if(is_admin):
+            #    mdf_documents = Document.objects.all().distinct()
+            #else:
+            #    mdf_documents = Document.objects.filter(groups__users=request.user).distinct()
+
+            mdf_documents = Document.objects.filter(groups__users=request.user).distinct()
             #print(mdf_documents)
+
             context = {
                 'mdf_documents' : mdf_documents,
                 'is_admin' : is_admin,
@@ -164,7 +197,7 @@ class MDFDocumentsOverview(View):
 
             return render(request, self.template_name, context=context)
         else:
-            return render(request, 'templates/login.html')  # Redirect to login if not authenticated
+            return render(request, 'app/templates/registration/login.html')  # Redirect to login if not authenticated
 
 # View for owners to add a document to database and add information. After adding a groups, program will choose certain users and will send them an email - this will be added later.
 class MDFDocumentsAdding(FormView):

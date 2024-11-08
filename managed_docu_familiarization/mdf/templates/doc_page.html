@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends 'layout/_grid.html' %}
+{% load static i18n user_tags %}
 
-</body>
-</html>
+{% block title %}- MDF base template for users{% endblock title %}
+
+{% block css %}
+{% endblock css %}
+
+{% block javascript %}
+{% endblock javascript %}
+
+
+{% block inline_javascript %}
+  {% include 'part/datatables.html' with datatables_element_id='managed_docu_familiarization_table' search_panes_columns='[1]' fixed_columns='1' %}
+{% endblock inline_javascript %}
+
+{% block content %}
+
+  <h1>Náhled dokumentu: {{ document.doc_name }}</h1>
+
+  <iframe src="{{ document.doc_url }}" width="100%" height="800px">
+    Tento prohlížeč nepodporuje zobrazení PDF dokumentů.
+      <a href="{{ document.doc_url }}">Stáhnout dokument</a>
+  </iframe>
+
+  <p><a href="{% url 'mdf:base_page' %}">Zpět na seznam dokumentů</a></p>
+{% endblock content %}
