@@ -13,6 +13,7 @@ urlpatterns = [
     path("mdfdocuments/document/", MDFDocumentDetailView.as_view(), name="document_page"),
     #path("mdfdocuments/document/<str:file_name>/", MDFDocumentDetailView.as_view(), name="document_page"),
     path("mdfdocuments/overview/", MDFDocumentsOverview.as_view(), name="base_page"),
+    path('mdfdocuments/agreements/<int:document_id>/', views.MDFDocumentAgreementView, name='document_agreements'),
     path("mdfdocuments/overview/add/", MDFDocumentsAdding.as_view(), name="publishing_page"),
     path("mdfdocuments/overview/add/<str:file_name>/", MDFDocumentsAdding.as_view(), name="publishing_page"),
     path('mdfdocuments/admin-file-search/', MDFAdminSearchDocument.as_view(), name='admin_file_search_page'),

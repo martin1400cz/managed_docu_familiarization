@@ -41,6 +41,11 @@
                     <td>{{ document.release_date }}</td>
                     <td>{{ document.owner.full_name }}</td> <!-- Adjust according to your User model -->
                     <td><a href="{% url 'mdf:document_page' %}?doc_url={{ document.doc_url }}">Zobrazit</a></td>
+                    <td>
+                      {% if document.owner == request.user %}
+                        <a href="{% url 'mdf:document_agreements' document.doc_id %}">Zobrazit statistiky</a>
+                      {% endif %}
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>

@@ -51,6 +51,7 @@ class Document(models.Model):
     # release_date = models.DateField(blank=False, null=False)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_owner')
     contact_users = models.ManyToManyField(User, related_name='document_contact_users')
+    deadline = models.DateTimeField(null=True, blank=True)
     #groups = models.ManyToManyField(Group, related_name='documents')
 
     #groups = models.ManyToManyField(managed_docu_familiarization.users.models.Group, related_name='documents', blank=False, null=False)

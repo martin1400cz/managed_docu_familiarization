@@ -1,7 +1,7 @@
 from django import forms
 
 from managed_docu_familiarization.users.models import User
-from .models import Document
+from .models import Document, DocumentAgreement
 from django.contrib.auth.models import Group
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
@@ -62,3 +62,13 @@ class DocumentFormAdmin(forms.ModelForm):
     def save(self, commit=True):
         doc = super().save()
         return doc
+
+
+class DocumentAgreementAdmin(forms.ModelForm):
+    class Meta:
+        model = DocumentAgreement
+        fields = ('user', 'document')
+
+    def save(self, commit=True):
+        agr = super().save()
+        return agr

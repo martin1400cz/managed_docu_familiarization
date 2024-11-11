@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from config import settings
 from managed_docu_familiarization.mdf.forms import DocumentForm
 from managed_docu_familiarization.mdf.forms import FileSearchForm
-from managed_docu_familiarization.mdf.models import Document
+from managed_docu_familiarization.mdf.models import Document, DocumentAgreement
 import os
 from django.conf import settings
 from django.contrib import messages
@@ -40,6 +40,23 @@ class MDFDocumentDetailView(TemplateView):
 
         context['document'] = document
         return context
+
+def MDFDocumentAgreementView(request, document_id):
+    document = get_object_or_404(Document, doc_id=document_id)
+
+    # Zkontrolujeme, jestli je přihlášený uživatel vlastníkem dokumentu
+    if request.user != document.owner:
+        return render(request, 'error.html', {'message': 'Nemáte oprávnění zobrazit tuto stránku.'})
+
+    # Načtení souhlasů spojených s dokumentem
+    agreements = DocumentAgreement.objects.filter(document=document).select_related('user')
+
+    context = {
+        'document': document,
+        'agreements': agreements,
+    }
+
+    return render(request, 'document_stats.html', context)
 
 
 # Prepared function for sending document link to owner.
