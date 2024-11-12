@@ -23,12 +23,13 @@
     <button type="submit">Send Document Link</button>
   </form>
 
-  <h3>Available Documents</h3>
+
   {% if generated_link %}
     <p>Vygenerovaný odkaz pro vlastníka: <a href="{{ generated_link }}">{{ generated_link }}</a></p>
   {% else %}
-  <table>
-        <thead>
+  <h3>Available Documents</h3>
+  <!--<thead><table>
+
             <tr>
                 <th>Document Name</th>
                 <th>Action</th>
@@ -48,7 +49,7 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table>-->
 {% endif %}
   <script>
     // JavaScript pro nastavení URL dokumentu do textového pole

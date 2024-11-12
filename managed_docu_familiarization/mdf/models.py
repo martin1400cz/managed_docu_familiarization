@@ -55,7 +55,7 @@ class Document(models.Model):
     #groups = models.ManyToManyField(Group, related_name='documents')
 
     #groups = models.ManyToManyField(managed_docu_familiarization.users.models.Group, related_name='documents', blank=False, null=False)
-    groups = models.ManyToManyField(Group, related_name='documents', blank=True, null=True)
+    groups = models.ManyToManyField(Group, related_name='document_groups', blank=True, null=True)
     #secure_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     #objects = DocumentsManager()
 

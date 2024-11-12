@@ -17,6 +17,8 @@ import os
 from django.conf import settings
 from django.contrib import messages
 from .utils import send_document_link
+from django.http import HttpResponse
+#import requests
 
 
 class MDFDocumentDetailView(TemplateView):
@@ -38,9 +40,40 @@ class MDFDocumentDetailView(TemplateView):
         except Document.DoesNotExist:
             raise Http404("Dokument nebyl nalezen nebo k němu nemáte přístup.")
 
-        context['document'] = document
+        context['document_url'] = doc_url
         return context
 
+'''
+Functions returns a list of users from certain groups, if some users are in more than one group, they are picked only once.
+'''
+def getUsersFromGroups(groups):
+    return None
+'''
+Function for getting a direct link to file saved on Google drive
+'''
+def getDirectDownloadLink(fileId):
+    directLink = f"https://drive.google.com/uc?export=download&id={fileId}"
+    return directLink
+'''
+Function for getting a file id from link
+'''
+def getFileIdFromLink(sharedLink):
+    return sharedLink.split('/d/')[1].split('/')[0]
+
+'''
+def download_google_drive_file(file_url):
+    response = requests.get(file_url)
+    if response.status_code == 200:
+        # Uložení souboru na disk
+        with open('downloaded_file', 'wb') as file:
+            file.write(response.content)
+        print("Soubor byl úspěšně stažen.")
+    else:
+        print("Chyba při stahování souboru.")
+'''
+'''
+View for document owner to show stats about who agreed with his document
+'''
 def MDFDocumentAgreementView(request, document_id):
     document = get_object_or_404(Document, doc_id=document_id)
 
@@ -146,26 +179,26 @@ class MDFAdminSearchDocument(TemplateView):
 
     def get_context_data(self, **kwargs):
         generated_link = None
-        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        DOCUMENTS_DIRECTORY = os.path.join(BASE_DIR, 'TestDocs/')
+        #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        #DOCUMENTS_DIRECTORY = os.path.join(BASE_DIR, 'TestDocs/')
         #DOCUMENTS_DIRECTORY = settings.DOCUMENTS_DIRECTORY
         context = super().get_context_data(**kwargs)
         context['form'] = FileSearchForm()
 
         # Load a list of files in DOCUMENTS_DIRECTORY
-        available_files = os.listdir(DOCUMENTS_DIRECTORY)  # Assuming a flat structure for simplicity
+        '''available_files = os.listdir(DOCUMENTS_DIRECTORY)  # Assuming a flat structure for simplicity
         document_links = [
             {
                 "name": file_name,
                 "url": f"{reverse('mdf:publishing_page')}?document_url={os.path.join(DOCUMENTS_DIRECTORY, file_name)}"
             }
             for file_name in available_files
-        ]
+        ]'''
 
-        context['documents'] = document_links
+        #context['documents'] = document_links
         context['generated_link'] =  generated_link
-        context['available_files'] = available_files
-        context['DOCUMENTS_PATH'] = DOCUMENTS_DIRECTORY
+        #context['available_files'] = available_files
+        #context['DOCUMENTS_PATH'] = DOCUMENTS_DIRECTORY
         return context
 
     def post(self, request, *args, **kwargs):
@@ -174,11 +207,11 @@ class MDFAdminSearchDocument(TemplateView):
 
         if form.is_valid():
             doc_url = form.cleaned_data['document_path']
-            BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            document_url = os.path.join(BASE_DIR, doc_url)
+            #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            #document_url = getFileIdFromLink(doc_url)
             # Generování URL s parametrem `doc_url`
             generated_link = request.build_absolute_uri(
-                reverse('mdf:publishing_page') + f"?doc_url={document_url}"
+                reverse('mdf:publishing_page') + f"?doc_url={doc_url}"
             )
 
         # Opětovné načtení kontextu pro zobrazení stejné stránky
@@ -196,19 +229,16 @@ class MDFDocumentsOverview(View):
     #@login_required
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            #mdf_documents = Document.objects.all()
-            #mdf_documents = None
             is_admin = request.user.groups.filter(name="MDF_authors").exists()
-            #if(is_admin):
-            #    mdf_documents = Document.objects.all().distinct()
-            #else:
-            #    mdf_documents = Document.objects.filter(groups__users=request.user).distinct()
 
-            mdf_documents = Document.objects.filter(groups__users=request.user).distinct()
+            mdf_documents1 = Document.objects.filter(groups__users=request.user).distinct()
+            mdf_documents2 = Document.objects.filter(owner=request.user)
+            # Combination of two querysets for documents for user in certain groups and for request user's documents
+            combined_queryset = mdf_documents1.union(mdf_documents2)
             #print(mdf_documents)
 
             context = {
-                'mdf_documents' : mdf_documents,
+                'mdf_documents' : combined_queryset,
                 'is_admin' : is_admin,
             }
 
@@ -240,16 +270,23 @@ class MDFDocumentsAdding(FormView):
             logger.error("User authenticated...")
             doc_owner = self.request.user
             # Uložení záznamu do databáze
-            Document.objects.create(
+            document = Document.objects.create(
                 doc_name=form.cleaned_data['name'],
                 doc_url=form.cleaned_data['url'],
                 category=form.cleaned_data['category'],
-                #groups=form.cleaned_data['groups'],
-                #groups = filter(lambda t: t[0] in form.cleaned_data['groups'], form.fields['groups'].),
                 owner=doc_owner
             )
             if form.cleaned_data['groups']:
-                Document.groups.set(form.cleaned_data['groups'])
+                groups = form.cleaned_data['groups']
+                if not isinstance(groups, list):
+                    logger.error("'Groups' is not a list...")
+                    groups_list = list(groups)
+                    if groups_list:
+                        document.groups.set(groups_list)
+                        return redirect(self.success_url)
+
+                if groups:
+                    document.groups.set(groups)
 
             return redirect(self.success_url)
 
