@@ -29,7 +29,7 @@ CACHES = {
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-host
-EMAIL_HOST = env("EMAIL_HOST", default="mailpit")
+EMAIL_HOST = env("EMAIL_HOST", default="mailhog")
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-port
 EMAIL_PORT = 1025
 
@@ -78,3 +78,10 @@ INSTALLED_APPS += ["django_extensions"]
 # Your stuff...
 # ------------------------------------------------------------------------------
 DOCUMENTS_DIRECTORY = 'C:/Users/Rodina/Desktop/TestDocs' #Documents base dir
+
+#EMAIL_PORT = 1025
+#EMAIL_HOST = '127.0.0.1'
+EMAIL_USE_TLS = False  # Obvykle není potřeba TLS pro MailHog
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''  # Pro MailHog není třeba
+DEFAULT_FROM_EMAIL = 'noreply@zf.com'

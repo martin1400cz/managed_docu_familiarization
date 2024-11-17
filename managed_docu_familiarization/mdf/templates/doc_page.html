@@ -22,6 +22,22 @@
     Tento prohlížeč nepodporuje zobrazení PDF dokumentů.
       <a href="{{ document.doc_url }}">Stáhnout dokument</a>
   </iframe>
+  {% if category == 3 %}
+    <h2>Souhlas s dokumentem</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label>
+            <input type="checkbox" name="consent" required>
+            Souhlasím s obsahem dokumentu
+        </label>
+        <br><br>
+        <button type="submit">Odeslat souhlas</button>
+    </form>
+
+    {% if message %}
+        <p style="color: green;">{{ message }}</p>
+    {% endif %}
+  {% endif %}
 
   <p><a href="{% url 'mdf:base_page' %}">Zpět na seznam dokumentů</a></p>
 {% endblock content %}

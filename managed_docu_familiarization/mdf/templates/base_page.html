@@ -16,27 +16,36 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container mt-5">
         <h1>Documents List</h1>
         {% if is_admin %}
             <a href="{% url 'mdf:publishing_page' %}">Add New Document</a>
+            <a href="?tab=author">Moje dokumenty</a>
+            <a href="?tab=admin">Spravované dokumenty</a>
+            <a href="?tab=user">Dostupné dokumenty</a>
+        {% elif is_author %}
+            <a href="{% url 'mdf:publishing_page' %}">Add New Document</a>
+            <a href="?tab=author">Moje dokumenty</a>
+            <a href="?tab=user">Dostupné dokumenty</a>
         {% endif %}
-        <table aria-describedby="Overview of the Employees" id="emp_people_overview_table"
-             class="table overview-datatable">
-            <thead>
 
+        <!-- Tables -->
+        <table aria-describedby="Overview of the Employees"
+             class="table overview-datatable tab_user">
+        <!-- Admin table -->
+        {% if active_tab == 'admin' %}
+            <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Name</th>
                     <th>Release Date</th>
-                    <th>Owner</th>
-                    <th>Actions</th>
+                    <th>Author</th>
+                    <th>Show document</th>
+                    <th>Show stats</th>
                 </tr>
             </thead>
             <tbody>
                 {% for document in mdf_documents %}
-                <tr id="{{ document.doc_id }}">
-                    <!--<td>{{ document.doc_id }}</td>-->
+                <tr>
                     <td>{{ document.doc_name }}</td>
                     <td>{{ document.release_date }}</td>
                     <td>{{ document.owner.full_name }}</td> <!-- Adjust according to your User model -->
@@ -53,6 +62,69 @@
                 </tr>
                 {% endfor %}
             </tbody>
+        {% elif active_tab == 'author' %}
+            <thead>
+
+                <tr>
+                    <th>Name</th>
+                    <th>Release Date</th>
+                    <th>Author</th>
+                    <th>Show document</th>
+                    <th>Show stats</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for document in my_documents %}
+                <tr>
+                    <td>{{ document.doc_name }}</td>
+                    <td>{{ document.release_date }}</td>
+                    <td>{{ document.owner.full_name }}</td> <!-- Adjust according to your User model -->
+                    <td><a href="{% url 'mdf:document_page' %}?doc_url={{ document.doc_url }}">Zobrazit</a></td>
+                    <td>
+                      {% if document.owner == request.user %}
+                        <a href="{% url 'mdf:document_agreements' document.doc_id %}">Zobrazit statistiky</a>
+                      {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No documents found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        {% else %}
+        <!-- User table -->
+            <thead>
+
+                <tr>
+                    <th>Name</th>
+                    <th>Release Date</th>
+                    <th>Author</th>
+                    <th>Familiarized with the document</th>
+                    <th>Show document</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for document in documents_list %}
+                <tr>
+                    <td>{{ document.document.doc_name }}</td>
+                    <td>{{ document.document.release_date }}</td>
+                    <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
+                    <td>{% if document.agree_exists %}
+                            Souhlas poslán
+                        {% else %}
+                            Souhlas chybí
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'mdf:document_page' %}?doc_url={{ document.document.doc_url }}">Zobrazit</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No documents found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        {% endif %}
         </table>
     </div>
 {% endblock content %}
