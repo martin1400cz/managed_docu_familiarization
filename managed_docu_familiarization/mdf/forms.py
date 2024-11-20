@@ -19,6 +19,14 @@ class DocumentForm(forms.ModelForm):
                             max_length=500,
                             required=True)
 
+    contact_users = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.SelectMultiple(attrs={
+            'class': 'custom-select',
+            'data-live-search': 'true',  # pro přidání Bootstrap vyhledávací funkce (volitelné)
+        })
+    )
+
     choices = [
         (1, "Private documents"),
         (2, "Public documents"),
@@ -51,13 +59,18 @@ class DocumentForm(forms.ModelForm):
 
     class Meta:
         model = Document
-        fields = ['doc_url', 'category', 'groups']
+        fields = ['doc_url', 'category', 'groups', 'contact_users']
+
+    #def __init__(self, *args, **kwargs):
+    #    super().__init__(*args, **kwargs)
+    #    self.fields['contact_users'].queryset = User.objects.all()
 
 
 class DocumentFormAdmin(forms.ModelForm):
     class Meta:
         model = Document
         fields = ('doc_name', 'doc_url', 'owner', 'category')
+
 
     def save(self, commit=True):
         doc = super().save()

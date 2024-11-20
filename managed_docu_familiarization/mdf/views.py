@@ -19,6 +19,10 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from .utils import send_document_link, get_documents_by_category, send_agreement, getUsersFromGroups
 from django.http import HttpResponse
+
+from ..users.models import User
+
+
 #import requests
 
 
@@ -248,10 +252,14 @@ class MDFDocumentsAdding(FormView):
         initial = super().get_initial()
         initial['url'] = self.request.GET.get('doc_url', '')
         return initial
-
+    '''
     def form_valid(self, form):
         logger = logging.getLogger(__name__)
         logger.error("User being authenticated...")
+        user_ids = self.request.POST.get('contact_users', '').split(',')
+        users = User.objects.filter(id__in=user_ids)
+        post_data = self.request.POST.copy()
+        post_data.setlist('contact_users', [str(user.id) for user in users])
         if self.request.user.is_authenticated:
 
             logger.error("User authenticated...")
@@ -263,6 +271,7 @@ class MDFDocumentsAdding(FormView):
                 category=form.cleaned_data['category'],
                 owner=doc_owner
             )
+            document.contact_users.set(users)
             if form.cleaned_data['groups']:
                 groups = form.cleaned_data['groups']
                 if not isinstance(groups, list):
@@ -276,10 +285,57 @@ class MDFDocumentsAdding(FormView):
                     document.groups.set(groups)
 
             return redirect(self.success_url)
+        '''
+
+    def form_valid(self, form):
+        logger = logging.getLogger(__name__)
+        logger.error("User being authenticated...")
+
+        # Načíst ID uživatelů z POST dat
+        user_ids = self.request.POST.get('contact_users', '').split(',')
+
+        try:
+            # Načíst odpovídající uživatele jako instance
+            users = User.objects.filter(id__in=user_ids)
+
+            # Kopírovat POST data a nastavit validní hodnoty pro contact_users
+            post_data = self.request.POST.copy()
+            post_data.setlist('contact_users', [str(user.id) for user in users])
+
+            # Aktualizovat formulář daty s validní hodnotou
+            form = self.get_form(self.form_class)
+            form.data = post_data
+        except Exception as e:
+            logger.error(f"Error processing users: {e}")
+            return self.form_invalid(form)
+
+        if not self.request.user.is_authenticated:
+            logger.error("User not authenticated.")
+            return self.form_invalid(form)
+
+        logger.error("User authenticated...")
+        doc_owner = self.request.user
+
+        # Uložení dokumentu
+        document = Document.objects.create(
+            doc_name=form.cleaned_data['name'],
+            doc_url=form.cleaned_data['url'],
+            category=form.cleaned_data['category'],
+            owner=doc_owner
+        )
+        document.contact_users.set(users)  # Nastavení uživatelů
+
+        # Zpracování skupin, pokud existují
+        groups = form.cleaned_data.get('groups', [])
+        if groups:
+            document.groups.set(groups if isinstance(groups, list) else list(groups))
+
+        return redirect(self.success_url)
 
     def form_invalid(self, form):
         logger = logging.getLogger(__name__)
-        logger.error("Invalid form!")
-        # Zobrazíme chyby, pokud je formulář nevalidní
-        print("Form is invalid:", form.errors)  # Zobrazí chyby formuláře v konzoli
+        logger.error("Form is invalid!")
+        logger.error(f"Errors: {form.errors}")
+        logger.error(f"POST data: {self.request.POST}")
+        print("Form errors:", form.errors)  # Vypsání chyb do konzole
         return super().form_invalid(form)
