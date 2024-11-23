@@ -50,11 +50,7 @@
                     <td>{{ document.release_date }}</td>
                     <td>{{ document.owner.full_name }}</td> <!-- Adjust according to your User model -->
                     <td><a href="{% url 'mdf:document_page' %}?doc_url={{ document.doc_url }}">Zobrazit</a></td>
-                    <td>
-                      {% if document.owner == request.user %}
-                        <a href="{% url 'mdf:document_agreements' document.doc_id %}">Zobrazit statistiky</a>
-                      {% endif %}
-                    </td>
+                    <td><a href="{% url 'mdf:document_agreements' document.doc_id %}">Zobrazit statistiky</a></td>
                 </tr>
                 {% empty %}
                 <tr>
@@ -63,6 +59,7 @@
                 {% endfor %}
             </tbody>
         {% elif active_tab == 'author' %}
+          <!-- Author table -->
             <thead>
 
                 <tr>

@@ -19,13 +19,19 @@ class DocumentForm(forms.ModelForm):
                             max_length=500,
                             required=True)
 
-    contact_users = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(),
-        widget=forms.SelectMultiple(attrs={
-            'class': 'custom-select',
-            'data-live-search': 'true',  # pro přidání Bootstrap vyhledávací funkce (volitelné)
-        })
+    #contact_users = forms.ModelMultipleChoiceField(
+    #    queryset=User.objects.all(),
+    #    #widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
+    #    widget=FilteredSelectMultiple("contact_users", is_stacked=False),
+    #    required=False
+    #)
+    contact_users = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        required=False,  # Může být prázdné
+        label="Selected Users",
+        help_text="Enter user IDs separated by commas.",
     )
+    #contact_users = forms.Textarea(queryset=User.objects.all(), attrs={'cols': 80, 'rows': 2})
 
     choices = [
         (1, "Private documents"),
@@ -47,6 +53,15 @@ class DocumentForm(forms.ModelForm):
         #filter_horizontal=['Groups'],
         required=False
     )
+
+    deadline = forms.DateTimeField(
+        required=False,
+        #widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+        widget=forms.DateInput(attrs={'type': 'text', 'placeholder': 'dd/mm/yyyy'}),
+        input_formats=['%d/%m/%Y'],  # Formát, který očekáváme
+        label='Set a deadline for this document',  # Vlastní popisek
+        help_text="Select a date and time when the document should be finalized."  # Pomocný text
+    )
     #filter_horizontal = ('groups',)
 
     class Media:
@@ -59,7 +74,7 @@ class DocumentForm(forms.ModelForm):
 
     class Meta:
         model = Document
-        fields = ['doc_url', 'category', 'groups', 'contact_users']
+        fields = ['url', 'category', 'contact_users', 'groups', 'deadline']
 
     #def __init__(self, *args, **kwargs):
     #    super().__init__(*args, **kwargs)

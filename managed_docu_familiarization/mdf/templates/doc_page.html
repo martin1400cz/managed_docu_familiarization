@@ -23,8 +23,11 @@
       <a href="{{ document.doc_url }}">Stáhnout dokument</a>
   </iframe>
   {% if category == 3 %}
-    <h2>Souhlas s dokumentem</h2>
-    <form method="post">
+    {% if accepted %}
+      <p>Souhlas odeslán!</p>
+    {% else %}
+      <h2>Souhlas s dokumentem</h2>
+      <form method="post">
         {% csrf_token %}
         <label>
             <input type="checkbox" name="consent" required>
@@ -32,7 +35,8 @@
         </label>
         <br><br>
         <button type="submit">Odeslat souhlas</button>
-    </form>
+      </form>
+    {% endif %}
 
     {% if message %}
         <p style="color: green;">{{ message }}</p>

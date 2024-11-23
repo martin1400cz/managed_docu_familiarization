@@ -1,10 +1,15 @@
 import logging
 import os
 
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+from django.utils import timezone
+from datetime import timedelta, datetime, time
+
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.files.storage import FileSystemStorage
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
+from django.utils.decorators import method_decorator
 from django.views.generic import View, TemplateView, FormView, DetailView
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth.models import Group
@@ -17,7 +22,7 @@ import os
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
-from .utils import send_document_link, get_documents_by_category, send_agreement, getUsersFromGroups
+from .utils import get_documents_by_category, send_agreement, getUsersFromGroups, sendLinksToUsers, user_is_admin
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -25,7 +30,9 @@ from ..users.models import User
 
 #import requests
 
-
+'''
+View for administrator/authors of documents for detail informations about document agreements.
+'''
 class MDFDocumentDetailView(TemplateView):
     model = Document
     template_name = 'doc_page.html'  # Šablona pro zobrazení dokumentu
@@ -57,9 +64,10 @@ class MDFDocumentDetailView(TemplateView):
             category = document.category
         except Document.DoesNotExist:
             raise Http404("Dokument nebyl nalezen nebo k němu nemáte přístup.")
-
+        is_accepted = DocumentAgreement.objects.filter(document=document, user=self.request.user).exists()
         context['document_url'] = doc_url
         context['category'] = category
+        context['accepted'] = is_accepted
         return context
 
 '''
@@ -85,21 +93,25 @@ def download_google_drive_file(file_url):
     else:
         print("Chyba při stahování souboru.")
 '''
+
+
 '''
 View for document owner to show stats about who agreed with his document
 '''
 def MDFDocumentAgreementView(request, document_id):
     document = get_object_or_404(Document, doc_id=document_id)
-    #users = getUsersFromGroups(document.groups)
+    #groups = document.groups.all()
+    users = getUsersFromGroups(document)
+    is_admin = request.user.groups.filter(name="MDF_admin").exists()
     # Zkontrolujeme, jestli je přihlášený uživatel vlastníkem dokumentu
-    if request.user != document.owner:
+    if request.user != document.owner and not is_admin:
         return render(request, 'error.html', {'message': 'Nemáte oprávnění zobrazit tuto stránku.'})
 
     # Načtení souhlasů spojených s dokumentem
     agreements = DocumentAgreement.objects.filter(document=document).select_related('user')
     agreements_count = len(agreements)
-    #users_count = len(users)
-    users_count = 3
+    users_count = len(users)
+    #users_count = 3
     context = {
         'agreements_count': agreements_count,
         'users_count':users_count,
@@ -110,8 +122,9 @@ def MDFDocumentAgreementView(request, document_id):
     return render(request, 'document_stats.html', context)
 
 
-# Prepared function for sending document link to owner.
-# Not used!
+'''
+Function for sending a generated link with document url to a document author for adding other informations
+'''
 def send_link_to_owner(request, owner, generated_link):
     logger = logging.getLogger(__name__)
 
@@ -130,13 +143,21 @@ def send_link_to_owner(request, owner, generated_link):
     # Zobrazení zprávy o úspěšném odeslání
     messages.success(request, f"E-mail s odkazem byl odeslán na adresu {owner_email}")
     return redirect(success_url)  # Vrátíme se na stránku se seznamem dokumentů
-
-# View for admin to search a document and generate link for owner
-# This is demo version - without using emails, just display the link!
-class MDFAdminSearchDocument(TemplateView):
+'''
+View for admin to search a document and generate link for owner
+v0.1 - This is demo version - without using emails, just display the link!
+v0.2 - Advanced version - displays the link + sends the link to the owner.
+'''
+class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
     template_name = 'admin_file_search_page.html'
     # @login_required
     generated_link = None   # link for user, contains document url
+
+    def dispatch(self, request, *args, **kwargs):
+        if not user_is_admin(request.user):
+            return HttpResponseForbidden("Nemáte oprávnění pro zobrazení této stránky.")
+            #raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         generated_link = None
@@ -184,8 +205,10 @@ class MDFAdminSearchDocument(TemplateView):
         context['generated_link'] = generated_link
         return self.render_to_response(context)
 
-# View for table of documents. Each user will see only documents for him. Owners will also see their documents
-# Admin will see all documents.
+'''
+View for table of documents. Each user will see only documents for him. Owners will also see their documents
+Admin will see all documents.
+'''
 class MDFDocumentsOverview(View):
 
     template_name = 'base_page.html'
@@ -236,9 +259,10 @@ class MDFDocumentsOverview(View):
             return render(request, self.template_name, context=context)
         else:
             return render(request, 'app/templates/registration/login.html')  # Redirect to login if not authenticated
-
-# View for owners to add a document to database and add information. After adding a groups, program will choose certain users and will send them an email - this will be added later.
-class MDFDocumentsAdding(FormView):
+'''
+View for owners to add a document to database and add information. After adding a groups, program will choose certain users and will send them an email - this will be added later.
+'''
+class MDFDocumentsAdding(LoginRequiredMixin, FormView):
 
     template_name = 'publishing_page.html'
 
@@ -251,63 +275,38 @@ class MDFDocumentsAdding(FormView):
 
         initial = super().get_initial()
         initial['url'] = self.request.GET.get('doc_url', '')
+
         return initial
-    '''
-    def form_valid(self, form):
-        logger = logging.getLogger(__name__)
-        logger.error("User being authenticated...")
-        user_ids = self.request.POST.get('contact_users', '').split(',')
-        users = User.objects.filter(id__in=user_ids)
-        post_data = self.request.POST.copy()
-        post_data.setlist('contact_users', [str(user.id) for user in users])
-        if self.request.user.is_authenticated:
 
-            logger.error("User authenticated...")
-            doc_owner = self.request.user
-            # Uložení záznamu do databáze
-            document = Document.objects.create(
-                doc_name=form.cleaned_data['name'],
-                doc_url=form.cleaned_data['url'],
-                category=form.cleaned_data['category'],
-                owner=doc_owner
-            )
-            document.contact_users.set(users)
-            if form.cleaned_data['groups']:
-                groups = form.cleaned_data['groups']
-                if not isinstance(groups, list):
-                    logger.error("'Groups' is not a list...")
-                    groups_list = list(groups)
-                    if groups_list:
-                        document.groups.set(groups_list)
-                        return redirect(self.success_url)
-
-                if groups:
-                    document.groups.set(groups)
-
-            return redirect(self.success_url)
-        '''
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['available_users'] = User.objects.all()  # Načtení uživatelů z databáze
+        return context
 
     def form_valid(self, form):
         logger = logging.getLogger(__name__)
         logger.error("User being authenticated...")
 
-        # Načíst ID uživatelů z POST dat
-        user_ids = self.request.POST.get('contact_users', '').split(',')
+        # Loading user's ids POST datas
+        if self.request.POST.get('contact_users', '') == '':
+            users = []
 
-        try:
-            # Načíst odpovídající uživatele jako instance
-            users = User.objects.filter(id__in=user_ids)
+        else:
+            user_ids = self.request.POST.get('contact_users', '').split(',')
+            try:
+                # Loading users by their ids
+                users = User.objects.filter(id__in=user_ids)
 
-            # Kopírovat POST data a nastavit validní hodnoty pro contact_users
-            post_data = self.request.POST.copy()
-            post_data.setlist('contact_users', [str(user.id) for user in users])
+                # Copying POST data and setting up a valid data for contact_users
+                post_data = self.request.POST.copy()
+                post_data.setlist('contact_users', [str(user.id) for user in users])
 
-            # Aktualizovat formulář daty s validní hodnotou
-            form = self.get_form(self.form_class)
-            form.data = post_data
-        except Exception as e:
-            logger.error(f"Error processing users: {e}")
-            return self.form_invalid(form)
+                # A format actualisation with a valid data
+                # form = self.get_form(self.form_class)
+                form.data = post_data
+            except Exception as e:
+                logger.error(f"Error processing users: {e}")
+                return self.form_invalid(form)
 
         if not self.request.user.is_authenticated:
             logger.error("User not authenticated.")
@@ -315,21 +314,49 @@ class MDFDocumentsAdding(FormView):
 
         logger.error("User authenticated...")
         doc_owner = self.request.user
-
-        # Uložení dokumentu
+        doc_category = form.cleaned_data['category']
+        # Saving document
         document = Document.objects.create(
             doc_name=form.cleaned_data['name'],
             doc_url=form.cleaned_data['url'],
-            category=form.cleaned_data['category'],
+            category=doc_category,
             owner=doc_owner
         )
-        document.contact_users.set(users)  # Nastavení uživatelů
+        document.contact_users.set(users)  # Users settup
+        if doc_category == '3':
+            logger.error("Setting deadline for category 3 document...")
+            #document.deadline = form.cleaned_data.get('deadline')
+            deadline_date = form.cleaned_data.get('deadline')
+            if deadline_date:
+                # Setting deadline time to 23:59
+                deadline_datetime = timezone.make_aware(datetime.combine(deadline_date, time(23, 59)))
+                document.deadline = deadline_datetime
 
-        # Zpracování skupin, pokud existují
+        # Get groups
         groups = form.cleaned_data.get('groups', [])
         if groups:
             document.groups.set(groups if isinstance(groups, list) else list(groups))
+        else:
+            allusers_group = Group.objects.filter(name='allusers').first()
+            if allusers_group:
+                document.groups.set([allusers_group])
+                document.save()
+            else:
+                logger.error("'allusers' group not found.")
 
+        logger.error(f"Document category: {doc_category}")
+        if doc_category == '1':
+            logger.error("Private document...")
+            allusers_group = Group.objects.filter(name='allusers').first()
+            if allusers_group:
+                document.groups.set([allusers_group])
+                document.save()
+            else:
+                logger.error("'allusers' group not found.")
+        generated_link = self.request.build_absolute_uri(
+            reverse('mdf:document_page') + f"?doc_url={document.doc_url}"
+        )
+        sendLinksToUsers(document, generated_link)
         return redirect(self.success_url)
 
     def form_invalid(self, form):
