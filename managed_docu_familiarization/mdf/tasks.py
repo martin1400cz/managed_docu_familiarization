@@ -5,7 +5,7 @@ from django.utils.timezone import now
 from .models import Document
 from django.core.mail import send_mail
 
-from .utils import getUsersFromGroups
+from .utils import notify_users_about_document
 
 
 #@shared_task
@@ -33,17 +33,3 @@ def check_document_deadlines():
         document.save()
 
     return f"{len(expired_documents)} documents processed."
-
-
-def notify_users_about_document(document):
-    """
-    Funkce pro odeslání upozornění uživatelům o uplynutí lhůty pro dokument.
-    """
-    users = getUsersFromGroups(document)
-    for user in users:
-        send_mail(
-            subject=f'Deadline expired for document: {document.doc_name}',
-            message=f'The deadline for the document "{document.doc_name}" has expired. Please take necessary action.',
-            from_email='noreply@zf.com',
-            recipient_list=user.email,
-        )

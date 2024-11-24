@@ -45,16 +45,23 @@
   </head>
 
   <body class="d-flex flex-column h-100">
+    <nav class="navbar fixed-top navbar-dark bg-primary">
+      {% block nav %}
+      {% endblock nav %}
+    </nav>
 
-      {% if global_message %}
+    {% if global_message %}
       <div class="global-message">
         {{ global_message|safe }}
       </div>
     {% endif %}
+    <main>
+      <article>
+        {% block layout %}{% endblock layout %}
 
-    {% block layout %}{% endblock layout %}
-
-    {% block modal %}{% endblock modal %}
+        {% block modal %}{% endblock modal %}
+      </article>
+    </main>
 
     {% block inline_javascript %}
       {# Script tags with only code, no src (defer by default) #}

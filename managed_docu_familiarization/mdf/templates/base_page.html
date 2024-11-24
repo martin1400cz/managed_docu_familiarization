@@ -11,27 +11,37 @@
 
 
 {% block inline_javascript %}
-  {% include 'part/datatables.html' with datatables_element_id='managed_docu_familiarization_table' search_panes_columns='[1]' fixed_columns='1' %}
+  {% include 'part/datatables.html' with datatables_element_id='mdf_document_overview_table' search_panes_columns='[1]' fixed_columns='1' %}
 {% endblock inline_javascript %}
 
 {% block content %}
 
 <div class="container mt-5">
         <h1>Documents List</h1>
-        {% if is_admin %}
+        <div class="navbar navbar-expand-lg navbar-light bg-light">
+          {% if is_admin %}
             <a href="{% url 'mdf:publishing_page' %}">Add New Document</a>
             <a href="?tab=author">Moje dokumenty</a>
             <a href="?tab=admin">Spravované dokumenty</a>
             <a href="?tab=user">Dostupné dokumenty</a>
-        {% elif is_author %}
+          {% elif is_author %}
             <a href="{% url 'mdf:publishing_page' %}">Add New Document</a>
             <a href="?tab=author">Moje dokumenty</a>
             <a href="?tab=user">Dostupné dokumenty</a>
-        {% endif %}
+          {% endif %}
+        </div>
 
         <!-- Tables -->
+        {% if active_tab == 'admin' %}
+        <h2>Spravované dokumenty</h2>
+        {% elif active_tab == 'author' %}
+        <h2>Moje dokumenty</h2>
+        {% else %}
+        <h2>Dokumenty pro vás</h2>
+        {% endif %}
         <table aria-describedby="Overview of the Employees"
-             class="table overview-datatable tab_user">
+               id="mdf_document_overview_table"
+               class="table overview-datatable tab_user">
         <!-- Admin table -->
         {% if active_tab == 'admin' %}
             <thead>
@@ -49,7 +59,7 @@
                     <td>{{ document.doc_name }}</td>
                     <td>{{ document.release_date }}</td>
                     <td>{{ document.owner.full_name }}</td> <!-- Adjust according to your User model -->
-                    <td><a href="{% url 'mdf:document_page' %}?doc_url={{ document.doc_url }}">Zobrazit</a></td>
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.doc_url }}"> Zobrazit</a></td>
                     <td><a href="{% url 'mdf:document_agreements' document.doc_id %}">Zobrazit statistiky</a></td>
                 </tr>
                 {% empty %}
@@ -76,7 +86,7 @@
                     <td>{{ document.doc_name }}</td>
                     <td>{{ document.release_date }}</td>
                     <td>{{ document.owner.full_name }}</td> <!-- Adjust according to your User model -->
-                    <td><a href="{% url 'mdf:document_page' %}?doc_url={{ document.doc_url }}">Zobrazit</a></td>
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.doc_url }}"> Zobrazit</a></td>
                     <td>
                       {% if document.owner == request.user %}
                         <a href="{% url 'mdf:document_agreements' document.doc_id %}">Zobrazit statistiky</a>
@@ -92,7 +102,6 @@
         {% else %}
         <!-- User table -->
             <thead>
-
                 <tr>
                     <th>Name</th>
                     <th>Release Date</th>
@@ -113,7 +122,7 @@
                             Souhlas chybí
                         {% endif %}
                     </td>
-                    <td><a href="{% url 'mdf:document_page' %}?doc_url={{ document.document.doc_url }}">Zobrazit</a></td>
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.document.doc_url }}"> Zobrazit</a></td>
                 </tr>
                 {% empty %}
                 <tr>

@@ -53,17 +53,11 @@ class Document(models.Model):
     doc_url = models.CharField(max_length=500, blank=True, null=True)
     category = models.PositiveSmallIntegerField('Category', choices=FORMAT_CHOICES)
     release_date = models.DateTimeField(auto_now_add=True)
-    # release_date = models.DateField(blank=False, null=False)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_owner')
     contact_users = models.ManyToManyField(User, related_name='document_contact_users')
     deadline = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
-    #groups = models.ManyToManyField(Group, related_name='documents')
-
-    #groups = models.ManyToManyField(managed_docu_familiarization.users.models.Group, related_name='documents', blank=False, null=False)
     groups = models.ManyToManyField(Group, related_name='document_groups', blank=True, null=True)
-    #secure_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    #objects = DocumentsManager()
 
     def __str__(self):
         return self.doc_name

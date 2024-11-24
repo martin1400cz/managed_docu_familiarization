@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static i18n user_tags %}
 
-{% block layout %}
 
-<div class="col-sm-2 col-md-2">
+
+<!--<div class="col-sm-2 col-md-2">
     <div style="color:#fff;">
       <span class="bi bi-person-fill" style="color:black">&nbsp;{{ user }}
         {# Kontrola, zda má uživatel groupu, nebo jestli je superuser - request.user|has_group:"TL" or user.is_superuser #}
@@ -15,16 +15,41 @@
         {% endif %}
         - {{ APP_VERSION_NUMBER }}
        </span>
-  </div>
+  </div>-->
 
-  <a href="{% url 'emp:emp_people_overview' %}">EMP Overview</a>
+
+
+  <!--<a href="{% url 'emp:emp_people_overview' %}">EMP Overview</a>-->
   <!-- Link to mdf module -->
+<!--
   <a href="{% url 'mdf:base_page' %}">MDF Overview</a>
   <a href="{% url 'mdf:admin_file_search_page'%}">MDF Admin</a>
-</div>
+</div>-->
+{% block nav %}
+  <a class="navbar-brand" href="">Management document familiarization</a>
+  <a class="nav-link" href="{% url 'emp:emp_people_overview' %}">EMP Overview</a>
+  <a class="nav-link" href="{% url 'mdf:base_page' %}">MDF Overview</a>
+  <a class="nav-link" href="{% url 'mdf:admin_file_search_page'%}">MDF Admin</a>
+  <div style="color:#fff;">
+          <span class="bi bi-person-fill" style="color:black">&nbsp;{{ user }}
+            {# Kontrola, zda má uživatel groupu, nebo jestli je superuser - request.user|has_group:"TL" or user.is_superuser #}
+            {% if user.is_authenticated %}
+              <a href="{% url 'logout' %}"> ({% trans "logout" %})</a>
+              <a href="/admin"> ({% trans "Admin panel" %})</a>
+            {% else %}
+              <a href="{% url 'login' %}"> ({% trans "login" %})</a>
+            {% endif %}
+            - {{ APP_VERSION_NUMBER }}
+          </span>
+        </div>
+{% endblock nav %}
+
+{% block layout %}
 
 {% block content %}
-  {# CONTENT - actual content goes here #}
+
+{# CONTENT - actual content goes here #}
+
 {% endblock content %}
 
 
