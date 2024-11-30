@@ -11,11 +11,11 @@ class FileSearchForm(forms.Form):
 
 class DocumentForm(forms.ModelForm):
 
-    name = forms.CharField(widget=forms.TextInput(),
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
                            max_length=255,
                            required=True)
     url = forms.CharField(widget=forms.TextInput(
-                            attrs={'readonly': 'readonly'}),
+                            attrs={'class': 'form-control', 'readonly': 'readonly'}),
                             max_length=500,
                             required=True)
 
@@ -25,12 +25,22 @@ class DocumentForm(forms.ModelForm):
     #    widget=FilteredSelectMultiple("contact_users", is_stacked=False),
     #    required=False
     #)
-    contact_users = forms.CharField(
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+    #contact_users = forms.CharField(
+    #    widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+    #    widget=FilteredSelectMultiple("Users", is_stacked=False, attrs={'class': 'form-select'}),
+    #    required=False,  # Může být prázdné
+    #   label="Selected Users",
+    #    help_text="Enter user IDs separated by commas.",
+    #)
+    contact_users = forms.ModelMultipleChoiceField(
+        #    widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        queryset=User.objects.all(),
+        widget=FilteredSelectMultiple("Users", is_stacked=False, attrs={'class': 'form-select'}),
         required=False,  # Může být prázdné
         label="Selected Users",
         help_text="Enter user IDs separated by commas.",
     )
+
     #contact_users = forms.Textarea(queryset=User.objects.all(), attrs={'cols': 80, 'rows': 2})
 
     choices = [
@@ -41,7 +51,7 @@ class DocumentForm(forms.ModelForm):
 
     category = forms.ChoiceField(
         choices=choices,
-        widget=forms.RadioSelect(attrs={'class': 'category-choice'}),
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input category-choice'}),
         label="Document Category"
     )
 
@@ -49,7 +59,7 @@ class DocumentForm(forms.ModelForm):
         label="Select Groups",
         queryset=Group.objects.all(),
         #widget=forms.SelectMultiple(attrs={'class': 'admin-style-select'}),  # Customize styling as needed
-        widget=FilteredSelectMultiple("Groups", is_stacked=False),
+        widget=FilteredSelectMultiple("Groups", is_stacked=False, attrs={'class': 'form-select'}),
         #filter_horizontal=['Groups'],
         required=False
     )
@@ -57,7 +67,7 @@ class DocumentForm(forms.ModelForm):
     deadline = forms.DateTimeField(
         required=False,
         #widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-        widget=forms.DateInput(attrs={'type': 'text', 'placeholder': 'dd/mm/yyyy'}),
+        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'dd/mm/yyyy', 'class': 'form-control col col-md-3'}),
         input_formats=['%d/%m/%Y'],  # Formát, který očekáváme
         label='Set a deadline for this document',  # Vlastní popisek
         help_text="Select a date and time when the document should be finalized."  # Pomocný text
@@ -74,7 +84,7 @@ class DocumentForm(forms.ModelForm):
 
     class Meta:
         model = Document
-        fields = ['url', 'category', 'contact_users', 'groups', 'deadline']
+        fields = ['name', 'url',  'contact_users', 'category', 'groups', 'deadline']
 
     #def __init__(self, *args, **kwargs):
     #    super().__init__(*args, **kwargs)

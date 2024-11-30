@@ -22,65 +22,94 @@
 {% endblock css %}
 
 {% block content %}
-<div class="container">
-  <h2>Add a New Document</h2>
-    <form method="post" action="{% url 'mdf:publishing_page' %}">
-        <label for="document_div">Document info:</label>
-        <div id="document_div">
-            {% csrf_token %}
-            {{ form.media }}
-            <!-- Render the name field -->
-            {{ form.name.label_tag }} {{ form.name }}
-            {{ form.url.label_tag }} {{ form.url }}
-            <div class="container">
-            <!-- Dostupní uživatelé -->
-              <div class="list-container">
-                <h3>Dostupní uživatelé</h3>
-                <input type="text" id="userSearch" placeholder="Hledat uživatele..." style="width: 100%; margin-bottom: 10px;">
-                <div class="list" id="availableUsers">
-                    {% for user in available_users %}
-                        <button type="button" data-user-id="{{ user.id }}" data-user-name="{{ user.full_name }}" data-user-email="{{ user.email }}">
-                            {{ user.full_name }} - ({{ user.email }})
-                        </button>
-                    {% endfor %}
-                </div>
-              </div>
 
-              <!-- Vybraní uživatelé -->
-              <div class="list-container">
-                <h3>Vybraní uživatelé</h3>
-                <div class="list" id="selectedUsers">
-                    <!-- Dynamicky přidávaní uživatelé -->
-                </div>
-              </div>
-        </div>
 
-        <!-- Skryté pole pro odeslání dat -->
-        <input type="hidden" name="contact_users" id="contactUsersInput">
-            <!-- Render the category radio buttons -->
-            <div>
-                {{ form.category.label_tag }}
-                {{ form.category }}
+<div class="container my-4">
+  <h2 class="mb-4">Add a New Document</h2>
+  <form method="post" action="{% url 'mdf:publishing_page' %}">
+    {% csrf_token %}
+    {{ form.media }}
+    <div class="mb-3">
+      <label for="document_div" class="form-label">Document Info:</label>
+      <div id="document_div">
+        {{ form.name.label_tag }} {{ form.name }}
+        {{ form.url.label_tag }} {{ form.url }}
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="contact_user_div" class="form-label">Contact users:</label>
+      <div id="contact_user_div">
+        {{ form.contact_users.label_tag }} {{ form.contact_users }}
+      </div>
+    </div>
+
+    <!--<div class="row">
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Dostupní uživatelé</h5>
+          </div>
+          <div class="card-body">
+            <input
+              type="text"
+              id="userSearch"
+              class="form-control search-input"
+              placeholder="Hledat uživatele..."
+            >
+            <div class="list" id="availableUsers">
+              {% for user in available_users %}
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-sm d-block w-100 text-start my-1"
+                  data-user-id="{{ user.id }}"
+                  data-user-name="{{ user.full_name }}"
+                  data-user-email="{{ user.email }}"
+                >
+                  {{ user.full_name }} - ({{ user.email }})
+                </button>
+              {% endfor %}
             </div>
-
-            <!-- Render the group selection, initially hidden -->
-            <div id="group-selection" style="display: none;">
-                {{ form.groups.label_tag }}
-                {{ form.groups }}
-              <div id="deadline-selection" style="display: none;">
-                {{ form.deadline.label_tag }}
-                {{ form.deadline }}
-              </div>
-            </div>
-            <button type="submit">Add Document</button>
-
+          </div>
         </div>
-    </form>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Vybraní uživatelé</h5>
+          </div>
+          <div class="card-body">
+            <div class="list" id="selectedUsers">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>-->
+
+    <!-- Skryté pole pro odeslání dat -->
+    <!--<input type="hidden" name="contact_users" id="contactUsersInput">-->
+    <div class="mb-4">
+      <!-- Kategorie -->
+      {{ form.category.label_tag }} {{ form.category }}
+    </div>
+    <div id="deadline-selection" class="mb-4" style="display: none;">
+      {{ form.deadline.label_tag }} {{ form.deadline }}
+    </div>
+    <div id="group-selection" class="mb-4" style="display: none;">
+      {{ form.groups.label_tag }} {{ form.groups }}
+    </div>
+    <div class="text-center mb-4">
+      <button type="submit" class="btn btn-success mt-3">Add Document</button>
+    </div>
+  </form>
+</div>
 
     <script src="{% static 'admin/js/core.js' %}"></script>
     <script src="{% static 'admin/js/SelectBox.js' %}"></script>
     <script src="{% static 'admin/js/SelectFilter2.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
+    <!--
     <script>
         const userSearch = document.getElementById('userSearch');
         const availableUsers = document.getElementById('availableUsers');
@@ -171,14 +200,18 @@
             contactUsersInput.parentNode.appendChild(hiddenInput);
           });
         }*/
-    </script>
+    </script>-->
     <script type="text/javascript">
         // Initialize the FilteredSelectMultiple widget on page load
         //window.addEventListener('load', function()
         document.addEventListener('DOMContentLoaded', function(){
             const groupSelectElement = document.getElementById("id_groups");
+            const contactUserSelectElement = document.getElementById("id_users");
             if (groupSelectElement) {
                 SelectFilter.init("id_groups", "Groups", 0);
+            }
+            if (contactUserSelectElement) {
+                SelectFilter.init("id_users", "Users", 0);
             }
         });
 
@@ -213,5 +246,5 @@
         });
     </script>
 
-</div>
+
 {% endblock content %}

@@ -22,7 +22,8 @@ import os
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
-from .utils import get_documents_by_category, send_agreement, getUsersFromGroups, sendLinksToUsers, user_is_admin
+from .utils import get_documents_by_category, send_agreement, getUsersFromGroups, sendLinksToUsers, user_is_admin, \
+    getDirectDownloadLink, getFileIdFromLink
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -36,6 +37,12 @@ View for administrator/authors of documents for detail informations about docume
 class MDFDocumentDetailView(TemplateView):
     model = Document
     template_name = 'doc_page.html'  # Šablona pro zobrazení dokumentu
+    #doc_time = None
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)  # Zavolejte rodičovskou metodu
+        self.doc_time = datetime.now()  # Inicializace atributu instance
+
     def post(self, request, *args, **kwargs):
         doc_url = self.request.GET.get('doc_url')
         user = self.request.user
@@ -45,6 +52,7 @@ class MDFDocumentDetailView(TemplateView):
                 raise Http404("URL dokumentu nebyla poskytnuta.")
             # Zde můžete přidat logiku, co dělat po přijetí souhlasu (např. ukládání do databáze)
             message = "Děkujeme za váš souhlas."
+            time_user = datetime.now() - self.doc_time
             send_agreement(document, user)
             return render(request, 'doc_page.html', {'file_url': doc_url, 'message': message})
 
@@ -68,19 +76,10 @@ class MDFDocumentDetailView(TemplateView):
         context['document_url'] = doc_url
         context['category'] = category
         context['accepted'] = is_accepted
+        context['file_url'] = getDirectDownloadLink(getFileIdFromLink(doc_url))
+        self.doc_time = datetime.now()
         return context
 
-'''
-Function for getting a direct link to file saved on Google drive
-'''
-def getDirectDownloadLink(fileId):
-    directLink = f"https://drive.google.com/uc?export=download&id={fileId}"
-    return directLink
-'''
-Function for getting a file id from link
-'''
-def getFileIdFromLink(sharedLink):
-    return sharedLink.split('/d/')[1].split('/')[0]
 
 '''
 def download_google_drive_file(file_url):
@@ -280,7 +279,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['available_users'] = User.objects.all()  # Načtení uživatelů z databáze
+        #context['available_users'] = User.objects.all()  # Načtení uživatelů z databáze
         return context
 
     def form_valid(self, form):
@@ -288,6 +287,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         logger.error("User being authenticated...")
 
         # Loading user's ids POST datas
+        '''
         if self.request.POST.get('contact_users', '') == '':
             users = []
 
@@ -307,7 +307,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
             except Exception as e:
                 logger.error(f"Error processing users: {e}")
                 return self.form_invalid(form)
-
+        '''
         if not self.request.user.is_authenticated:
             logger.error("User not authenticated.")
             return self.form_invalid(form)
@@ -322,7 +322,11 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
             category=doc_category,
             owner=doc_owner
         )
-        document.contact_users.set(users)  # Users settup
+        users = form.cleaned_data.get('contact_users', [])
+        if users:
+            document.contact_users.set(users if isinstance(users, list) else list(users))
+
+        #document.contact_users.set(users)  # Users settup
         if doc_category == '3':
             logger.error("Setting deadline for category 3 document...")
             #document.deadline = form.cleaned_data.get('deadline')

@@ -1,8 +1,22 @@
+import logging
+
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.conf import settings
 from managed_docu_familiarization.mdf.models import Document, DocumentAgreement
 from managed_docu_familiarization.users.models import User
+
+'''
+Function for getting a direct link to file saved on Google drive
+'''
+def getDirectDownloadLink(fileId):
+    directLink = f"https://drive.google.com/uc?export=download&id={fileId}"
+    return directLink
+'''
+Function for getting a file id from link
+'''
+def getFileIdFromLink(sharedLink):
+    return sharedLink.split('/d/')[1].split('/')[0]
 
 def user_is_admin(user):
     """Kontrola, zda je uživatel členem skupiny administrators."""
@@ -46,25 +60,36 @@ def sendLinksToUsers(document, generated_link):
 """
 Funkce pro odeslání upozornění uživatelům o uplynutí lhůty pro dokument.
 """
-def notify_users_about_document(document):
+def notify_users_about_document_deadline(document):
+    logger = logging.getLogger(__name__)
     users = getUsersFromGroups(document)
+    subject = f'Deadline expired for document {document.doc_name}'
+    message = f'The deadline for the document "{document.doc_name}" has expired. Please take necessary action.'
+
     for user in users:
+        logger.error(f"User: {user.first_name}")
+        from_email = 'noreply@zf.com'
+        to_email = user.email
         send_mail(
-            subject=f'Deadline expired for document: {document.doc_name}',
-            message=f'The deadline for the document "{document.doc_name}" has expired. Please take necessary action.',
-            from_email='noreply@zf.com',
-            recipient_list=user.email,
+            subject,
+            message,
+            from_email,
+            [to_email],
+            fail_silently=False
         )
 
 def get_users_accepted(document):
     return len(DocumentAgreement.objects.filter(document=document))
 
 def notify_owner_about_document(document):
-
+    subject = f'Deadline expired for document {document.doc_name}'
+    message = f'The deadline for the document "{document.doc_name}" has expired. Please take necessary action.'
+    from_email = 'noreply@zf.com'
+    to_email = document.owner.email
     send_mail(
-        subject=f'Deadline expired for document: {document.doc_name}',
-        message=f'The deadline for the document "{document.doc_name}" has expired. Please take necessary action.\n'
-                f'{get_users_accepted(document)}/{len(getUsersFromGroups(document))} has agreed with the document.',
-        from_email='noreply@zf.com',
-        recipient_list=document.owner.email,
+        subject,
+        message,
+        from_email,
+        [to_email],
+        fail_silently=False
     )

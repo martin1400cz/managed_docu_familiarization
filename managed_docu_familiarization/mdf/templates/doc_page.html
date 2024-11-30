@@ -18,10 +18,11 @@
 
   <h1>Náhled dokumentu: {{ document.doc_name }}</h1>
 
-  <iframe src="{{ document_url }}" width="100%" height="800px">
+  <iframe class="justify-content-center" src="{{ document_url }}" width="100%" height="800px">
     Tento prohlížeč nepodporuje zobrazení PDF dokumentů.
       <a href="{{ document.doc_url }}">Stáhnout dokument</a>
   </iframe>
+  <div class="justify-content-center pb-3 mb-3">
   {% if category == 3 %}
     {% if accepted %}
       <p>Souhlas odeslán!</p>
@@ -42,6 +43,17 @@
         <p style="color: green;">{{ message }}</p>
     {% endif %}
   {% endif %}
+  </div>
+  <div class="justify-content-center pb-3 mb-3">
+    <hr>
+    <h3>Stáhnout dokument</h3>
+    <p>
+        Pokud si chcete dokument stáhnout, klikněte na následující odkaz:
+    </p>
+    <a href="{{ file_url }}" download>Stáhnout dokument</a>
+    <hr>
+    <p><a href="{% url 'mdf:base_page' %}">Zpět na seznam dokumentů</a></p>
+  </div>
 
-  <p><a href="{% url 'mdf:base_page' %}">Zpět na seznam dokumentů</a></p>
+
 {% endblock content %}

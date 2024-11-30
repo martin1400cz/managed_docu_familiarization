@@ -44,8 +44,8 @@
 
   </head>
 
-  <body class="d-flex flex-column h-100">
-    <nav class="navbar fixed-top navbar-dark bg-primary">
+  <body class="d-flex flex-column h-100 pt-5">
+    <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-primary">
       {% block nav %}
       {% endblock nav %}
     </nav>
@@ -55,14 +55,26 @@
         {{ global_message|safe }}
       </div>
     {% endif %}
-    <main>
-      <article>
-        {% block layout %}{% endblock layout %}
+
+        {% block layout %}
+
+        {% endblock layout %}
 
         {% block modal %}{% endblock modal %}
-      </article>
-    </main>
 
+    <div class="b-example-divider"></div>
+
+    <div class="container">
+
+        <footer class="py-3 my-4">
+          {% block footer %}
+
+          {% endblock footer %}
+        </footer>
+
+    </div>
+
+    <div class="b-example-divider"></div>
     {% block inline_javascript %}
       {# Script tags with only code, no src (defer by default) #}
     {% endblock inline_javascript %}

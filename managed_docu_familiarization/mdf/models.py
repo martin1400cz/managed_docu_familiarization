@@ -80,6 +80,8 @@ class DocumentAgreement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_agreements')
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='agreements')
     agreed_at = models.DateTimeField(auto_now_add=True)  # Automatically saves the timestamp when a user agrees
+    # reading_time = models.TimeField(auto_now=False, auto_now_add=False, **options) #the time it took the user to read the document
+    # open_count = models.IntegerField(**options)
 
     class Meta:
         unique_together = ('user', 'document')  # Ensures one agreement per user per document
