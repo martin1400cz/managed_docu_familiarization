@@ -3,8 +3,26 @@ import logging
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.conf import settings
+from managed_docu_familiarization.static.Strings import string_constants
 from managed_docu_familiarization.mdf.models import Document, DocumentAgreement
 from managed_docu_familiarization.users.models import User
+from django.core.signing import Signer, BadSignature
+
+
+def generate_secure_link(doc_id):
+    signer = Signer()
+    signed_doc_id = signer.sign(doc_id)
+    return signed_doc_id
+
+
+
+def verify_secure_link(signed_doc_id):
+    signer = Signer()
+    try:
+        doc_id = signer.unsign(signed_doc_id)
+        return doc_id  # Vrací původní doc_id, pokud je podpis validní
+    except BadSignature:
+        return None  # Pokud je podpis neplatný
 
 '''
 Function for getting a direct link to file saved on Google drive
@@ -36,22 +54,27 @@ Functions returns a list of users from certain groups, if some users are in more
 '''
 def getUsersFromGroups(document):
     unique_set = set()
-    users = User.objects.filter(groups__in=document.groups.all()).distinct()
+    users = User.objects.filter(groups__in=document.groups.all())
     owner = document.owner
+    # removing admin
+    #admin_user = None
+    #for user in users:
+    #    if user_is_admin(user):
+    #        admin_user = user
     unique_set.update(users)
+    #removing document owner
     unique_set.remove(owner)
+    #unique_set.remove(admin_user)
     #for group in groups:
     #    users = User.objects.filter(groups__)
     #    unique_set.update(users)
     return list(unique_set)
 
-def sendLinksToUsers(document, generated_link):
+def sendLinksToUsers(document, generated_link, mess):
     users = getUsersFromGroups(document)
-    subject = "Potvrzení o seznámení se s dokumentem"
+    subject = string_constants.email_subject_accept
     from_email = settings.EMAIL_HOST_USER
-    message = f"Dobrý den,\n\n" \
-              f"Prosíme vás o potvrzení o seznámení se s dokumentem:\n{generated_link}\n\n" \
-              f"Děkujeme!"
+    message = f"{mess}\n\nLink: {generated_link}"
     # Odeslání e-mailu
     for user in users:
         user_email = user.email
@@ -81,7 +104,7 @@ def notify_users_about_document_deadline(document):
 def get_users_accepted(document):
     return len(DocumentAgreement.objects.filter(document=document))
 
-def notify_owner_about_document(document):
+def notify_owner_about_document_deadline(document):
     subject = f'Deadline expired for document {document.doc_name}'
     message = f'The deadline for the document "{document.doc_name}" has expired. Please take necessary action.'
     from_email = 'noreply@zf.com'

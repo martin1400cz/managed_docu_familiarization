@@ -15,6 +15,7 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth.models import Group
 
 from config import settings
+from managed_docu_familiarization.static.Strings import string_constants
 from managed_docu_familiarization.mdf.forms import DocumentForm
 from managed_docu_familiarization.mdf.forms import FileSearchForm
 from managed_docu_familiarization.mdf.models import Document, DocumentAgreement
@@ -23,7 +24,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from .utils import get_documents_by_category, send_agreement, getUsersFromGroups, sendLinksToUsers, user_is_admin, \
-    getDirectDownloadLink, getFileIdFromLink
+    getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -190,12 +191,20 @@ class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
             doc_url = form.cleaned_data['document_path']
             #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             #document_url = getFileIdFromLink(doc_url)
-            owner = form.cleaned_data['owner']
+            doc_owner = form.cleaned_data['owner']
+            document = Document.objects.create(
+                doc_name=form.cleaned_data['document_name'],
+                doc_url=form.cleaned_data['document_path'],
+                category='1',
+                owner=doc_owner
+            )
+            doc_id = document.doc_id
+            encrypted_doc_id = generate_secure_link(doc_id)
             # Generování URL s parametrem `doc_url`
             generated_link = request.build_absolute_uri(
-                reverse('mdf:publishing_page') + f"?doc_url={doc_url}"
+                reverse('mdf:publishing_page') + f"?doc_id={encrypted_doc_id}"
             )
-            send_link_to_owner(request, owner, generated_link)
+            send_link_to_owner(request, doc_owner, generated_link)
 
 
         # Opětovné načtení kontextu pro zobrazení stejné stránky
@@ -267,14 +276,25 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
 
     form_class = DocumentForm
     success_url = '/mdf/mdfdocuments/overview/'  # Po uložení záznamu do databáze
-    doc_owner = None
-
+    document = None
+    doc_id = None
     def get_initial(self):
         # Inicializuje formulář s hodnotou `doc_url` z URL parametrů
 
         initial = super().get_initial()
-        initial['url'] = self.request.GET.get('doc_url', '')
+        doc_id = self.request.GET.get('doc_id', '')
+        decrypted_id = verify_secure_link(doc_id)
+        self.doc_id = decrypted_id
+        #self.doc_url = self.request.GET.get('doc_url', '')
+        #self.document = Document.objects.get(doc_id=decrypted_id)
+        self.document = get_object_or_404(Document, doc_id=decrypted_id)
+        if self.document is None:
+            return HttpResponseForbidden("Document not found!")
+        initial['url'] = self.document.doc_url
 
+
+        initial['name'] = self.document.doc_name
+        #initial['message'] = string_constants.email_message_for_users
         return initial
 
     def get_context_data(self, **kwargs):
@@ -311,30 +331,26 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         if not self.request.user.is_authenticated:
             logger.error("User not authenticated.")
             return self.form_invalid(form)
-
+        document = Document.objects.get(doc_id=self.doc_id)
         logger.error("User authenticated...")
+        if document is None:
+            return HttpResponseForbidden("Document not found!")
         doc_owner = self.request.user
         doc_category = form.cleaned_data['category']
         # Saving document
+        '''
         document = Document.objects.create(
             doc_name=form.cleaned_data['name'],
             doc_url=form.cleaned_data['url'],
             category=doc_category,
             owner=doc_owner
-        )
+        )'''
+        document.category = doc_category
         users = form.cleaned_data.get('contact_users', [])
         if users:
             document.contact_users.set(users if isinstance(users, list) else list(users))
 
         #document.contact_users.set(users)  # Users settup
-        if doc_category == '3':
-            logger.error("Setting deadline for category 3 document...")
-            #document.deadline = form.cleaned_data.get('deadline')
-            deadline_date = form.cleaned_data.get('deadline')
-            if deadline_date:
-                # Setting deadline time to 23:59
-                deadline_datetime = timezone.make_aware(datetime.combine(deadline_date, time(23, 59)))
-                document.deadline = deadline_datetime
 
         # Get groups
         groups = form.cleaned_data.get('groups', [])
@@ -354,13 +370,23 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
             allusers_group = Group.objects.filter(name='allusers').first()
             if allusers_group:
                 document.groups.set([allusers_group])
-                document.save()
+                #document.save()
             else:
                 logger.error("'allusers' group not found.")
+        if doc_category == '3':
+            logger.error("Setting deadline for category 3 document...")
+            #document.deadline = form.cleaned_data.get('deadline')
+            deadline_date = form.cleaned_data.get('deadline')
+            if deadline_date:
+                # Setting deadline time to 23:59
+                deadline_datetime = timezone.make_aware(datetime.combine(deadline_date, time(23, 59)))
+                document.deadline = deadline_datetime
+        message = form.cleaned_data['message']
         generated_link = self.request.build_absolute_uri(
             reverse('mdf:document_page') + f"?doc_url={document.doc_url}"
         )
-        sendLinksToUsers(document, generated_link)
+        document.save()
+        sendLinksToUsers(document, generated_link, message)
         return redirect(self.success_url)
 
     def form_invalid(self, form):

@@ -24,7 +24,7 @@
 {% block content %}
 
 
-<div class="container my-4">
+<div class="container mb-4">
   <h2 class="mb-4">Add a New Document</h2>
   <form method="post" action="{% url 'mdf:publishing_page' %}">
     {% csrf_token %}
@@ -38,70 +38,30 @@
     </div>
 
     <div class="mb-3">
-      <label for="contact_user_div" class="form-label">Contact users:</label>
-      <div id="contact_user_div">
+      <div id="contact_user_div" class="form-group">
         {{ form.contact_users.label_tag }} {{ form.contact_users }}
       </div>
     </div>
 
-    <!--<div class="row">
-      <div class="col-md-6">
-        <div class="card shadow">
-          <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Dostupní uživatelé</h5>
-          </div>
-          <div class="card-body">
-            <input
-              type="text"
-              id="userSearch"
-              class="form-control search-input"
-              placeholder="Hledat uživatele..."
-            >
-            <div class="list" id="availableUsers">
-              {% for user in available_users %}
-                <button
-                  type="button"
-                  class="btn btn-outline-primary btn-sm d-block w-100 text-start my-1"
-                  data-user-id="{{ user.id }}"
-                  data-user-name="{{ user.full_name }}"
-                  data-user-email="{{ user.email }}"
-                >
-                  {{ user.full_name }} - ({{ user.email }})
-                </button>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="card shadow">
-          <div class="card-header bg-secondary text-white">
-            <h5 class="mb-0">Vybraní uživatelé</h5>
-          </div>
-          <div class="card-body">
-            <div class="list" id="selectedUsers">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>-->
-
-    <!-- Skryté pole pro odeslání dat -->
-    <!--<input type="hidden" name="contact_users" id="contactUsersInput">-->
-    <div class="mb-4">
-      <!-- Kategorie -->
+    <!-- Hidden field for sending data -->
+    <!--<input type="hidden" name="contact_users" isd="contactUsersInput">-->
+    <div class="form-check category-choice mb-4 pb-4">
+      <!-- Categories -->
       {{ form.category.label_tag }} {{ form.category }}
     </div>
-    <div id="deadline-selection" class="mb-4" style="display: none;">
+    <div id="deadline-selection" class="form-group mb-4 pb-4" style="display: none;">
       {{ form.deadline.label_tag }} {{ form.deadline }}
     </div>
-    <div id="group-selection" class="mb-4" style="display: none;">
+    <div id="group-selection" class="form-group mb-4 pb-4" style="display: none;">
       {{ form.groups.label_tag }} {{ form.groups }}
     </div>
-    <div class="text-center mb-4">
+    <div class="form-group">
+      {{ form.message.label_tag }} {{ form.message }}
+    </div>
+    <div class="mb-4 pb-4">
       <button type="submit" class="btn btn-success mt-3">Add Document</button>
     </div>
+
   </form>
 </div>
 
@@ -109,98 +69,6 @@
     <script src="{% static 'admin/js/SelectBox.js' %}"></script>
     <script src="{% static 'admin/js/SelectFilter2.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
-    <!--
-    <script>
-        const userSearch = document.getElementById('userSearch');
-        const availableUsers = document.getElementById('availableUsers');
-        const selectedUsers = document.getElementById('selectedUsers');
-        const contactUsersInput = document.getElementById('contactUsersInput');
-
-        // Filtrování dostupných uživatelů
-        userSearch.addEventListener('input', function() {
-            const filter = userSearch.value.toLowerCase();
-            Array.from(availableUsers.querySelectorAll('button')).forEach(button => {
-                const text = button.textContent.toLowerCase();
-                button.style.display = text.includes(filter) ? '' : 'none';
-            });
-        });
-
-        // Přidání uživatele do vybraných
-        availableUsers.addEventListener('click', function(event) {
-            if (event.target.tagName === 'BUTTON') {
-                const button = event.target;
-                const userId = button.dataset.userId;
-                const userName = button.dataset.userName;
-                const userEmail = button.dataset.userEmail
-                //const userZfId = button.dataset.userZfId;
-
-                // Přidání uživatele do vybraných
-                const selectedButton = document.createElement('button');
-                selectedButton.type = 'button';
-                selectedButton.dataset.userId = userId;
-                //selectedButton.dataset.userZfId = userZfId;
-                selectedButton.dataset.userName = userName;
-                selectedButton.dataset.userEmail = userEmail;
-                //selectedButton.textContent = `${userZfId} - ${userName}`;
-                selectedButton.textContent = `${userName} - ${userEmail}`;
-                selectedUsers.appendChild(selectedButton);
-
-                // Odebrání uživatele z dostupných
-                button.remove();
-
-                // Aktualizace skrytého pole
-                updateHiddenField();
-            }
-        });
-
-        // Odebrání uživatele z vybraných
-        selectedUsers.addEventListener('click', function(event) {
-            if (event.target.tagName === 'BUTTON') {
-                const button = event.target;
-                const userId = button.dataset.userId;
-                const userName = button.dataset.userName;
-                //const userZfId = button.dataset.userZfId;
-                const userEmail = button.dataset.userEmail;
-
-                // Přidání zpět do dostupných
-                const availableButton = document.createElement('button');
-                availableButton.type = 'button';
-                availableButton.dataset.userId = userId;
-                //availableButton.dataset.userZfId = userZfId;
-                availableButton.dataset.userName = userName;
-                availableButton.dataset.userEmail = userEmail;
-                //availableButton.textContent = `${userZfId} - ${userName}`;
-                availableButton.textContent = `${userName} - ${userEmail}`;
-                availableUsers.appendChild(availableButton);
-
-                // Odebrání z vybraných
-                button.remove();
-
-                // Aktualizace skrytého pole
-                updateHiddenField();
-            }
-        });
-
-        // Aktualizace skrytého pole
-        function updateHiddenField() {
-            const selectedIds = Array.from(selectedUsers.querySelectorAll('button')).map(button => button.dataset.userId);
-            contactUsersInput.value = selectedIds;
-        }
-        /*function updateHiddenField() {
-          const selectedIds = Array.from(selectedUsers.querySelectorAll('button')).map(button => button.dataset.userId);
-
-          // Odstranění starých hodnot a nastavení nových
-          //contactUsersInput.value = ''; // Vyprázdníme skryté pole (pro starý způsob)
-          contactUsersInput.value = selectedIds[0];
-          selectedIds.forEach(id => {
-            const hiddenInput = document.createElement("input");
-            hiddenInput.type = "hidden";
-            hiddenInput.name = "contact_users"; // Každá hodnota jako samostatný input
-            hiddenInput.value = id;
-            contactUsersInput.parentNode.appendChild(hiddenInput);
-          });
-        }*/
-    </script>-->
     <script type="text/javascript">
         // Initialize the FilteredSelectMultiple widget on page load
         //window.addEventListener('load', function()
