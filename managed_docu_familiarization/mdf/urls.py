@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from managed_docu_familiarization.mdf import views
 #from managed_docu_familiarization.mdf.views import MDFView
 from managed_docu_familiarization.mdf.views import MDFDocumentsOverview, MDFDocumentsAdding, MDFAdminSearchDocument, \
-    MDFDocumentDetailView
+    MDFDocumentDetailView, MDFDocumentStatsView
 
 app_name = "mdf"
 urlpatterns = [
@@ -13,7 +13,8 @@ urlpatterns = [
     path("mdfdocuments/document/", MDFDocumentDetailView.as_view(), name="document_page"),
     #path("mdfdocuments/document/<str:file_name>/", MDFDocumentDetailView.as_view(), name="document_page"),
     path("mdfdocuments/overview/", MDFDocumentsOverview.as_view(), name="base_page"),
-    path('mdfdocuments/agreements/<int:document_id>/', views.MDFDocumentAgreementView, name='document_agreements'),
+    path('mdfdocuments/agreements/', MDFDocumentStatsView.as_view(), name='document_stats'),
+    path('mdfdocuments/agreements/<str:doc_id>/', MDFDocumentStatsView.as_view(), name='document_stats'),
     path("mdfdocuments/overview/add/", MDFDocumentsAdding.as_view(), name="publishing_page"),
     path("mdfdocuments/overview/add/<str:file_name>/", MDFDocumentsAdding.as_view(), name="publishing_page"),
     path('mdfdocuments/admin-file-search/', MDFAdminSearchDocument.as_view(), name='admin_file_search_page'),

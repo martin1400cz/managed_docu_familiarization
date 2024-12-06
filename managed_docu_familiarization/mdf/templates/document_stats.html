@@ -18,27 +18,27 @@
 
   <h2>Statistiky souhlasu pro dokument: {{ document.doc_name }}</h2>
 
-<table border="1">
+<table aria-describedby="Overview of the Employees"
+       id="mdf_document_stats_table"
+       class="table overview-datatable tab_user">
     <thead>
         <tr>
-            <th>Uživatel</th>
-            <th>Datum souhlasu</th>
+            <th>User</th>
+            <th>Status</th>
+            <th>Date of agreement</th>
         </tr>
     </thead>
     <tbody>
-        {% for agreement in agreements %}
+        {% for agreement in agreements_list %}
         <tr>
             <td>{{ agreement.user.zf_id }}</td>
+            <td>{{ agreement.status }}</td>
             <td>{{ agreement.agreed_at }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="2">Žádný uživatel se zatím s dokumentem neseznámil.</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 <p>{{ agreements_count }}/{{ users_count }}</p>
-<a href="{% url 'mdf:base_page' %}">Zpět na seznam dokumentů</a>
+<a href="{% url 'mdf:base_page' %}">Back to the list of documents</a>
 
 {% endblock content %}

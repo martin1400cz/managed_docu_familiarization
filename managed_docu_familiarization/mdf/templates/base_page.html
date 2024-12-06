@@ -20,24 +20,26 @@
         <h1>Documents List</h1>
         <div class="navbar navbar-expand-lg navbar-light bg-light">
           {% if is_admin %}
-            <a href="{% url 'mdf:publishing_page' %}">Add New Document</a>
-            <a href="?tab=author">Moje dokumenty</a>
-            <a href="?tab=admin">Spravované dokumenty</a>
-            <a href="?tab=user">Dostupné dokumenty</a>
+            <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
+            <a class="nav-link" href="?tab=user">Documents for you</a>
+            <a class="nav-link" href="?tab=author">My documents</a>
+            <a class="nav-link" href="?tab=admin">All documents</a>
+
           {% elif is_author %}
-            <a href="{% url 'mdf:publishing_page' %}">Add New Document</a>
-            <a href="?tab=author">Moje dokumenty</a>
-            <a href="?tab=user">Dostupné dokumenty</a>
+            <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
+            <a class="nav-link" href="?tab=user">Documents for you</a>
+            <a class="nav-link" href="?tab=author">My documents</a>
+
           {% endif %}
         </div>
 
         <!-- Tables -->
         {% if active_tab == 'admin' %}
-        <h2>Spravované dokumenty</h2>
+        <h2>All documents</h2>
         {% elif active_tab == 'author' %}
-        <h2>Moje dokumenty</h2>
+        <h2>My documents</h2>
         {% else %}
-        <h2>Dokumenty pro vás</h2>
+        <h2>Documents for you</h2>
         {% endif %}
         <table aria-describedby="Overview of the Employees"
                id="mdf_document_overview_table"
@@ -48,19 +50,21 @@
                 <tr>
                     <th>Name</th>
                     <th>Release Date</th>
+                    <th>Status</th>
                     <th>Author</th>
                     <th>Show document</th>
                     <th>Show stats</th>
                 </tr>
             </thead>
             <tbody>
-                {% for document in mdf_documents %}
+                {% for document in documents_list %}
                 <tr>
-                    <td>{{ document.doc_name }}</td>
-                    <td>{{ document.release_date }}</td>
-                    <td>{{ document.owner.full_name }}</td> <!-- Adjust according to your User model -->
-                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.doc_url }}"> Zobrazit</a></td>
-                    <td><a href="{% url 'mdf:document_agreements' document.doc_id %}">Zobrazit statistiky</a></td>
+                    <td>{{ document.document.doc_name }}</td>
+                    <td>{{ document.document.release_date|date:"d/m/Y" }}</td>
+                    <td>{{ document.document.status }}</td>
+                    <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.document.doc_url }}"> Zobrazit</a></td>
+                    <td><a href="{% url 'mdf:document_stats' %}?doc_id={{ document.encrypted_id }}">Show document details</a></td>
                 </tr>
                 {% empty %}
                 <tr>
@@ -75,21 +79,23 @@
                 <tr>
                     <th>Name</th>
                     <th>Release Date</th>
+                    <th>Status</th>
                     <th>Author</th>
                     <th>Show document</th>
                     <th>Show stats</th>
                 </tr>
             </thead>
             <tbody>
-                {% for document in my_documents %}
+                {% for document in documents_list %}
                 <tr>
-                    <td>{{ document.doc_name }}</td>
-                    <td>{{ document.release_date }}</td>
-                    <td>{{ document.owner.full_name }}</td> <!-- Adjust according to your User model -->
-                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.doc_url }}"> Zobrazit</a></td>
+                    <td>{{ document.document.doc_name }}</td>
+                    <td>{{ document.document.release_date|date:"d/m/Y" }}</td>
+                    <td>{{ document.document.status }}</td>
+                    <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.document.doc_url }}"> Zobrazit</a></td>
                     <td>
-                      {% if document.owner == request.user %}
-                        <a href="{% url 'mdf:document_agreements' document.doc_id %}">Zobrazit statistiky</a>
+                      {% if document.document.owner == request.user %}
+                        <a href="{% url 'mdf:document_stats' %}?doc_id={{ document.encrypted_id }}">Show document details</a>
                       {% endif %}
                     </td>
                 </tr>
@@ -114,12 +120,12 @@
                 {% for document in documents_list %}
                 <tr>
                     <td>{{ document.document.doc_name }}</td>
-                    <td>{{ document.document.release_date }}</td>
+                    <td>{{ document.document.release_date|date:"d/m/Y" }}</td>
                     <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
                     <td>{% if document.agree_exists %}
-                            Souhlas poslán
+                            <p class="font-weight-normal text-success">Accepted</p>
                         {% else %}
-                            Souhlas chybí
+                            <p class="font-weight-normal text-danger">Not accepted</p>
                         {% endif %}
                     </td>
                     <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.document.doc_url }}"> Zobrazit</a></td>

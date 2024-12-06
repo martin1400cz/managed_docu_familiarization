@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
                     "user",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="document_agreements",
+                        related_name="document_stats",
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),

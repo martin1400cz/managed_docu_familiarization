@@ -77,7 +77,7 @@ class Document(models.Model):
 
 class DocumentAgreement(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_agreements')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_stats')
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='agreements')
     agreed_at = models.DateTimeField(auto_now_add=True)  # Automatically saves the timestamp when a user agrees
     # reading_time = models.TimeField(auto_now=False, auto_now_add=False, **options) #the time it took the user to read the document

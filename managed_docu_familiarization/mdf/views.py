@@ -2,6 +2,7 @@ import logging
 import os
 
 from django.core.exceptions import PermissionDenied
+from django.db.models import Subquery
 from django.utils import timezone
 from datetime import timedelta, datetime, time
 
@@ -32,17 +33,14 @@ from ..users.models import User
 
 #import requests
 
-'''
-View for administrator/authors of documents for detail informations about document agreements.
-'''
 class MDFDocumentDetailView(TemplateView):
     model = Document
-    template_name = 'doc_page.html'  # Šablona pro zobrazení dokumentu
+    template_name = 'doc_page.html'
     #doc_time = None
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)  # Zavolejte rodičovskou metodu
-        self.doc_time = datetime.now()  # Inicializace atributu instance
+        super().__init__(**kwargs)
+        self.doc_time = datetime.now()
 
     def post(self, request, *args, **kwargs):
         doc_url = self.request.GET.get('doc_url')
@@ -77,6 +75,7 @@ class MDFDocumentDetailView(TemplateView):
         context['document_url'] = doc_url
         context['category'] = category
         context['accepted'] = is_accepted
+        context['document_google_id'] = getFileIdFromLink(doc_url)
         context['file_url'] = getDirectDownloadLink(getFileIdFromLink(doc_url))
         self.doc_time = datetime.now()
         return context
@@ -96,30 +95,59 @@ def download_google_drive_file(file_url):
 
 
 '''
-View for document owner to show stats about who agreed with his document
+View for administrator/authors of documents for detail informations about document agreements.
 '''
-def MDFDocumentAgreementView(request, document_id):
-    document = get_object_or_404(Document, doc_id=document_id)
-    #groups = document.groups.all()
-    users = getUsersFromGroups(document)
-    is_admin = request.user.groups.filter(name="MDF_admin").exists()
-    # Zkontrolujeme, jestli je přihlášený uživatel vlastníkem dokumentu
-    if request.user != document.owner and not is_admin:
-        return render(request, 'error.html', {'message': 'Nemáte oprávnění zobrazit tuto stránku.'})
+class MDFDocumentStatsView(TemplateView):
+    template_name = 'document_stats.html'
+    def get_context_data(self, **kwargs):
+        doc_id = self.request.GET.get('doc_id')
+        dec_id = verify_secure_link(doc_id)
 
-    # Načtení souhlasů spojených s dokumentem
-    agreements = DocumentAgreement.objects.filter(document=document).select_related('user')
-    agreements_count = len(agreements)
-    users_count = len(users)
-    #users_count = 3
-    context = {
-        'agreements_count': agreements_count,
-        'users_count':users_count,
-        'document': document,
-        'agreements': agreements,
-    }
+        document = get_object_or_404(Document, doc_id=dec_id)
+        # groups = document.groups.all()
+        users = getUsersFromGroups(document)
+        is_admin = self.request.user.groups.filter(name="MDF_admin").exists()
+        agreements_list = []
+        # Zkontrolujeme, jestli je přihlášený uživatel vlastníkem dokumentu
+        if self.request.user != document.owner and not is_admin:
+            return render(self.request, 'error.html', {'message': 'Nemáte oprávnění zobrazit tuto stránku.'})
 
-    return render(request, 'document_stats.html', context)
+        # Načtení souhlasů spojených s dokumentem
+        agreements = DocumentAgreement.objects.filter(document=document).select_related('user')
+        agreement_map = {agreement.user: agreement.agreed_at for agreement in agreements}
+        agreements_count = len(agreements)
+        users_count = len(users)
+
+        for user in users:
+            if user in agreement_map:
+                formatted_date = agreement_map[user].strftime('%d/%m/%Y')
+                agreements_list.append({
+                    'user': user,
+                    'status': string_constants.user_agreed,
+                    'agreed_at': formatted_date
+                })
+            else:
+                agreements_list.append({
+                    'user': user,
+                    'status': string_constants.user_disagreed,
+                    'agreed_at': None
+                })
+
+            #agreements_list.append({
+            #    'user': user,
+            #    'is_accepted': is_accepted
+            #})
+
+        # users_count = 3
+        context = {
+            'agreements_count': agreements_count,
+            'users_count': users_count,
+            'document': document,
+            'agreements': agreements,
+            'agreements_list': agreements_list,
+        }
+
+        return context
 
 
 '''
@@ -229,16 +257,29 @@ class MDFDocumentsOverview(View):
             logger.error(f"Tab: {tab}")
             is_admin = request.user.groups.filter(name="MDF_admin").exists()
             is_owner = request.user.groups.filter(name="MDF_authors").exists()
-            documents = Document.objects.all()
+            #documents = Document.objects.all()
             my_documents = []
             documents_list = []
             if tab == 'admin' and is_admin:
+                documents_list = []
                 logger.error("I am in admin")
                 documents = Document.objects.all()
+                for document in documents:
+                    documents_list.append({
+                        'document': document,
+                        'encrypted_id': generate_secure_link(document.doc_id)
+                    })
             elif tab == 'author' and is_owner:
+                documents_list = []
                 logger.error("I am in author")
                 my_documents = Document.objects.filter(owner=request.user)
+                for document in my_documents:
+                    documents_list.append({
+                        'document': document,
+                        'encrypted_id': generate_secure_link(document.doc_id)
+                    })
             else:
+                documents_list = []
                 document_filter = Document.objects.filter(groups__users=request.user, category=3).distinct()
 
 
@@ -246,18 +287,14 @@ class MDFDocumentsOverview(View):
                     consent_exists = DocumentAgreement.objects.filter(user=request.user, document=document).exists()
                     documents_list.append({
                         'document': document,
+                        'encrypted_id': generate_secure_link(document.doc_id),
                         'agree_exists': consent_exists
                     })
 
-            #mdf_documents1 = Document.objects.filter(groups__users=request.user).distinct()
-            #mdf_documents2 = Document.objects.filter(owner=request.user)
-            # Combination of two querysets for documents for user in certain groups and for request user's documents
-            #combined_queryset = mdf_documents1.union(mdf_documents2)
-
             #print(mdf_documents)
             context = {
-                'mdf_documents': documents,
-                'my_documents': my_documents,
+                #'mdf_documents': documents,
+                #'my_documents': my_documents,
                 'documents_list': documents_list,
                 'is_admin': is_admin,
                 'is_author': is_owner,

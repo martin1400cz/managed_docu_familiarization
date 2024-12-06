@@ -1,53 +1,7 @@
 {% extends 'base.html' %}
 {% load static i18n user_tags %}
 
-
-
-<!--<div class="col-sm-2 col-md-2">
-    <div style="color:#fff;">
-      <span class="bi bi-person-fill" style="color:black">&nbsp;{{ user }}
-        {# Kontrola, zda má uživatel groupu, nebo jestli je superuser - request.user|has_group:"TL" or user.is_superuser #}
-        {% if user.is_authenticated %}
-          <a href="{% url 'logout' %}"> ({% trans "logout" %})</a>
-          <a href="/admin"> ({% trans "Admin panel" %})</a>
-        {% else %}
-          <a href="{% url 'login' %}"> ({% trans "login" %})</a>
-        {% endif %}
-        - {{ APP_VERSION_NUMBER }}
-       </span>
-  </div>-->
-
-
-
-  <!--<a href="{% url 'emp:emp_people_overview' %}">EMP Overview</a>-->
-  <!-- Link to mdf module -->
-<!--
-  <a href="{% url 'mdf:base_page' %}">MDF Overview</a>
-  <a href="{% url 'mdf:admin_file_search_page'%}">MDF Admin</a>
-</div>-->
-
 {% block css %}
-  .nav_ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #333;
-  }
-
-  .nav_li {
-    display: inline;
-    float: right;
-  }
-
-  .nav_a {
-    color: white; /* Nastaví barvu textu na bílou */
-    text-decoration: none; /* Odstraní podtržení */
-  }
-
-  .nav_a:hover {
-    text-decoration: underline; /* Volitelné, podtržení při hoveru */
-  }
 {% endblock %}
 
 {% block nav %}
