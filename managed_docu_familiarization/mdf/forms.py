@@ -14,10 +14,12 @@ class FileSearchForm(forms.Form):
                                     label=string_constants.admin_page_form_document_name)
     document_path = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
                                     label=string_constants.admin_page_form_document_path,
-                                    max_length=255)
+                                    max_length=255,
+                                    required=True)
     owner = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),
                                    queryset=User.objects.all(),
-                                   label=string_constants.admin_page_form_document_owner)
+                                   label=string_constants.admin_page_form_document_owner,
+                                   required=True)
 
 class DocumentForm(forms.ModelForm):
 
@@ -63,7 +65,8 @@ class DocumentForm(forms.ModelForm):
         choices=choices,
         #widget=forms.RadioSelect(attrs={'class': 'form-check-input category-choice'}),
         widget=forms.RadioSelect,
-        label="Document Category"
+        label="Document Category",
+        required=True,
     )
 
     groups = forms.ModelMultipleChoiceField(
@@ -72,7 +75,7 @@ class DocumentForm(forms.ModelForm):
         #widget=forms.SelectMultiple(attrs={'class': 'admin-style-select'}),  # Customize styling as needed
         widget=FilteredSelectMultiple("Groups", is_stacked=False, attrs={'class': 'form-select form-control'}),
         #filter_horizontal=['Groups'],
-        required=False
+        required=True
     )
 
     deadline = forms.DateTimeField(

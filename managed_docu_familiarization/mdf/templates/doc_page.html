@@ -35,11 +35,11 @@
       <form method="post">
         {% csrf_token %}
         <label>
-            <input type="checkbox" name="consent" required>
+            <input type="checkbox" name="consent" required id="timeSpent" value="0">
             Souhlasím s obsahem dokumentu
         </label>
         <br><br>
-        <button type="submit">Odeslat souhlas</button>
+        <button type="submit" onclick="calculateTimeSpent()">Odeslat souhlas</button>
       </form>
     {% endif %}
 
@@ -58,6 +58,16 @@
     <hr>
     <p><a href="{% url 'mdf:base_page' %}">Zpět na seznam dokumentů</a></p>
   </div>
+
+<script>
+    let startTime = Date.now();
+
+    function calculateTimeSpent() {
+        let endTime = Date.now();
+        let timeSpent = Math.floor((endTime - startTime) / 1000);
+        document.getElementById('timeSpent').value = timeSpent;
+    }
+</script>
 
 
 {% endblock content %}

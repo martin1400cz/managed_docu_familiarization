@@ -10,5 +10,5 @@ admin_page_form_document_owner = "Owner"
 publishing_page_form_contact_users="Selected Users"
 #document_stats_page
 user_agreed="Agreed"
-user_disagreed="Disagreed"
+user_no_agree_yet="-"
 

@@ -16,9 +16,13 @@
 
 {% block content %}
 
-  <h2>Statistiky souhlasu pro dokument: {{ document.doc_name }}</h2>
+<h2>{{ document.doc_name }} document stats:</h2>
 
-<table aria-describedby="Overview of the Employees"
+<div>
+  <p>Number of agreements: {{ agreements_count }}/{{ users_count }}</p>
+</div>
+<div>
+  <table aria-describedby="Overview of the Employees"
        id="mdf_document_stats_table"
        class="table overview-datatable tab_user">
     <thead>
@@ -26,6 +30,8 @@
             <th>User</th>
             <th>Status</th>
             <th>Date of agreement</th>
+            <th>Reading time</th>
+            <th>Number of views</th>
         </tr>
     </thead>
     <tbody>
@@ -34,11 +40,15 @@
             <td>{{ agreement.user.zf_id }}</td>
             <td>{{ agreement.status }}</td>
             <td>{{ agreement.agreed_at }}</td>
+            <td>{{ agreement.reading_time }} s</td>
+            <td>{{ agreement.open_count }}</td>
         </tr>
         {% endfor %}
     </tbody>
-</table>
-<p>{{ agreements_count }}/{{ users_count }}</p>
-<a href="{% url 'mdf:base_page' %}">Back to the list of documents</a>
+  </table>
+</div>
+<div>
+  <a href="javascript:history.back()">Back to the list of documents</a>
+</div>
 
 {% endblock content %}

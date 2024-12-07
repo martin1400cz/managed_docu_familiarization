@@ -47,12 +47,14 @@ class MDFDocumentDetailView(TemplateView):
         user = self.request.user
         document = Document.objects.get(doc_url=doc_url)
         if 'consent' in request.POST:
+            time_spent = int(request.POST.get('consent', 0))
             if doc_url is None:
                 raise Http404("URL dokumentu nebyla poskytnuta.")
             # Zde můžete přidat logiku, co dělat po přijetí souhlasu (např. ukládání do databáze)
             message = "Děkujeme za váš souhlas."
-            time_user = datetime.now() - self.doc_time
-            send_agreement(document, user)
+            #time_user = datetime.now() - self.doc_time
+            #formatted_time = time(hour=time_spent // 3600, minute=(time_spent % 3600) // 60, second=time_spent % 60)
+            send_agreement(document, user, time_spent)
             return render(request, 'doc_page.html', {'file_url': doc_url, 'message': message})
 
     def get_context_data(self, **kwargs):
@@ -114,23 +116,30 @@ class MDFDocumentStatsView(TemplateView):
 
         # Načtení souhlasů spojených s dokumentem
         agreements = DocumentAgreement.objects.filter(document=document).select_related('user')
-        agreement_map = {agreement.user: agreement.agreed_at for agreement in agreements}
+        agreement_map = {agreement.user: agreement for agreement in agreements}
         agreements_count = len(agreements)
         users_count = len(users)
 
         for user in users:
             if user in agreement_map:
-                formatted_date = agreement_map[user].strftime('%d/%m/%Y')
+                agreement = agreement_map[user]
+                reading_time = agreement.reading_time
+                open_count = agreement.open_count
+                formatted_date = agreement.agreed_at.strftime('%d/%m/%Y')
                 agreements_list.append({
                     'user': user,
                     'status': string_constants.user_agreed,
-                    'agreed_at': formatted_date
+                    'agreed_at': formatted_date,
+                    'reading_time': reading_time,
+                    'open_count': open_count,
                 })
             else:
                 agreements_list.append({
                     'user': user,
-                    'status': string_constants.user_disagreed,
-                    'agreed_at': None
+                    'status': string_constants.user_no_agree_yet,
+                    'agreed_at': '-',
+                    'reading_time': '-',
+                    'open_count': 0,
                 })
 
             #agreements_list.append({
@@ -342,29 +351,6 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         logger = logging.getLogger(__name__)
         logger.error("User being authenticated...")
-
-        # Loading user's ids POST datas
-        '''
-        if self.request.POST.get('contact_users', '') == '':
-            users = []
-
-        else:
-            user_ids = self.request.POST.get('contact_users', '').split(',')
-            try:
-                # Loading users by their ids
-                users = User.objects.filter(id__in=user_ids)
-
-                # Copying POST data and setting up a valid data for contact_users
-                post_data = self.request.POST.copy()
-                post_data.setlist('contact_users', [str(user.id) for user in users])
-
-                # A format actualisation with a valid data
-                # form = self.get_form(self.form_class)
-                form.data = post_data
-            except Exception as e:
-                logger.error(f"Error processing users: {e}")
-                return self.form_invalid(form)
-        '''
         if not self.request.user.is_authenticated:
             logger.error("User not authenticated.")
             return self.form_invalid(form)
@@ -374,20 +360,11 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
             return HttpResponseForbidden("Document not found!")
         doc_owner = self.request.user
         doc_category = form.cleaned_data['category']
-        # Saving document
-        '''
-        document = Document.objects.create(
-            doc_name=form.cleaned_data['name'],
-            doc_url=form.cleaned_data['url'],
-            category=doc_category,
-            owner=doc_owner
-        )'''
+
         document.category = doc_category
         users = form.cleaned_data.get('contact_users', [])
         if users:
             document.contact_users.set(users if isinstance(users, list) else list(users))
-
-        #document.contact_users.set(users)  # Users settup
 
         # Get groups
         groups = form.cleaned_data.get('groups', [])
@@ -422,6 +399,8 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         generated_link = self.request.build_absolute_uri(
             reverse('mdf:document_page') + f"?doc_url={document.doc_url}"
         )
+        document.status = 'pending'
+        # Saving document
         document.save()
         sendLinksToUsers(document, generated_link, message)
         return redirect(self.success_url)

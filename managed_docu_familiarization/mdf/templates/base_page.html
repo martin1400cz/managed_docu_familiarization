@@ -50,6 +50,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Release Date</th>
+                    <th>Category</th>
                     <th>Status</th>
                     <th>Author</th>
                     <th>Show document</th>
@@ -61,6 +62,7 @@
                 <tr>
                     <td>{{ document.document.doc_name }}</td>
                     <td>{{ document.document.release_date|date:"d/m/Y" }}</td>
+                    <td>{{ document.document.category }}</td>
                     <td>{{ document.document.status }}</td>
                     <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
                     <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.document.doc_url }}"> Zobrazit</a></td>
@@ -79,6 +81,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Release Date</th>
+                    <th>Category</th>
                     <th>Status</th>
                     <th>Author</th>
                     <th>Show document</th>
@@ -90,6 +93,7 @@
                 <tr>
                     <td>{{ document.document.doc_name }}</td>
                     <td>{{ document.document.release_date|date:"d/m/Y" }}</td>
+                    <td>{{ document.document.category }}</td>
                     <td>{{ document.document.status }}</td>
                     <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
                     <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.document.doc_url }}"> Zobrazit</a></td>

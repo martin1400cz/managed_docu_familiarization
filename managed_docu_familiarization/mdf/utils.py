@@ -34,7 +34,10 @@ def getDirectDownloadLink(fileId):
 Function for getting a file id from link
 '''
 def getFileIdFromLink(sharedLink):
-    return sharedLink.split('/d/')[1].split('/')[0]
+    try:
+        return sharedLink.split('/d/')[1].split('/')[0]
+    except IndexError as e:
+        return 'testId'
 
 def user_is_admin(user):
     """Kontrola, zda je uživatel členem skupiny administrators."""
@@ -43,11 +46,14 @@ def user_is_admin(user):
 def get_documents_by_category(category):
     return Document.objects.get(category=category)
 
-def send_agreement(document, user):
-    agreement = DocumentAgreement.objects.create(
+def send_agreement(document, user, time_spent):
+    DocumentAgreement.objects.create(
         user=user,
-        document=document
+        document=document,
+        reading_time=time_spent,
+        open_count=1
     )
+    return True
 
 '''
 Functions returns a list of users from certain groups, if some users are in more than one group, they are picked only once.

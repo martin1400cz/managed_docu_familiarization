@@ -26,7 +26,7 @@
 
 <div class="container mb-4">
   <h2 class="mb-4">Add a New Document</h2>
-  <form method="post" action="{% url 'mdf:publishing_page' %}">
+  <form method="post">
     {% csrf_token %}
     {{ form.media }}
     <div class="mb-3">

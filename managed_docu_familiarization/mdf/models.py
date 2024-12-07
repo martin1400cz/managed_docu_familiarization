@@ -27,8 +27,9 @@ FORMAT_CHOICES = (
 )
 
 STATUS_CHOICES = (
-    ('pending', 'Pending'),    # Dokument čeká na potvrzeni
-    ('processed', 'Processed') # Dokument již byl zpracován
+    ('uploaded', 'Uploaded'),  # Document has been uploaded by admin
+    ('pending', 'Pending'),    # Document has been published by owner
+    ('processed', 'Processed') # Document has been processed
 )
 
 """
@@ -56,7 +57,7 @@ class Document(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_owner')
     contact_users = models.ManyToManyField(User, related_name='document_contact_users')
     deadline = models.DateTimeField(null=True, blank=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='uploaded')
     groups = models.ManyToManyField(Group, related_name='document_groups', blank=True, null=True)
 
     def __str__(self):
@@ -80,8 +81,8 @@ class DocumentAgreement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_stats')
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='agreements')
     agreed_at = models.DateTimeField(auto_now_add=True)  # Automatically saves the timestamp when a user agrees
-    # reading_time = models.TimeField(auto_now=False, auto_now_add=False, **options) #the time it took the user to read the document
-    # open_count = models.IntegerField(**options)
+    reading_time = models.PositiveIntegerField(default=0)
+    open_count = models.PositiveIntegerField(default=0)
 
     class Meta:
         unique_together = ('user', 'document')  # Ensures one agreement per user per document
