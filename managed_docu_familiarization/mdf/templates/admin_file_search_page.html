@@ -29,29 +29,6 @@
   {% if generated_link %}
     <p>Vygenerovaný odkaz pro vlastníka: <a href="{{ generated_link }}">{{ generated_link }}</a></p>
   {% else %}
-  <h3>Available Documents</h3>
-  <!--<thead><table>
-
-            <tr>
-                <th>Document Name</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for file in available_files %}
-            <tr>
-                <td>{{ file }}</td>
-                <td>
-                    <button type="button" onclick="setDocumentUrl('{{ file.url }}{{ file }}')">Nastavit URL</button>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="2">No files available.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>-->
 {% endif %}
   <script>
     // JavaScript pro nastavení URL dokumentu do textového pole

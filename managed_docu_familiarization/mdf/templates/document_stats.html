@@ -16,15 +16,28 @@
 
 {% block content %}
 
-<h2>{{ document.doc_name }} document stats:</h2>
+<h2>Document stats:</h2>
+<div>
+  <div>
+    <p>Document name: {{ document.doc_name }}</p>
+    <p>Document url: {{ document.doc_url }}</p>
+    <p>Release date: {{ document.release_date }}</p>
+    <p>Document owner: {{ document.owner.zf_id }}</p>
+    <p>Category: {{ document.category }}</p>
+
+  </div>
+  <div>
+
+  </div>
+</div>
 
 <div>
   <p>Number of agreements: {{ agreements_count }}/{{ users_count }}</p>
 </div>
 <div>
   <table aria-describedby="Overview of the Employees"
-       id="mdf_document_stats_table"
-       class="table overview-datatable tab_user">
+               id="mdf_document_overview_table"
+               class="table overview-datatable tab_user">
     <thead>
         <tr>
             <th>User</th>
@@ -32,6 +45,7 @@
             <th>Date of agreement</th>
             <th>Reading time</th>
             <th>Number of views</th>
+            <td>Action</td>
         </tr>
     </thead>
     <tbody>
@@ -42,6 +56,11 @@
             <td>{{ agreement.agreed_at }}</td>
             <td>{{ agreement.reading_time }} s</td>
             <td>{{ agreement.open_count }}</td>
+            {% if agreement.agreed_at == '-' %}
+              <td>
+                <button class="btn btn-primary" onclick="sendEmail('{{ agreement.user.zf_id }}', '{{ document.doc_id }}')">Send notification</button>
+              </td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>
@@ -51,4 +70,41 @@
   <a href="javascript:history.back()">Back to the list of documents</a>
 </div>
 
+<script>
+function sendEmail(userId, documentId) {
+
+    data = JSON.stringify({
+        user_id: userId,
+        document_id: documentId
+    })
+
+
+    let response = fetch(`/mdf/mdfdocuments/agreements/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}', // Django CSRF token
+            'Content-Type': 'application/json'
+        },
+        body: data,
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json(); // Předpokládáme, že server vrací JSON
+    })
+    .then(data => {
+        console.log("Server response:", data);
+        if (data.status === 'success') {
+            alert("Email was successfully sent.");
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error during email notification:", error);
+        alert("An error occurred while sending the email.");
+    });
+}
+</script>
 {% endblock content %}
+

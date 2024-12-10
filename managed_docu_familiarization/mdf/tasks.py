@@ -5,7 +5,7 @@ from django.utils.timezone import now
 from .models import Document
 from django.core.mail import send_mail
 
-from .utils import notify_users_about_document_deadline, notify_owner_about_document
+from .utils import notify_users_about_document_deadline, notify_owner_about_document_deadline
 
 
 #@shared_task
@@ -27,7 +27,7 @@ def check_document_deadlines():
         # Provádíme akci (např. odesílání e-mailu)
         logger.error("Provadime akci")
         notify_users_about_document_deadline(document)
-        notify_owner_about_document(document)
+        notify_owner_about_document_deadline(document)
 
         # Aktualizujeme stav dokumentu, aby se stejná akce neopakovala
         document.status = 'processed'  # Příklad stavu: "zpracováno"

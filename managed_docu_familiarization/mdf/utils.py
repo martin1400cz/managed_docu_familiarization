@@ -76,6 +76,10 @@ def getUsersFromGroups(document):
     #    unique_set.update(users)
     return list(unique_set)
 
+def send_mail_to_user(user, subject, message):
+    from_email = settings.EMAIL_HOST_USER
+    send_mail(subject, message, from_email, [user.email], fail_silently=False)
+
 def sendLinksToUsers(document, generated_link, mess):
     users = getUsersFromGroups(document)
     subject = string_constants.email_subject_accept

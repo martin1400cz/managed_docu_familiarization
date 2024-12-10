@@ -1,6 +1,6 @@
 import logging
 import os
-
+import json
 from django.core.exceptions import PermissionDenied
 from django.db.models import Subquery
 from django.utils import timezone
@@ -9,7 +9,7 @@ from datetime import timedelta, datetime, time
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.files.storage import FileSystemStorage
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View, TemplateView, FormView, DetailView
 from django.shortcuts import render, redirect, reverse, get_object_or_404
@@ -25,7 +25,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from .utils import get_documents_by_category, send_agreement, getUsersFromGroups, sendLinksToUsers, user_is_admin, \
-    getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link
+    getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link, send_mail_to_user
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -74,9 +74,11 @@ class MDFDocumentDetailView(TemplateView):
         except Document.DoesNotExist:
             raise Http404("Dokument nebyl nalezen nebo k němu nemáte přístup.")
         is_accepted = DocumentAgreement.objects.filter(document=document, user=self.request.user).exists()
+        is_ordinary_user = not self.request.user.groups.filter(name="MDF_admin").exists()
         context['document_url'] = doc_url
         context['category'] = category
         context['accepted'] = is_accepted
+        context['is_ordinary_user'] = is_ordinary_user
         context['document_google_id'] = getFileIdFromLink(doc_url)
         context['file_url'] = getDirectDownloadLink(getFileIdFromLink(doc_url))
         self.doc_time = datetime.now()
@@ -103,18 +105,18 @@ class MDFDocumentStatsView(TemplateView):
     template_name = 'document_stats.html'
     def get_context_data(self, **kwargs):
         doc_id = self.request.GET.get('doc_id')
-        dec_id = verify_secure_link(doc_id)
+        dec_id = verify_secure_link(doc_id) # Decrypted document id (doc_id)
 
         document = get_object_or_404(Document, doc_id=dec_id)
         # groups = document.groups.all()
         users = getUsersFromGroups(document)
         is_admin = self.request.user.groups.filter(name="MDF_admin").exists()
         agreements_list = []
-        # Zkontrolujeme, jestli je přihlášený uživatel vlastníkem dokumentu
+        # Check if logged user is admin
         if self.request.user != document.owner and not is_admin:
-            return render(self.request, 'error.html', {'message': 'Nemáte oprávnění zobrazit tuto stránku.'})
+            return render(self.request, 'error.html', {'message': 'You are not authorized to view this page.'})
 
-        # Načtení souhlasů spojených s dokumentem
+        # Agreements...
         agreements = DocumentAgreement.objects.filter(document=document).select_related('user')
         agreement_map = {agreement.user: agreement for agreement in agreements}
         agreements_count = len(agreements)
@@ -158,6 +160,29 @@ class MDFDocumentStatsView(TemplateView):
 
         return context
 
+    def post(self, request, *args, **kwargs):
+        try:
+            logger = logging.getLogger(__name__)
+            logger.error("Stats - jsme v post!")
+            data = json.loads(request.body)
+            user_id = data.get('user_id')
+            logger.error(f"Stats - User id: {user_id}")
+            document_id = data.get('document_id')
+            logger.error(f"Stats - Doc id: {document_id}")
+
+            user = get_object_or_404(User, zf_id=user_id)
+
+            document = get_object_or_404(Document, doc_id=document_id)
+            generated_link = self.request.build_absolute_uri(
+                reverse('mdf:document_page') + f"?doc_url={document.doc_url}"
+            )
+            subject = string_constants.email_subject_notification
+            message = f"Hello, please confirm that you have read the document.\nLink: {generated_link}"
+
+            send_mail_to_user(user, subject, message)
+            return JsonResponse({'status': 'success', 'message': 'E-mail sent.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
 
 '''
 Function for sending a generated link with document url to a document author for adding other informations
@@ -299,6 +324,11 @@ class MDFDocumentsOverview(View):
                         'encrypted_id': generate_secure_link(document.doc_id),
                         'agree_exists': consent_exists
                     })
+
+            if is_admin:
+                #logger.error(f"Tab: {tab}")
+                if tab is 'user':
+                    tab = 'admin'
 
             #print(mdf_documents)
             context = {

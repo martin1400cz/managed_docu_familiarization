@@ -19,22 +19,30 @@
 <div class="container mt-5">
         <h1>Documents List</h1>
         <div class="navbar navbar-expand-lg navbar-light bg-light">
+          <ul class="nav">
           {% if is_admin %}
             <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
-            <a class="nav-link" href="?tab=user">Documents for you</a>
+          <li class="nav-item">
             <a class="nav-link" href="?tab=author">My documents</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="?tab=admin">All documents</a>
+          </li>
 
           {% elif is_author %}
             <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
+          <li class="nav-item">
             <a class="nav-link" href="?tab=user">Documents for you</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="?tab=author">My documents</a>
-
+          </li>
+          </ul>
           {% endif %}
         </div>
 
         <!-- Tables -->
-        {% if active_tab == 'admin' %}
+        {% if active_tab == 'admin' and is_admin %}
         <h2>All documents</h2>
         {% elif active_tab == 'author' %}
         <h2>My documents</h2>
@@ -45,7 +53,7 @@
                id="mdf_document_overview_table"
                class="table overview-datatable tab_user">
         <!-- Admin table -->
-        {% if active_tab == 'admin' %}
+        {% if active_tab == 'admin' and is_admin %}
             <thead>
                 <tr>
                     <th>Name</th>
