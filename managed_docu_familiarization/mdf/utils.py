@@ -20,9 +20,9 @@ def verify_secure_link(signed_doc_id):
     signer = Signer()
     try:
         doc_id = signer.unsign(signed_doc_id)
-        return doc_id  # Vrací původní doc_id, pokud je podpis validní
+        return doc_id
     except BadSignature:
-        return None  # Pokud je podpis neplatný
+        return None
 
 '''
 Function for getting a direct link to file saved on Google drive
@@ -39,8 +39,11 @@ def getFileIdFromLink(sharedLink):
     except IndexError as e:
         return 'testId'
 
+"""
+Checking if the user is a member of the administrators group.
+"""
 def user_is_admin(user):
-    """Kontrola, zda je uživatel členem skupiny administrators."""
+
     return user.is_authenticated and user.groups.filter(name='MDF_admin').exists()
 
 def get_documents_by_category(category):
@@ -91,7 +94,7 @@ def sendLinksToUsers(document, generated_link, mess):
         send_mail(subject, message, from_email, [user_email], fail_silently=False)
 
 """
-Funkce pro odeslání upozornění uživatelům o uplynutí lhůty pro dokument.
+Function to send notifications to users about the expiration of a document.
 """
 def notify_users_about_document_deadline(document):
     logger = logging.getLogger(__name__)
@@ -113,7 +116,9 @@ def notify_users_about_document_deadline(document):
 
 def get_users_accepted(document):
     return len(DocumentAgreement.objects.filter(document=document))
-
+"""
+Function to send notifications to document owner about the expiration of a document.
+"""
 def notify_owner_about_document_deadline(document):
     subject = f'Deadline expired for document {document.doc_name}'
     message = f'The deadline for the document "{document.doc_name}" has expired. Please take necessary action.'

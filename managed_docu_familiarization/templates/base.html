@@ -42,12 +42,15 @@
 
     {% block javascript %}
     <!-- Your stuff: Third-party javascript libraries go here -->
+    <script src="{% static 'admin/js/core.js' %}"></script>
+    <script src="{% static 'admin/js/SelectBox.js' %}"></script>
+    <script src="{% static 'admin/js/SelectFilter2.js' %}"></script>
     {% endblock javascript %}
 
   </head>
 
   <body class="d-flex flex-column h-100 pt-5">
-    <nav class="header-navbar navbar fixed-top navbar-expand-sm navbar-dark bg-primary">
+    <nav class="header-navbar navbar fixed-top navbar-expand-sm navbar-dark zf-gradient-background">
       {% block nav %}
       {% endblock nav %}
     </nav>

@@ -4,19 +4,55 @@
 {% block title %}- MDF base template for users{% endblock title %}
 
 {% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
     <style>
+        /* Zajištění centrování celé stránky */
+        .centered-content {
+            min-height: 100vh; /* Výška stránky */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Vertikální zarovnání */
+            align-items: center; /* Horizontální zarovnání */
+            text-align: center; /* Text na střed */
+        }
+
+        /* Formulář a obsah */
         .container {
             display: flex;
-            gap: 20px;
+            flex-direction: column; /* Vertikální uspořádání formuláře */
+            gap: 20px; /* Odstup mezi prvky formuláře */
+            max-width: 600px; /* Maximální šířka formuláře */
+            width: 100%; /* Přizpůsobení šířce stránky */
         }
+
+        .category-choice {
+            display: flex;
+            flex-direction: column; /* Vertikální uspořádání */
+        }
+
+        .category-choice label {
+            display: flex; /* Uspořádání obsahu v řádku */
+            align-items: center; /* Vertikální zarovnání textu */
+            gap: 10px; /* Mezera mezi radiobuttonem a textem */
+        }
+
+        .category-choice input[type="radio"] {
+            margin: 0; /* Odstranění defaultního odsazení */
+        }
+
         .list-container {
-            width: 300px;
+            width: 100%; /* Přizpůsobení šířce kontejneru */
         }
+
         .list {
             border: 1px solid #ccc;
             padding: 10px;
             height: 200px;
             overflow-y: auto;
+        }
+
+        button {
+            margin-top: 20px; /* Odstup tlačítka od ostatních prvků */
         }
     </style>
 {% endblock css %}
@@ -24,51 +60,42 @@
 {% block content %}
 
 
-<div class="container mb-4">
+<div class="centered-content">
   <h2 class="mb-4">Add a New Document</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.media }}
-    <div class="mb-3">
-      <label for="document_div" class="form-label">Document Info:</label>
-      <div id="document_div">
-        {{ form.name.label_tag }} {{ form.name }}
-        {{ form.url.label_tag }} {{ form.url }}
+  <div class="container">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.media }}
+      <div class="mb-3">
+        <label for="document_div" class="form-label">Document Info:</label>
+        <div id="document_div" class="form-group">
+          {{ form.name.label_tag }} {{ form.name }}
+          {{ form.url.label_tag }} {{ form.url }}
+        </div>
       </div>
-    </div>
-
-    <div class="mb-3">
-      <div id="contact_user_div" class="form-group">
+      <div id="contact_user_div" class="form-group mb-4 pb-4">
         {{ form.contact_users.label_tag }} {{ form.contact_users }}
       </div>
-    </div>
+      <div class="form-group category-choice mb-4 pb-4">
+        {{ form.category.label_tag }} {{ form.category }}
+      </div>
+      <div id="deadline-selection" class="form-group mb-4 pb-4" style="display: none;">
+        {{ form.deadline.label_tag }} {{ form.deadline }}
+      </div>
+      <div id="group-selection" class="form-group mb-4 pb-4" style="display: none;">
+        {{ form.groups.label_tag }} {{ form.groups }}
+      </div>
+      <div id="email-message" class="form-group mb-4 pb-4" style="display: none;">
+        {{ form.message.label_tag }} {{ form.message }}
+      </div>
+      <div class="mb-4 pb-4">
+        <button type="submit" class="btn btn-success mt-3">Add Document</button>
+      </div>
 
-    <!-- Hidden field for sending data -->
-    <!--<input type="hidden" name="contact_users" isd="contactUsersInput">-->
-    <div class="form-check category-choice mb-4 pb-4">
-      <!-- Categories -->
-      {{ form.category.label_tag }} {{ form.category }}
-    </div>
-    <div id="deadline-selection" class="form-group mb-4 pb-4" style="display: none;">
-      {{ form.deadline.label_tag }} {{ form.deadline }}
-    </div>
-    <div id="group-selection" class="form-group mb-4 pb-4" style="display: none;">
-      {{ form.groups.label_tag }} {{ form.groups }}
-    </div>
-    <div class="form-group">
-      {{ form.message.label_tag }} {{ form.message }}
-    </div>
-    <div class="mb-4 pb-4">
-      <button type="submit" class="btn btn-success mt-3">Add Document</button>
-    </div>
-
-  </form>
+    </form>
+  </div>
 </div>
 
-    <script src="{% static 'admin/js/core.js' %}"></script>
-    <script src="{% static 'admin/js/SelectBox.js' %}"></script>
-    <script src="{% static 'admin/js/SelectFilter2.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
     <script type="text/javascript">
         // Initialize the FilteredSelectMultiple widget on page load
         //window.addEventListener('load', function()
@@ -89,12 +116,14 @@
             const categoryChoices = document.querySelectorAll('.category-choice input');
             const groupSelection = document.getElementById('group-selection');
             const deadlineSelection = document.getElementById('deadline-selection');
+            const messageEmail = document.getElementById('email-message');
 
             // Function to toggle the visibility of the group-selection div
             function toggleGroupSelection() {
                 const selectedCategory = document.querySelector('.category-choice input:checked');
                 if (selectedCategory && (selectedCategory.value === '2' || selectedCategory.value === '3')) {
                     groupSelection.style.display = 'block';
+                    messageEmail.style.display = 'block';
                     if (selectedCategory.value === '3') {
                         deadlineSelection.style.display = 'block';
                     } else {
@@ -103,6 +132,7 @@
                 } else {
                     groupSelection.style.display = 'none';
                     deadlineSelection.style.display = 'none';
+                    messageEmail.style.display = 'none';
                 }
             }
 

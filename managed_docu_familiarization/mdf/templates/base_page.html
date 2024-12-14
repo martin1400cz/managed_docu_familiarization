@@ -22,12 +22,15 @@
           <ul class="nav">
           {% if is_admin %}
             <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
-          <li class="nav-item">
-            <a class="nav-link" href="?tab=author">My documents</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="?tab=admin">All documents</a>
-          </li>
+            <li class="nav-item">
+              <a class="nav-link" href="?tab=user">Documents for you</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="?tab=author">My documents</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="?tab=admin">All documents</a>
+            </li>
 
           {% elif is_author %}
             <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
@@ -134,7 +137,9 @@
                     <td>{{ document.document.doc_name }}</td>
                     <td>{{ document.document.release_date|date:"d/m/Y" }}</td>
                     <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
-                    <td>{% if document.agree_exists %}
+                    <td>{% if document.agree_exists == '-' %}
+                            <p class="font-weight-normal">-</p>
+                        {% elif document.agree_exists %}
                             <p class="font-weight-normal text-success">Accepted</p>
                         {% else %}
                             <p class="font-weight-normal text-danger">Not accepted</p>

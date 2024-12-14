@@ -11,7 +11,7 @@
 
 
 {% block inline_javascript %}
-  {% include 'part/datatables.html' with datatables_element_id='managed_docu_familiarization_table' search_panes_columns='[1]' fixed_columns='1' %}
+  {% include 'part/datatables.html' with datatables_element_id='mdf_document_stats_table' search_panes_columns='[1]' fixed_columns='1' %}
 {% endblock inline_javascript %}
 
 {% block content %}
@@ -35,36 +35,38 @@
   <p>Number of agreements: {{ agreements_count }}/{{ users_count }}</p>
 </div>
 <div>
-  <table aria-describedby="Overview of the Employees"
+  {% if document.category == 3 %}
+    <table aria-describedby="Overview of the Employees"
                id="mdf_document_overview_table"
                class="table overview-datatable tab_user">
-    <thead>
-        <tr>
-            <th>User</th>
-            <th>Status</th>
-            <th>Date of agreement</th>
-            <th>Reading time</th>
-            <th>Number of views</th>
-            <td>Action</td>
-        </tr>
-    </thead>
-    <tbody>
-        {% for agreement in agreements_list %}
-        <tr>
-            <td>{{ agreement.user.zf_id }}</td>
-            <td>{{ agreement.status }}</td>
-            <td>{{ agreement.agreed_at }}</td>
-            <td>{{ agreement.reading_time }} s</td>
-            <td>{{ agreement.open_count }}</td>
-            {% if agreement.agreed_at == '-' %}
-              <td>
-                <button class="btn btn-primary" onclick="sendEmail('{{ agreement.user.zf_id }}', '{{ document.doc_id }}')">Send notification</button>
-              </td>
-            {% endif %}
-        </tr>
-        {% endfor %}
-    </tbody>
-  </table>
+      <thead>
+          <tr>
+              <th>User</th>
+              <th>Status</th>
+              <th>Date of agreement</th>
+              <th>Reading time</th>
+              <th>Number of views</th>
+              <td>Action</td>
+          </tr>
+      </thead>
+      <tbody>
+          {% for agreement in agreements_list %}
+          <tr>
+              <td>{{ agreement.user.zf_id }}</td>
+              <td>{{ agreement.status }}</td>
+              <td>{{ agreement.agreed_at }}</td>
+              <td>{{ agreement.reading_time }} s</td>
+              <td>{{ agreement.open_count }}</td>
+              {% if agreement.agreed_at == '-' %}
+                <td>
+                 <button class="btn btn-primary" onclick="sendEmail('{{ agreement.user.zf_id }}', '{{ document.doc_id }}')">Send notification</button>
+                </td>
+              {% endif %}
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
 </div>
 <div>
   <a href="javascript:history.back()">Back to the list of documents</a>

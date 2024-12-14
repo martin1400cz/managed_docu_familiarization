@@ -3,6 +3,7 @@ import os
 import json
 from django.core.exceptions import PermissionDenied
 from django.db.models import Subquery
+from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta, datetime, time
 
@@ -49,9 +50,9 @@ class MDFDocumentDetailView(TemplateView):
         if 'consent' in request.POST:
             time_spent = int(request.POST.get('consent', 0))
             if doc_url is None:
-                raise Http404("URL dokumentu nebyla poskytnuta.")
+                raise Http404("Document URL not provided")
             # Zde můžete přidat logiku, co dělat po přijetí souhlasu (např. ukládání do databáze)
-            message = "Děkujeme za váš souhlas."
+            message = "Thank you for your consent."
             #time_user = datetime.now() - self.doc_time
             #formatted_time = time(hour=time_spent // 3600, minute=(time_spent % 3600) // 60, second=time_spent % 60)
             send_agreement(document, user, time_spent)
@@ -65,20 +66,20 @@ class MDFDocumentDetailView(TemplateView):
         category = None
 
         if doc_url is None:
-            raise Http404("URL dokumentu nebyla poskytnuta.")
+            raise Http404("Document URL not provided.")
 
         # Ověření, že dokument existuje
         try:
             document = Document.objects.get(doc_url=doc_url)
             category = document.category
         except Document.DoesNotExist:
-            raise Http404("Dokument nebyl nalezen nebo k němu nemáte přístup.")
+            raise Http404("The document was not found or you do not have access to it.")
         is_accepted = DocumentAgreement.objects.filter(document=document, user=self.request.user).exists()
-        is_ordinary_user = not self.request.user.groups.filter(name="MDF_admin").exists()
+        #is_ordinary_user = not self.request.user.groups.filter(name="MDF_admin").exists()
         context['document_url'] = doc_url
         context['category'] = category
         context['accepted'] = is_accepted
-        context['is_ordinary_user'] = is_ordinary_user
+        #context['is_ordinary_user'] = is_ordinary_user
         context['document_google_id'] = getFileIdFromLink(doc_url)
         context['file_url'] = getDirectDownloadLink(getFileIdFromLink(doc_url))
         self.doc_time = datetime.now()
@@ -109,54 +110,55 @@ class MDFDocumentStatsView(TemplateView):
 
         document = get_object_or_404(Document, doc_id=dec_id)
         # groups = document.groups.all()
-        users = getUsersFromGroups(document)
-        is_admin = self.request.user.groups.filter(name="MDF_admin").exists()
-        agreements_list = []
-        # Check if logged user is admin
-        if self.request.user != document.owner and not is_admin:
-            return render(self.request, 'error.html', {'message': 'You are not authorized to view this page.'})
+        if document.category == 3:
+            is_admin = self.request.user.groups.filter(name="MDF_admin").exists()
+            agreements_list = []
+            # Check if logged user is admin
+            if self.request.user != document.owner and not is_admin:
+                return render(self.request, 'error.html', {'message': 'You are not authorized to view this page.'})
 
-        # Agreements...
-        agreements = DocumentAgreement.objects.filter(document=document).select_related('user')
-        agreement_map = {agreement.user: agreement for agreement in agreements}
-        agreements_count = len(agreements)
-        users_count = len(users)
+            # Agreements...
 
-        for user in users:
-            if user in agreement_map:
-                agreement = agreement_map[user]
-                reading_time = agreement.reading_time
-                open_count = agreement.open_count
-                formatted_date = agreement.agreed_at.strftime('%d/%m/%Y')
-                agreements_list.append({
-                    'user': user,
-                    'status': string_constants.user_agreed,
-                    'agreed_at': formatted_date,
-                    'reading_time': reading_time,
-                    'open_count': open_count,
-                })
-            else:
-                agreements_list.append({
-                    'user': user,
-                    'status': string_constants.user_no_agree_yet,
-                    'agreed_at': '-',
-                    'reading_time': '-',
-                    'open_count': 0,
-                })
+            users = getUsersFromGroups(document)
+            agreements = DocumentAgreement.objects.filter(document=document).select_related('user')
+            agreement_map = {agreement.user: agreement for agreement in agreements}
+            agreements_count = len(agreements)
+            users_count = len(users)
 
-            #agreements_list.append({
-            #    'user': user,
-            #    'is_accepted': is_accepted
-            #})
+            for user in users:
+                if user in agreement_map:
+                    agreement = agreement_map[user]
+                    reading_time = agreement.reading_time
+                    open_count = agreement.open_count
+                    formatted_date = agreement.agreed_at.strftime('%d/%m/%Y')
+                    agreements_list.append({
+                        'user': user,
+                        'status': string_constants.user_agreed,
+                        'agreed_at': formatted_date,
+                        'reading_time': reading_time,
+                        'open_count': open_count,
+                    })
+                else:
+                    agreements_list.append({
+                        'user': user,
+                        'status': string_constants.user_no_agree_yet,
+                        'agreed_at': '-',
+                        'reading_time': '-',
+                        'open_count': 0,
+                    })
+            context = {
+                'agreements_count': agreements_count,
+                'users_count': users_count,
+                'document': document,
+                'agreements': agreements,
+                'agreements_list': agreements_list,
+            }
+        else:
+            context = {
+                'document': document,
+            }
 
-        # users_count = 3
-        context = {
-            'agreements_count': agreements_count,
-            'users_count': users_count,
-            'document': document,
-            'agreements': agreements,
-            'agreements_list': agreements_list,
-        }
+
 
         return context
 
@@ -193,17 +195,17 @@ def send_link_to_owner(request, owner, generated_link):
     owner_email = owner.email
     logger.error(f"Owners mail: {owner_email}")
     # Text e-mailu
-    subject = "Dokument k doplnění informací"
-    message = f"Ahoj {owner.first_name} {owner.last_name},\n\n" \
-              f"Prosím klikni na následující odkaz a doplň informace o dokumentu:\n{generated_link}\n\n" \
-              f"Děkujeme!"
+    subject = "Adding information to a document"
+    message = f"Hello {owner.first_name} {owner.last_name},\n\n" \
+              f"please click on the following link and complete the document information:\n{generated_link}\n\n" \
+              f"Thank you!"
     from_email = settings.EMAIL_HOST_USER
     logger.error(f"From mail: {from_email}")
     # Odeslání e-mailu
     send_mail(subject, message, from_email, [owner_email],fail_silently=False)
     success_url = '/mdf/mdfdocuments/admin-file-search/'
     # Zobrazení zprávy o úspěšném odeslání
-    messages.success(request, f"E-mail s odkazem byl odeslán na adresu {owner_email}")
+    messages.success(request, f"An email with a link has been sent to {owner_email}")
     return redirect(success_url)  # Vrátíme se na stránku se seznamem dokumentů
 '''
 View for admin to search a document and generate link for owner
@@ -217,7 +219,7 @@ class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if not user_is_admin(request.user):
-            return HttpResponseForbidden("Nemáte oprávnění pro zobrazení této stránky.")
+            return HttpResponseForbidden("You do not have permission to view this page.")
             #raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
@@ -291,9 +293,6 @@ class MDFDocumentsOverview(View):
             logger.error(f"Tab: {tab}")
             is_admin = request.user.groups.filter(name="MDF_admin").exists()
             is_owner = request.user.groups.filter(name="MDF_authors").exists()
-            #documents = Document.objects.all()
-            my_documents = []
-            documents_list = []
             if tab == 'admin' and is_admin:
                 documents_list = []
                 logger.error("I am in admin")
@@ -314,21 +313,26 @@ class MDFDocumentsOverview(View):
                     })
             else:
                 documents_list = []
-                document_filter = Document.objects.filter(groups__users=request.user, category=3).distinct()
-
-
+                #document_filter = Document.objects.filter(groups__users=request.user, category=3).distinct()
+                document_filter = Document.objects.filter(Q(groups__users=request.user), Q(status='pending') | Q(status='processed')).distinct()
                 for document in document_filter:
-                    consent_exists = DocumentAgreement.objects.filter(user=request.user, document=document).exists()
+                    if document.category == 3:
+                        consent_exists = DocumentAgreement.objects.filter(user=request.user, document=document).exists()
+                    else:
+                        consent_exists = '-'
+
+                    logger.error(f"doc name: {document.doc_name}, consent_exists: {consent_exists}")
                     documents_list.append({
                         'document': document,
                         'encrypted_id': generate_secure_link(document.doc_id),
                         'agree_exists': consent_exists
                     })
 
-            if is_admin:
-                #logger.error(f"Tab: {tab}")
-                if tab is 'user':
-                    tab = 'admin'
+            # If request user is admin -> it should not open a basic view for user, however admin must see what other users do
+            #if is_admin:
+            #    #logger.error(f"Tab: {tab}")
+            #    if tab is 'user':
+            #        tab = 'admin'
 
             #print(mdf_documents)
             context = {

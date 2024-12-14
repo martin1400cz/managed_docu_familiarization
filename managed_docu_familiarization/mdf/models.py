@@ -55,6 +55,7 @@ class Document(models.Model):
     category = models.PositiveSmallIntegerField('Category', choices=FORMAT_CHOICES)
     release_date = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_owner')
+    responsible_users = models.ManyToManyField(User, related_name='document_responsible_users', null=True, blank=True)
     contact_users = models.ManyToManyField(User, related_name='document_contact_users')
     deadline = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='uploaded')

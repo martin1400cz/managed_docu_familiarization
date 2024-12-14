@@ -8,7 +8,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from managed_docu_familiarization.static.Strings import string_constants
 
 class FileSearchForm(forms.Form):
-    document_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'col-sm-10 form-control'}),
+    document_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
                                     max_length=255,
                                     required=True,
                                     label=string_constants.admin_page_form_document_name)
@@ -20,6 +20,22 @@ class FileSearchForm(forms.Form):
                                    queryset=User.objects.all(),
                                    label=string_constants.admin_page_form_document_owner,
                                    required=True)
+    responsible_users = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        widget=FilteredSelectMultiple("Responsible_users", is_stacked=False, attrs={'class': 'form-select form-control'}),
+        required=False,
+        label=string_constants.publishing_page_form_contact_users,
+        help_text="Enter user IDs separated by commas.",
+    )
+    class Media:
+        css = {
+            #'all': ['admin/css/widgets.css',
+            #        'css/uid-manage-form.css'],
+            'all': ['admin/css/widgets.css'],
+        }
+        # Adding this javascript is crucial
+        js = ['/admin/jsi18n/']
+
 
 class DocumentForm(forms.ModelForm):
 
@@ -100,8 +116,9 @@ class DocumentForm(forms.ModelForm):
 
     class Media:
         css = {
-            'all': ['admin/css/widgets.css',
-                    'css/uid-manage-form.css'],
+            #'all': ['admin/css/widgets.css',
+            #        'css/uid-manage-form.css'],
+            'all': ['admin/css/widgets.css'],
         }
         # Adding this javascript is crucial
         js = ['/admin/jsi18n/']

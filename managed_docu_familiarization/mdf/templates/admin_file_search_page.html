@@ -4,6 +4,42 @@
 {% block title %}- MDF base template for users{% endblock title %}
 
 {% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
+    <style>
+        /* Zajištění centrování celé stránky */
+        .centered-content {
+            min-height: 100vh; /* Výška stránky */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Vertikální zarovnání */
+            align-items: center; /* Horizontální zarovnání */
+            text-align: center; /* Text na střed */
+        }
+
+        /* Formulář a obsah */
+        .container {
+            display: flex;
+            flex-direction: column; /* Vertikální uspořádání formuláře */
+            gap: 20px; /* Odstup mezi prvky formuláře */
+            max-width: 600px; /* Maximální šířka formuláře */
+            width: 100%; /* Přizpůsobení šířce stránky */
+        }
+
+        .list-container {
+            width: 100%; /* Přizpůsobení šířce kontejneru */
+        }
+
+        .list {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        button {
+            margin-top: 20px; /* Odstup tlačítka od ostatních prvků */
+        }
+    </style>
 {% endblock css %}
 
 {% block javascript %}
@@ -11,7 +47,6 @@
 
 
 {% block inline_javascript %}
-  {% include 'part/datatables.html' with datatables_element_id='managed_docu_familiarization_table' search_panes_columns='[1]' fixed_columns='1' %}
 {% endblock inline_javascript %}
 
 {% block content %}
@@ -19,22 +54,38 @@
   <h1>Document Selection for Sending</h1>
   <form method="post" action="{% url 'mdf:admin_file_search_page' %}">
     {% csrf_token %}
-    {{ form.document_name.label }}{{ form.document_name }}
-    {{ form.document_path.label }}{{ form.document_path }}
-    {{ form.owner.label }}{{ form.owner }}
-    <button type="submit">Send Document Link</button>
+    {{ form.media }}
+    <div class="form-group mb-4 pb-4">
+        {{ form.document_name.label_tag }} {{ form.document_name }}
+    </div>
+    <div class="form-group mb-4 pb-4">
+        {{ form.document_path.label_tag }} {{ form.document_path }}
+    </div>
+    <div class="form-group mb-4 pb-4">
+        {{ form.owner.label_tag }} {{ form.owner }}
+    </div>
+    <div id="responsible_users_div" class="form-group mb-4 pb-4">
+      {{ form.responsible_users.label }}{{ form.responsible_users }}
+    </div>
+    <button type="submit" class="btn btn-success mt-3">Send Document Link</button>
   </form>
 
 
   {% if generated_link %}
     <p>Vygenerovaný odkaz pro vlastníka: <a href="{{ generated_link }}">{{ generated_link }}</a></p>
   {% else %}
-{% endif %}
+  {% endif %}
   <script>
     // JavaScript pro nastavení URL dokumentu do textového pole
     function setDocumentUrl(url) {
       document.querySelector('[name="document_path"]').value = url;
     }
+    document.addEventListener('DOMContentLoaded', function(){
+      const responsibleUserSelectElement = document.getElementById("id_users");
+      if (contactUserSelectElement) {
+        SelectFilter.init("id_users", "Responsible_users", 0);
+      }
+    });
   </script>
 </div>
 {% endblock %}
