@@ -59,32 +59,31 @@ def send_agreement(document, user, time_spent):
     return True
 
 '''
-Functions returns a list of users from certain groups, if some users are in more than one group, they are picked only once.
+Function for sending a generated link with document url to a document author for adding other informations
 '''
-def getUsersFromGroups(document):
-    unique_set = set()
-    users = User.objects.filter(groups__in=document.groups.all())
+def send_link_to_owner_and_responsible_users(request, document, generated_link):
+    logger = logging.getLogger(__name__)
     owner = document.owner
-    # removing admin
-    #admin_user = None
-    #for user in users:
-    #    if user_is_admin(user):
-    #        admin_user = user
-    unique_set.update(users)
-    #removing document owner
-    unique_set.remove(owner)
-    #unique_set.remove(admin_user)
-    #for group in groups:
-    #    users = User.objects.filter(groups__)
-    #    unique_set.update(users)
-    return list(unique_set)
+    users = document.get_all_important_users()
+
+    responsible_users_text = "\n".join(f"{user.first_name} {user.last_name}" for user in users)
+
+    subject = "Adding information to a document"
+    from_email = settings.EMAIL_HOST_USER
+    for user in users:
+        message = f"Hello {user.first_name} {user.last_name},\n\n" \
+              f"please click on the following link and complete the document information:\n{generated_link}\n" \
+              f"Responsible users: \n{responsible_users_text}\n" \
+              f"Thank you!"
+        send_mail(subject, message, from_email, [user.email],fail_silently=False)
+
 
 def send_mail_to_user(user, subject, message):
     from_email = settings.EMAIL_HOST_USER
     send_mail(subject, message, from_email, [user.email], fail_silently=False)
 
 def sendLinksToUsers(document, generated_link, mess):
-    users = getUsersFromGroups(document)
+    users = document.get_users_from_groups()
     subject = string_constants.email_subject_accept
     from_email = settings.EMAIL_HOST_USER
     message = f"{mess}\n\nLink: {generated_link}"
@@ -98,7 +97,7 @@ Function to send notifications to users about the expiration of a document.
 """
 def notify_users_about_document_deadline(document):
     logger = logging.getLogger(__name__)
-    users = getUsersFromGroups(document)
+    users = document.get_users_from_groups()
     subject = f'Deadline expired for document {document.doc_name}'
     message = f'The deadline for the document "{document.doc_name}" has expired. Please take necessary action.'
 

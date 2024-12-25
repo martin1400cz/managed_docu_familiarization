@@ -59,7 +59,7 @@
 
 {% block content %}
 
-
+{% if is_uploaded %}
 <div class="centered-content">
   <h2 class="mb-4">Add a New Document</h2>
   <div class="container">
@@ -143,6 +143,10 @@
             toggleGroupSelection();
         });
     </script>
-
+{% else %}
+<div class="centered-content">
+  <h2 class="mb-4">The document has already been published!</h2>
+</div>
+{% endif %}
 
 {% endblock content %}

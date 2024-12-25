@@ -16,29 +16,26 @@
 
 {% block content %}
 
-<h2>Document stats:</h2>
-<div>
+<div class="container-fluid mb-4">
+
   <div>
+    <h2>Document stats:</h2>
     <p>Document name: {{ document.doc_name }}</p>
     <p>Document url: {{ document.doc_url }}</p>
     <p>Release date: {{ document.release_date }}</p>
     <p>Document owner: {{ document.owner.zf_id }}</p>
+    <p>Other responsible users:</p>
+    {% for user in responsible_users %}
+      <p>{{ user.zf_id }}</p>
+    {% endfor %}
     <p>Category: {{ document.category }}</p>
-
+    <p>Number of agreements: {{ agreements_count }}/{{ users_count }}</p>
   </div>
-  <div>
 
-  </div>
-</div>
-
-<div>
-  <p>Number of agreements: {{ agreements_count }}/{{ users_count }}</p>
-</div>
-<div>
   {% if document.category == 3 %}
-    <table aria-describedby="Overview of the Employees"
-               id="mdf_document_overview_table"
-               class="table overview-datatable tab_user">
+    <table aria-describedby="Overview of the Document"
+               id="mdf_document_stats_table"
+               class="table overview-datatable">
       <thead>
           <tr>
               <th>User</th>
@@ -61,16 +58,19 @@
                 <td>
                  <button class="btn btn-primary" onclick="sendEmail('{{ agreement.user.zf_id }}', '{{ document.doc_id }}')">Send notification</button>
                 </td>
+              {% else %}
+                <td> - </td>
               {% endif %}
           </tr>
           {% endfor %}
       </tbody>
     </table>
   {% endif %}
+  <div>
+    <a href="{% url 'mdf:base_page' %}">Back to the list of documents</a>
+  </div>
 </div>
-<div>
-  <a href="javascript:history.back()">Back to the list of documents</a>
-</div>
+
 
 <script>
 function sendEmail(userId, documentId) {

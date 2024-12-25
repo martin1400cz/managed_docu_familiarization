@@ -25,8 +25,9 @@ import os
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
-from .utils import get_documents_by_category, send_agreement, getUsersFromGroups, sendLinksToUsers, user_is_admin, \
-    getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link, send_mail_to_user
+from .utils import get_documents_by_category, send_agreement, sendLinksToUsers, user_is_admin, \
+    getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link, send_mail_to_user, \
+    send_link_to_owner_and_responsible_users
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -34,9 +35,9 @@ from ..users.models import User
 
 #import requests
 
-class MDFDocumentDetailView(TemplateView):
+class MDFDocumentView(LoginRequiredMixin, TemplateView):
     model = Document
-    template_name = 'doc_page.html'
+    template_name = 'document_view_page.html'
     #doc_time = None
 
     def __init__(self, **kwargs):
@@ -56,7 +57,7 @@ class MDFDocumentDetailView(TemplateView):
             #time_user = datetime.now() - self.doc_time
             #formatted_time = time(hour=time_spent // 3600, minute=(time_spent % 3600) // 60, second=time_spent % 60)
             send_agreement(document, user, time_spent)
-            return render(request, 'doc_page.html', {'file_url': doc_url, 'message': message})
+            return render(request, 'document_view_page.html', {'file_url': doc_url, 'message': message})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -102,8 +103,8 @@ def download_google_drive_file(file_url):
 '''
 View for administrator/authors of documents for detail informations about document agreements.
 '''
-class MDFDocumentStatsView(TemplateView):
-    template_name = 'document_stats.html'
+class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
+    template_name = 'document_stats_page.html'
     def get_context_data(self, **kwargs):
         doc_id = self.request.GET.get('doc_id')
         dec_id = verify_secure_link(doc_id) # Decrypted document id (doc_id)
@@ -119,11 +120,12 @@ class MDFDocumentStatsView(TemplateView):
 
             # Agreements...
 
-            users = getUsersFromGroups(document)
+            users = document.get_users_from_groups()
             agreements = DocumentAgreement.objects.filter(document=document).select_related('user')
             agreement_map = {agreement.user: agreement for agreement in agreements}
             agreements_count = len(agreements)
             users_count = len(users)
+            responsible_users = document.get_responsible_users()
 
             for user in users:
                 if user in agreement_map:
@@ -150,6 +152,7 @@ class MDFDocumentStatsView(TemplateView):
                 'agreements_count': agreements_count,
                 'users_count': users_count,
                 'document': document,
+                'responsible_users': responsible_users,
                 'agreements': agreements,
                 'agreements_list': agreements_list,
             }
@@ -187,33 +190,12 @@ class MDFDocumentStatsView(TemplateView):
             return JsonResponse({'status': 'error', 'message': str(e)})
 
 '''
-Function for sending a generated link with document url to a document author for adding other informations
-'''
-def send_link_to_owner(request, owner, generated_link):
-    logger = logging.getLogger(__name__)
-
-    owner_email = owner.email
-    logger.error(f"Owners mail: {owner_email}")
-    # Text e-mailu
-    subject = "Adding information to a document"
-    message = f"Hello {owner.first_name} {owner.last_name},\n\n" \
-              f"please click on the following link and complete the document information:\n{generated_link}\n\n" \
-              f"Thank you!"
-    from_email = settings.EMAIL_HOST_USER
-    logger.error(f"From mail: {from_email}")
-    # Odeslání e-mailu
-    send_mail(subject, message, from_email, [owner_email],fail_silently=False)
-    success_url = '/mdf/mdfdocuments/admin-file-search/'
-    # Zobrazení zprávy o úspěšném odeslání
-    messages.success(request, f"An email with a link has been sent to {owner_email}")
-    return redirect(success_url)  # Vrátíme se na stránku se seznamem dokumentů
-'''
 View for admin to search a document and generate link for owner
 v0.1 - This is demo version - without using emails, just display the link!
 v0.2 - Advanced version - displays the link + sends the link to the owner.
 '''
 class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
-    template_name = 'admin_file_search_page.html'
+    template_name = 'document_admin_page.html'
     # @login_required
     generated_link = None   # link for user, contains document url
 
@@ -225,26 +207,10 @@ class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         generated_link = None
-        #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        #DOCUMENTS_DIRECTORY = os.path.join(BASE_DIR, 'TestDocs/')
-        #DOCUMENTS_DIRECTORY = settings.DOCUMENTS_DIRECTORY
         context = super().get_context_data(**kwargs)
         context['form'] = FileSearchForm()
 
-        # Load a list of files in DOCUMENTS_DIRECTORY
-        '''available_files = os.listdir(DOCUMENTS_DIRECTORY)  # Assuming a flat structure for simplicity
-        document_links = [
-            {
-                "name": file_name,
-                "url": f"{reverse('mdf:publishing_page')}?document_url={os.path.join(DOCUMENTS_DIRECTORY, file_name)}"
-            }
-            for file_name in available_files
-        ]'''
-
-        #context['documents'] = document_links
         context['generated_link'] =  generated_link
-        #context['available_files'] = available_files
-        #context['DOCUMENTS_PATH'] = DOCUMENTS_DIRECTORY
         return context
 
     def post(self, request, *args, **kwargs):
@@ -252,9 +218,6 @@ class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
         generated_link = None
 
         if form.is_valid():
-            doc_url = form.cleaned_data['document_path']
-            #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            #document_url = getFileIdFromLink(doc_url)
             doc_owner = form.cleaned_data['owner']
             document = Document.objects.create(
                 doc_name=form.cleaned_data['document_name'],
@@ -262,13 +225,20 @@ class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
                 category='1',
                 owner=doc_owner
             )
+            responsible_users = form.cleaned_data.get('responsible_users', [])
+            if responsible_users:
+                document.responsible_users.set(responsible_users if isinstance(responsible_users, list) else list(responsible_users))
+                document.save()
+
             doc_id = document.doc_id
             encrypted_doc_id = generate_secure_link(doc_id)
             # Generování URL s parametrem `doc_url`
             generated_link = request.build_absolute_uri(
                 reverse('mdf:publishing_page') + f"?doc_id={encrypted_doc_id}"
             )
-            send_link_to_owner(request, doc_owner, generated_link)
+            send_link_to_owner_and_responsible_users(request, document, generated_link)
+            success_url = '/mdf/mdfdocuments/admin-file-search/'
+            return redirect(success_url)
 
 
         # Opětovné načtení kontextu pro zobrazení stejné stránky
@@ -277,99 +247,108 @@ class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
         context['generated_link'] = generated_link
         return self.render_to_response(context)
 
-'''
-View for table of documents. Each user will see only documents for him. Owners will also see their documents
-Admin will see all documents.
-'''
-class MDFDocumentsOverview(View):
 
-    template_name = 'base_page.html'
+class MDFDocumentsOverview(LoginRequiredMixin, View):
+    """
+    View for table of documents. Each user will see only documents for him. Owners will also see their documents
+    Admin will see all documents.
+    """
+    template_name = 'document_overview_page.html'
 
     #@login_required
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            tab = request.GET.get('tab', 'user')
-            logger = logging.getLogger(__name__)
-            logger.error(f"Tab: {tab}")
-            is_admin = request.user.groups.filter(name="MDF_admin").exists()
-            is_owner = request.user.groups.filter(name="MDF_authors").exists()
-            if tab == 'admin' and is_admin:
-                documents_list = []
-                logger.error("I am in admin")
-                documents = Document.objects.all()
-                for document in documents:
-                    documents_list.append({
-                        'document': document,
-                        'encrypted_id': generate_secure_link(document.doc_id)
-                    })
-            elif tab == 'author' and is_owner:
-                documents_list = []
-                logger.error("I am in author")
-                my_documents = Document.objects.filter(owner=request.user)
-                for document in my_documents:
-                    documents_list.append({
-                        'document': document,
-                        'encrypted_id': generate_secure_link(document.doc_id)
-                    })
-            else:
-                documents_list = []
-                #document_filter = Document.objects.filter(groups__users=request.user, category=3).distinct()
-                document_filter = Document.objects.filter(Q(groups__users=request.user), Q(status='pending') | Q(status='processed')).distinct()
-                for document in document_filter:
-                    if document.category == 3:
-                        consent_exists = DocumentAgreement.objects.filter(user=request.user, document=document).exists()
-                    else:
-                        consent_exists = '-'
-
-                    logger.error(f"doc name: {document.doc_name}, consent_exists: {consent_exists}")
-                    documents_list.append({
-                        'document': document,
-                        'encrypted_id': generate_secure_link(document.doc_id),
-                        'agree_exists': consent_exists
-                    })
-
-            # If request user is admin -> it should not open a basic view for user, however admin must see what other users do
-            #if is_admin:
-            #    #logger.error(f"Tab: {tab}")
-            #    if tab is 'user':
-            #        tab = 'admin'
-
-            #print(mdf_documents)
-            context = {
-                #'mdf_documents': documents,
-                #'my_documents': my_documents,
-                'documents_list': documents_list,
-                'is_admin': is_admin,
-                'is_author': is_owner,
-                'active_tab': tab,
-            }
-
-            return render(request, self.template_name, context=context)
+        tab = request.GET.get('tab', 'user')
+        logger = logging.getLogger(__name__)
+        logger.error(f"Tab: {tab}")
+        is_admin = request.user.groups.filter(name="MDF_admin").exists()
+        is_owner = request.user.groups.filter(name="MDF_authors").exists()
+        if tab == 'admin' and is_admin:
+            documents_list = []
+            logger.error("I am in admin")
+            documents = Document.objects.all()
+            for document in documents:
+                documents_list.append({
+                    'document': document,
+                    'encrypted_id': generate_secure_link(document.doc_id)
+                })
+        elif tab == 'author' and is_owner:
+            documents_list = []
+            logger.error("I am in author")
+            my_documents = Document.objects.filter(owner=request.user)
+            for document in my_documents:
+                documents_list.append({
+                    'document': document,
+                    'encrypted_id': generate_secure_link(document.doc_id)
+                })
         else:
-            return render(request, 'app/templates/registration/login.html')  # Redirect to login if not authenticated
-'''
-View for owners to add a document to database and add information. After adding a groups, program will choose certain users and will send them an email - this will be added later.
-'''
-class MDFDocumentsAdding(LoginRequiredMixin, FormView):
+            documents_list = []
+            # document_filter = Document.objects.filter(groups__users=request.user, category=3).distinct()
+            document_filter = Document.objects.filter(Q(groups__users=request.user),
+                                                      Q(status='pending') | Q(status='processed')).distinct()
+            for document in document_filter:
+                if document.category == 3:
+                    consent_exists = DocumentAgreement.objects.filter(user=request.user, document=document).exists()
+                else:
+                    consent_exists = '-'
 
-    template_name = 'publishing_page.html'
+                logger.error(f"doc name: {document.doc_name}, consent_exists: {consent_exists}")
+                documents_list.append({
+                    'document': document,
+                    'encrypted_id': generate_secure_link(document.doc_id),
+                    'agree_exists': consent_exists
+                })
+
+        # If request user is admin -> it should not open a basic view for user, however admin must see what other users do
+        # if is_admin:
+        #    #logger.error(f"Tab: {tab}")
+        #    if tab is 'user':
+        #        tab = 'admin'
+
+        # print(mdf_documents)
+        context = {
+            # 'mdf_documents': documents,
+            # 'my_documents': my_documents,
+            'documents_list': documents_list,
+            'is_admin': is_admin,
+            'is_author': is_owner,
+            'active_tab': tab,
+        }
+
+        return render(request, self.template_name, context=context)
+
+
+class MDFDocumentsAdding(LoginRequiredMixin, FormView):
+    """
+    View for owners to add a document to database and add information. After adding a groups, program will choose certain users and will send them an email - this will be added later.
+    """
+    template_name = 'document_author_page.html'
 
     form_class = DocumentForm
     success_url = '/mdf/mdfdocuments/overview/'  # Po uložení záznamu do databáze
     document = None
     doc_id = None
+
+    def dispatch(self, request, *args, **kwargs):
+        doc_id = self.request.GET.get('doc_id', '')
+        decrypted_id = verify_secure_link(doc_id)
+        self.doc_id = decrypted_id
+        try:
+            self.document = Document.objects.get(doc_id=decrypted_id)
+        except Document.DoesNotExist:
+            return HttpResponseForbidden("Document not found!")
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get_initial(self):
         # Inicializuje formulář s hodnotou `doc_url` z URL parametrů
 
         initial = super().get_initial()
-        doc_id = self.request.GET.get('doc_id', '')
-        decrypted_id = verify_secure_link(doc_id)
-        self.doc_id = decrypted_id
         #self.doc_url = self.request.GET.get('doc_url', '')
         #self.document = Document.objects.get(doc_id=decrypted_id)
-        self.document = get_object_or_404(Document, doc_id=decrypted_id)
-        if self.document is None:
-            return HttpResponseForbidden("Document not found!")
+        #self.document = get_object_or_404(Document, doc_id=decrypted_id)
+        #if self.document is None:
+            #return HttpResponseForbidden("Document not found!")
+
         initial['url'] = self.document.doc_url
 
 
@@ -378,8 +357,9 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         return initial
 
     def get_context_data(self, **kwargs):
+        #print("KWARGS:", kwargs)  # Debugging
         context = super().get_context_data(**kwargs)
-        #context['available_users'] = User.objects.all()  # Načtení uživatelů z databáze
+        context['is_uploaded'] = self.document.is_uploaded  # If document is in 'uploaded' status - if it is in 'pending' status or another, user cannot add details about document
         return context
 
     def form_valid(self, form):

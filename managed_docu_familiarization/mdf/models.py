@@ -61,6 +61,31 @@ class Document(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='uploaded')
     groups = models.ManyToManyField(Group, related_name='document_groups', blank=True, null=True)
 
+    @property
+    def is_uploaded(self):
+        return self.status == 'uploaded'
+
+    def get_all_important_users(self):
+        all_users = set(self.responsible_users.all())
+        all_users.add(self.owner)
+        return list(all_users)
+
+    def get_responsible_users(self):
+        all_users = set(self.responsible_users.all())
+        return list(all_users)
+
+
+    def get_users_from_groups(self):
+        """
+        Functions returns a list of users from certain groups, if some users are in more than one group, they are picked only once.
+        """
+        unique_set = set()
+        users = User.objects.filter(groups__in=self.groups.all())
+        owner = self.owner
+        unique_set.update(users)
+        unique_set.remove(owner)
+        return list(unique_set)
+
     def __str__(self):
         return self.doc_name
 
