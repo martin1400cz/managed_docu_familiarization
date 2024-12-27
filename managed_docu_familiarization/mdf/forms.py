@@ -89,7 +89,7 @@ class DocumentForm(forms.ModelForm):
         #widget=forms.SelectMultiple(attrs={'class': 'admin-style-select'}),  # Customize styling as needed
         widget=FilteredSelectMultiple("Groups", is_stacked=False, attrs={'class': 'form-select form-control'}),
         #filter_horizontal=['Groups'],
-        required=True
+        required=False
     )
 
     deadline = forms.DateTimeField(
@@ -107,9 +107,15 @@ class DocumentForm(forms.ModelForm):
             'cols': 50,
             'placeholder': 'Write here a message for users...',
         }),
-        initial=string_constants.email_message_for_users,
+        #initial=string_constants.email_message_for_users,
         label="Email message:",
     )
+
+    def __init__(self, *args, document_link=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if document_link:
+            prefilled_text = (string_constants.email_message_for_users(document_link))
+            self.fields['message'].initial = prefilled_text
     #filter_horizontal = ('groups',)
 
     class Media:

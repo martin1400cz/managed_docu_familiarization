@@ -27,7 +27,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from .utils import get_documents_by_category, send_agreement, sendLinksToUsers, user_is_admin, \
     getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link, send_mail_to_user, \
-    send_link_to_owner_and_responsible_users
+    send_link_to_owner_and_responsible_users, generate_document_link
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -36,6 +36,9 @@ from ..users.models import User
 #import requests
 
 class MDFDocumentView(LoginRequiredMixin, TemplateView):
+    """
+
+    """
     model = Document
     template_name = 'document_view_page.html'
     #doc_time = None
@@ -100,17 +103,20 @@ def download_google_drive_file(file_url):
 '''
 
 
-'''
-View for administrator/authors of documents for detail informations about document agreements.
-'''
 class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
+    """
+    View for administrator/authors of documents for detail informations about document agreements.
+    """
     template_name = 'document_stats_page.html'
+    document = None
     def get_context_data(self, **kwargs):
         doc_id = self.request.GET.get('doc_id')
         dec_id = verify_secure_link(doc_id) # Decrypted document id (doc_id)
 
         document = get_object_or_404(Document, doc_id=dec_id)
+        self.document = document
         # groups = document.groups.all()
+        is_uploaded = self.document.is_uploaded
         if document.category == 3:
             is_admin = self.request.user.groups.filter(name="MDF_admin").exists()
             agreements_list = []
@@ -155,13 +161,13 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
                 'responsible_users': responsible_users,
                 'agreements': agreements,
                 'agreements_list': agreements_list,
+                'is_uploaded': is_uploaded,
             }
         else:
             context = {
                 'document': document,
+                'is_uploaded': is_uploaded,
             }
-
-
 
         return context
 
@@ -170,33 +176,43 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
             logger = logging.getLogger(__name__)
             logger.error("Stats - jsme v post!")
             data = json.loads(request.body)
-            user_id = data.get('user_id')
-            logger.error(f"Stats - User id: {user_id}")
-            document_id = data.get('document_id')
-            logger.error(f"Stats - Doc id: {document_id}")
+            action = data.get('action')
+            if action == 'send_email_user':
+                user_id = data.get('user_id')
+                logger.error(f"Stats - User id: {user_id}")
+                document_id = data.get('document_id')
+                logger.error(f"Stats - Doc id: {document_id}")
 
-            user = get_object_or_404(User, zf_id=user_id)
+                user = get_object_or_404(User, zf_id=user_id)
 
-            document = get_object_or_404(Document, doc_id=document_id)
-            generated_link = self.request.build_absolute_uri(
-                reverse('mdf:document_page') + f"?doc_url={document.doc_url}"
-            )
-            subject = string_constants.email_subject_notification
-            message = f"Hello, please confirm that you have read the document.\nLink: {generated_link}"
+                document = get_object_or_404(Document, doc_id=document_id)
+                generated_link = generate_document_link(self.request, document)
+                subject = string_constants.email_subject_notification
+                message = f"Hello, please confirm that you have read the document.\nLink: {generated_link}"
 
-            send_mail_to_user(user, subject, message)
-            return JsonResponse({'status': 'success', 'message': 'E-mail sent.'})
+                send_mail_to_user(user, subject, message)
+                return JsonResponse({'status': 'success', 'message': 'E-mail sent.'})
+            elif action == 'send_email_resp_users':
+                document_id = data.get('document_id')
+                document = get_object_or_404(Document, doc_id=document_id)
+                encrypted_doc_id = generate_secure_link(document_id)
+                generated_link = request.build_absolute_uri(
+                    reverse('mdf:publishing_page') + f"?doc_id={encrypted_doc_id}"
+                )
+                send_link_to_owner_and_responsible_users(request, document, generated_link)
+                return JsonResponse({'status': 'success', 'message': 'E-mail sent.'})
+
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 
-'''
-View for admin to search a document and generate link for owner
-v0.1 - This is demo version - without using emails, just display the link!
-v0.2 - Advanced version - displays the link + sends the link to the owner.
-'''
 class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
+    """
+    View for admin to search a document and generate link for owner
+    v0.1 - This is demo version - without using emails, just display the link!
+    v0.2 - Advanced version - displays the link + sends the link to the owner.
+    """
+
     template_name = 'document_admin_page.html'
-    # @login_required
     generated_link = None   # link for user, contains document url
 
     def dispatch(self, request, *args, **kwargs):
@@ -327,6 +343,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
     success_url = '/mdf/mdfdocuments/overview/'  # Po uložení záznamu do databáze
     document = None
     doc_id = None
+    generated_link = None
 
     def dispatch(self, request, *args, **kwargs):
         doc_id = self.request.GET.get('doc_id', '')
@@ -336,8 +353,22 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
             self.document = Document.objects.get(doc_id=decrypted_id)
         except Document.DoesNotExist:
             return HttpResponseForbidden("Document not found!")
-
+        self.generated_link = self.request.build_absolute_uri(
+            reverse('mdf:document_page') + f"?doc_url={self.document.doc_url}"
+        )
+        #self.form_class = DocumentForm(request.POST, document_link=generated_link)
         return super().dispatch(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        """
+        Vrátí instanci formuláře s předvyplněnými hodnotami a generovaným odkazem.
+        """
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(
+            initial=self.get_initial(),
+            document_link=self.generated_link
+        )
 
     def get_initial(self):
         # Inicializuje formulář s hodnotou `doc_url` z URL parametrů

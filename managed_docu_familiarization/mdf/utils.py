@@ -58,10 +58,16 @@ def send_agreement(document, user, time_spent):
     )
     return True
 
-'''
-Function for sending a generated link with document url to a document author for adding other informations
-'''
+def generate_document_link(request, document):
+    generated_link = request.build_absolute_uri(
+        reverse('mdf:document_page') + f"?doc_url={document.doc_url}"
+    )
+    return generated_link
+
 def send_link_to_owner_and_responsible_users(request, document, generated_link):
+    """
+    Function for sending a generated link with document url to a document author for adding other informations
+    """
     logger = logging.getLogger(__name__)
     owner = document.owner
     users = document.get_all_important_users()
@@ -86,11 +92,11 @@ def sendLinksToUsers(document, generated_link, mess):
     users = document.get_users_from_groups()
     subject = string_constants.email_subject_accept
     from_email = settings.EMAIL_HOST_USER
-    message = f"{mess}\n\nLink: {generated_link}"
+    #message = f"{mess}\n\nLink: {generated_link}"
     # Odeslání e-mailu
     for user in users:
         user_email = user.email
-        send_mail(subject, message, from_email, [user_email], fail_silently=False)
+        send_mail(subject, mess, from_email, [user_email], fail_silently=False)
 
 """
 Function to send notifications to users about the expiration of a document.

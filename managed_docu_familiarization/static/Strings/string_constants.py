@@ -1,8 +1,16 @@
 #Subject + message for users - publishing a document
 email_subject_accept = "Confirmation of familiarization with the document"
-email_message_for_users = f"Hello,\n\n" \
-              f"Please confirm that you have read the document.\n\n" \
-              f"Thank you!"
+#email_message_for_users = f"Hello,\n\n" \
+#                          f"Please confirm that you have read the document.\n\n" \
+#                          f"Thank you!"
+
+def email_message_for_users(link):
+    return f"Hello,\n\n" \
+    f"Please confirm that you have read the document.\n" \
+    f"Document link: {link} \n" \
+    f"Thank you!"
+
+
 #Subject + message for users - sending notification from admin/author in document_stats page
 email_subject_notification = "Important notice"
 #email_message_for_user_notification = "Hello, please confirm that you have read the document."

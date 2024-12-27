@@ -29,26 +29,14 @@ FORMAT_CHOICES = (
 STATUS_CHOICES = (
     ('uploaded', 'Uploaded'),  # Document has been uploaded by admin
     ('pending', 'Pending'),    # Document has been published by owner
-    ('processed', 'Processed') # Document has been processed
+    ('processed', 'Processed'),# Document has been processed
+    ('expired', 'Expired')     # Document has been expired
 )
 
-"""
-class Group(models.Model):
-    name = models.CharField(max_length=100)
-    users = models.ManyToManyField(managed_docu_familiarization.users.models.User)
-
-    def __str__(self):
-        return self.name
-
-class Owner(models.Model):
-    id = models.AutoField(primary_key=True)
-    users = models.ManyToManyField(managed_docu_familiarization.users.models.User)
-
-    def __str__(self):
-        return self.users.models.User.last_name
-"""
-
 class Document(models.Model):
+    """
+
+    """
     doc_id = models.AutoField(primary_key=True)
     doc_name = models.CharField(max_length=255)
     doc_url = models.CharField(max_length=500, blank=True, null=True)

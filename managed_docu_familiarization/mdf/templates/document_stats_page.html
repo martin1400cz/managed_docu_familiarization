@@ -30,6 +30,9 @@
     {% endfor %}
     <p>Category: {{ document.category }}</p>
     <p>Number of agreements: {{ agreements_count }}/{{ users_count }}</p>
+    {% if is_uploaded %}
+      <button class="btn btn-primary" onclick="sendEmailToResponsibleUsers('{{ document.doc_id }}')">Send notification</button>
+    {% endif %}
   </div>
 
   {% if document.category == 3 %}
@@ -43,7 +46,7 @@
               <th>Date of agreement</th>
               <th>Reading time</th>
               <th>Number of views</th>
-              <td>Action</td>
+              <td><p>Action</p></td>
           </tr>
       </thead>
       <tbody>
@@ -76,6 +79,7 @@
 function sendEmail(userId, documentId) {
 
     data = JSON.stringify({
+        action: 'send_email_user',
         user_id: userId,
         document_id: documentId
     })
@@ -92,7 +96,7 @@ function sendEmail(userId, documentId) {
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return response.json(); // Předpokládáme, že server vrací JSON
+        return response.json();
     })
     .then(data => {
         console.log("Server response:", data);
@@ -107,6 +111,42 @@ function sendEmail(userId, documentId) {
         alert("An error occurred while sending the email.");
     });
 }
+</script>
+<script>
+  function sendEmailToResponsibleUsers(documentId) {
+
+    data = JSON.stringify({
+        action: 'send_email_resp_users',
+        document_id: documentId
+    })
+
+
+    let response = fetch(`/mdf/mdfdocuments/agreements/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}', // Django CSRF token
+            'Content-Type': 'application/json'
+        },
+        body: data,
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Server response:", data);
+        if (data.status === 'success') {
+            alert("Email was successfully sent.");
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error during email notification:", error);
+        alert("An error occurred while sending the email.");
+    });
+  }
 </script>
 {% endblock content %}
 
