@@ -45,19 +45,6 @@ class DocumentForm(forms.ModelForm):
                             max_length=500,
                             required=True)
 
-    #contact_users = forms.ModelMultipleChoiceField(
-    #    queryset=User.objects.all(),
-    #    #widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
-    #    widget=FilteredSelectMultiple("contact_users", is_stacked=False),
-    #    required=False
-    #)
-    #contact_users = forms.CharField(
-    #    widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-    #    widget=FilteredSelectMultiple("Users", is_stacked=False, attrs={'class': 'form-select'}),
-    #    required=False,  # Může být prázdné
-    #   label="Selected Users",
-    #    help_text="Enter user IDs separated by commas.",
-    #)
     contact_users = forms.ModelMultipleChoiceField(
         #    widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         queryset=User.objects.all(),

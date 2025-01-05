@@ -10,6 +10,20 @@ from django.utils.translation import gettext_lazy as _
 class UserManager(BaseUserManager):
     """Methods behind Model.objects.*** """
 
+    def create_user(self, zf_id, email, first_name, last_name, password=None, **extra_fields):
+        """
+        Create and return a regular user.
+        """
+        if not zf_id:
+            raise ValueError("The zf_id field is required.")
+        if not email:
+            raise ValueError("The email field is required.")
+        email = self.normalize_email(email)
+        user = self.model(zf_id=zf_id, email=email, first_name=first_name, last_name=last_name, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
     def get_queryset(self):
         """Optimize queries to speed up loading time."""
         related_fields = [

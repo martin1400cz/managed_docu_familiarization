@@ -394,16 +394,17 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         return context
 
     def form_valid(self, form):
+        print("We are in valid form!")
         logger = logging.getLogger(__name__)
         logger.error("User being authenticated...")
         if not self.request.user.is_authenticated:
             logger.error("User not authenticated.")
             return self.form_invalid(form)
         document = Document.objects.get(doc_id=self.doc_id)
-        logger.error("User authenticated...")
+        #document = self.document
+        #logger.error("User authenticated...")
         if document is None:
             return HttpResponseForbidden("Document not found!")
-        doc_owner = self.request.user
         doc_category = form.cleaned_data['category']
 
         document.category = doc_category
@@ -453,7 +454,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         logger = logging.getLogger(__name__)
         logger.error("Form is invalid!")
-        logger.error(f"Errors: {form.errors}")
+        logger.error(f"Form errors: {form.errors.as_json()}")
         logger.error(f"POST data: {self.request.POST}")
         print("Form errors:", form.errors)  # Vypsání chyb do konzole
         return super().form_invalid(form)
