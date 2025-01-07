@@ -359,16 +359,21 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         #self.form_class = DocumentForm(request.POST, document_link=generated_link)
         return super().dispatch(request, *args, **kwargs)
 
-    def get_form(self, form_class=None):
+    #def get_form(self, form_class=None):
         """
         Vrátí instanci formuláře s předvyplněnými hodnotami a generovaným odkazem.
         """
-        if form_class is None:
-            form_class = self.get_form_class()
-        return form_class(
-            initial=self.get_initial(),
-            document_link=self.generated_link
-        )
+    #    if form_class is None:
+    #        form_class = self.get_form_class()
+    #    return form_class(
+    #        initial=self.get_initial(),
+    #        document_link=self.generated_link
+    #    )
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['document_link'] = self.generated_link
+        return kwargs
 
     def get_initial(self):
         # Inicializuje formulář s hodnotou `doc_url` z URL parametrů
@@ -391,6 +396,11 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         #print("KWARGS:", kwargs)  # Debugging
         context = super().get_context_data(**kwargs)
         context['is_uploaded'] = self.document.is_uploaded  # If document is in 'uploaded' status - if it is in 'pending' status or another, user cannot add details about document
+        #context['form'] = (
+        #    DocumentForm(self.request.POST)
+        #    if self.request.POST
+        #    else DocumentForm()
+        #)
         return context
 
     def form_valid(self, form):
@@ -433,6 +443,11 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
                 #document.save()
             else:
                 logger.error("'allusers' group not found.")
+
+            document.status = 'processed'
+            # Saving document
+            document.save()
+            return redirect(self.success_url)
         if doc_category == '3':
             logger.error("Setting deadline for category 3 document...")
             #document.deadline = form.cleaned_data.get('deadline')
@@ -454,7 +469,8 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         logger = logging.getLogger(__name__)
         logger.error("Form is invalid!")
-        logger.error(f"Form errors: {form.errors.as_json()}")
+        logger.error(f"Form errors: {form.errors}")
         logger.error(f"POST data: {self.request.POST}")
         print("Form errors:", form.errors)  # Vypsání chyb do konzole
+        print("Form data:", form.data)
         return super().form_invalid(form)

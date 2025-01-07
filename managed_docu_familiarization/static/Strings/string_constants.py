@@ -8,7 +8,7 @@ def email_message_for_users(link):
     return f"Hello,\n\n" \
     f"Please confirm that you have read the document.\n" \
     f"Document link: {link} \n" \
-    f"Thank you!"
+    f"Thank you!\n"
 
 
 #Subject + message for users - sending notification from admin/author in document_stats page
@@ -19,7 +19,7 @@ admin_page_form_document_name = "Document name:"
 admin_page_form_document_path = "Document url:"
 admin_page_form_document_owner = "Owner"
 #Labels in publishing_page_form
-publishing_page_form_contact_users="Selected Users"
+publishing_page_form_contact_users="Contact Users"
 #document_stats_page
 user_agreed="Agreed"
 user_no_agree_yet="-"

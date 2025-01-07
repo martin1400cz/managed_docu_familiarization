@@ -44,7 +44,7 @@ class Document(models.Model):
     release_date = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_owner')
     responsible_users = models.ManyToManyField(User, related_name='document_responsible_users', null=True, blank=True)
-    contact_users = models.ManyToManyField(User, related_name='document_contact_users')
+    contact_users = models.ManyToManyField(User, related_name='document_contact_users', null=True, blank=True)
     deadline = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='uploaded')
     groups = models.ManyToManyField(Group, related_name='document_groups', blank=True, null=True)

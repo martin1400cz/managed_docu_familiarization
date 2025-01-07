@@ -35,7 +35,13 @@ class FileSearchForm(forms.Form):
         js = ['/admin/jsi18n/']
 
 
-class DocumentForm(forms.ModelForm):
+class DocumentForm(forms.Form):
+    def __init__(self, *args, document_link=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if document_link:
+            prefilled_text = (string_constants.email_message_for_users(document_link))
+            self.fields['message'].initial = prefilled_text
+    #filter_horizontal = ('groups',)
 
     name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
                            max_length=255,
@@ -48,7 +54,7 @@ class DocumentForm(forms.ModelForm):
     contact_users = forms.ModelMultipleChoiceField(
         #    widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         queryset=User.objects.all(),
-        widget=FilteredSelectMultiple("Users", is_stacked=False, attrs={'class': 'form-select form-control'}),
+        widget=FilteredSelectMultiple("Users", is_stacked=False, attrs={'class': 'form-select form-control' , 'id': 'id_contact_users'}),
         required=False,  # Může být prázdné
         label=string_constants.publishing_page_form_contact_users,
         help_text="Enter user IDs separated by commas.",
@@ -82,28 +88,23 @@ class DocumentForm(forms.ModelForm):
     deadline = forms.DateTimeField(
         required=False,
         #widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'dd/mm/yyyy', 'class': 'form-control col col-md-3'}),
+        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'dd/mm/yyyy', 'class': 'form-control col col-md-3', 'id': 'id_deadline'}),
         input_formats=['%d/%m/%Y'],  # Formát, který očekáváme
         label='Set a deadline for this document',  # Vlastní popisek
         help_text="Select a date and time when the document should be finalized."  # Pomocný text
     )
 
     message = forms.CharField(
+        required=False,
         widget=forms.Textarea(attrs={
             'rows': 10,
             'cols': 50,
             'placeholder': 'Write here a message for users...',
+            'id': 'id_message',
         }),
         #initial=string_constants.email_message_for_users,
         label="Email message:",
     )
-
-    def __init__(self, *args, document_link=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        if document_link:
-            prefilled_text = (string_constants.email_message_for_users(document_link))
-            self.fields['message'].initial = prefilled_text
-    #filter_horizontal = ('groups',)
 
     class Media:
         css = {
@@ -114,9 +115,9 @@ class DocumentForm(forms.ModelForm):
         # Adding this javascript is crucial
         js = ['/admin/jsi18n/']
 
-    class Meta:
-        model = Document
-        fields = ['name', 'url',  'contact_users', 'category', 'groups', 'deadline']
+    #class Meta:
+    #    model = Document
+    #    fields = ['name', 'url',  'contact_users', 'category', 'groups', 'deadline']
 
     def save(self, commit=True):
         doc = super().save()

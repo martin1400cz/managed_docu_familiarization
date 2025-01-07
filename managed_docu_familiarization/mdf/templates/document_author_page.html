@@ -69,24 +69,24 @@
       <div class="mb-3">
         <label for="document_div" class="form-label">Document Info:</label>
         <div id="document_div" class="form-group">
-          {{ form.name.label_tag }} {{ form.name }}
-          {{ form.url.label_tag }} {{ form.url }}
+          {{ form.name.label_tag }} {{ form.name }} {{ form.name.errors }}
+          {{ form.url.label_tag }} {{ form.url }} {{ form.url.errors }}
         </div>
       </div>
       <div id="contact_user_div" class="form-group mb-4 pb-4">
-        {{ form.contact_users.label_tag }} {{ form.contact_users }}
+        {{ form.contact_users.label_tag }} {{ form.contact_users }} {{ form.contact_users.errors }}
       </div>
       <div class="form-group category-choice mb-4 pb-4">
-        {{ form.category.label_tag }} {{ form.category }}
+        {{ form.category.label_tag }} {{ form.category }} {{ form.category.errors }}
       </div>
       <div id="deadline-selection" class="form-group mb-4 pb-4" style="display: none;">
-        {{ form.deadline.label_tag }} {{ form.deadline }}
+        {{ form.deadline.label_tag }} {{ form.deadline }} {{ form.deadline.errors }}
       </div>
       <div id="group-selection" class="form-group mb-4 pb-4" style="display: none;">
-        {{ form.groups.label_tag }} {{ form.groups }}
+        {{ form.groups.label_tag }} {{ form.groups }} {{ form.groups.errors }}
       </div>
       <div id="email-message" class="form-group mb-4 pb-4" style="display: none;">
-        {{ form.message.label_tag }} {{ form.message }}
+        {{ form.message.label_tag }} {{ form.message }} {{ form.message.errors }}
       </div>
       <div class="mb-4 pb-4">
         <button type="submit" class="btn btn-success mt-3">Add Document</button>
@@ -142,6 +142,52 @@
             // Initialize visibility based on the current selection
             toggleGroupSelection();
         });
+        document.addEventListener('DOMContentLoaded', function () {
+        const deadlineField = document.getElementById('id_deadline');
+        const contactUsersField = document.getElementById('id_contact_users');
+        const messageField = document.getElementById('id_message');
+
+        // Funkce pro aktualizaci/nahrazení části zprávy
+        function replaceOrAddSection(text, sectionTitle, newValue) {
+            const sectionRegex = new RegExp(`${sectionTitle}:.*?(\\n|$)`, 'i');
+            if (newValue) {
+                const newSection = `${sectionTitle}: ${newValue}\n`;
+                if (sectionRegex.test(text)) {
+                    return text.replace(sectionRegex, newSection);
+                } else {
+                    return text + newSection;
+                }
+            } else {
+                // Pokud hodnota není, sekci odstraníme
+                return text.replace(sectionRegex, '');
+            }
+        }
+
+        // Hlavní funkce pro aktualizaci zprávy
+        function updateMessage() {
+            let currentMessage = messageField.value;
+
+            // Získat deadline
+            const deadline = deadlineField.value;
+            currentMessage = replaceOrAddSection(currentMessage, 'Deadline', deadline);
+
+            // Získat vybrané uživatele
+            const selectedUsers = Array.from(contactUsersField.options)
+                .filter(option => option.selected)
+                .map(option => option.text)
+                .join(', ');
+            currentMessage = replaceOrAddSection(currentMessage, 'Contact Users', selectedUsers);
+
+            // Nastavit zpět do pole message
+            messageField.value = currentMessage.trim() + '\n';
+        }
+
+        // Připojení event listenerů
+        deadlineField.addEventListener('change', updateMessage);
+        contactUsersField.addEventListener('change', updateMessage);
+    });
+
+
     </script>
 {% else %}
 <div class="centered-content">

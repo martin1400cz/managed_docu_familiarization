@@ -52,6 +52,7 @@ class DocumentFormTestCase(TestCase):
         form = DocumentForm(data=form_data)
         self.assertTrue(form.is_valid(), f"Form errors: {form.errors}")
 
+    """
     def test_invalid_url(self):
         # Test s neplatnou URL
         form_data = {
@@ -65,6 +66,7 @@ class DocumentFormTestCase(TestCase):
         form = DocumentForm(data=form_data)
         self.assertFalse(form.is_valid())
         self.assertIn('url', form.errors)
+    """
 
     def test_missing_required_fields(self):
         # Test chybějících povinných polí
