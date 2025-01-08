@@ -1,10 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends 'layout/_grid.html' %}
+{% load static i18n user_tags %}
 
-</body>
-</html>
+{% block title %}- MDF base template for users{% endblock title %}
+
+{% block css %}
+{% endblock css %}
+
+{% block javascript %}
+{% endblock javascript %}
+
+
+{% block inline_javascript %}
+  {% include 'part/datatables.html' with datatables_element_id='mdf_document_stats_table' search_panes_columns='[1]' fixed_columns='1' %}
+{% endblock inline_javascript %}
+
+{% block content %}
+    <div class="container">
+      <h2>User detail View</h2>
+
+      <table aria-describedby="Overview of the Documents for user"
+               id="mdf_document_overview_table"
+               class="table overview-datatable tab_user">
+            <thead>
+                <tr>
+                    <th>Document name</th>
+                    <th>Release Date</th>
+                    <th>Familiarized with the document</th>
+                    <th>Familiarized Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for document in documents_list %}
+                <tr>
+                    <td>{{ document.document.doc_name }}</td>
+                    <td>{{ document.document.release_date|date:"d/m/Y" }}</td>
+                    {% if document.agreement_exists %}
+                      <td><p>Yes</p></td>
+                      <td><p>{{ document.agreed_at }}</p></td>
+                    {% else %}
+                      <td><p>No</p></td>
+                      <td><p>-</p></td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No documents found.</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+      </table>
+    </div>
+{% endblock content %}

@@ -27,7 +27,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from .utils import get_documents_by_category, send_agreement, sendLinksToUsers, user_is_admin, \
     getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link, send_mail_to_user, \
-    send_link_to_owner_and_responsible_users, generate_document_link
+    send_link_to_owner_and_responsible_users, generate_document_link, verify_secure_id, document_progress_chart
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -154,6 +154,7 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
                         'reading_time': '-',
                         'open_count': 0,
                     })
+            progress_percentage = (agreements_count/users_count)*100
             context = {
                 'agreements_count': agreements_count,
                 'users_count': users_count,
@@ -162,6 +163,8 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
                 'agreements': agreements,
                 'agreements_list': agreements_list,
                 'is_uploaded': is_uploaded,
+                'progress_percentage': progress_percentage,
+                'graph_details' : document_progress_chart(self.request, document),
             }
         else:
             context = {
@@ -359,17 +362,6 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         #self.form_class = DocumentForm(request.POST, document_link=generated_link)
         return super().dispatch(request, *args, **kwargs)
 
-    #def get_form(self, form_class=None):
-        """
-        Vrátí instanci formuláře s předvyplněnými hodnotami a generovaným odkazem.
-        """
-    #    if form_class is None:
-    #        form_class = self.get_form_class()
-    #    return form_class(
-    #        initial=self.get_initial(),
-    #        document_link=self.generated_link
-    #    )
-
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['document_link'] = self.generated_link
@@ -416,25 +408,14 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         if document is None:
             return HttpResponseForbidden("Document not found!")
         doc_category = form.cleaned_data['category']
+        logger.error(f"Document category: {doc_category}")
 
         document.category = doc_category
         users = form.cleaned_data.get('contact_users', [])
         if users:
             document.contact_users.set(users if isinstance(users, list) else list(users))
 
-        # Get groups
-        groups = form.cleaned_data.get('groups', [])
-        if groups:
-            document.groups.set(groups if isinstance(groups, list) else list(groups))
-        else:
-            allusers_group = Group.objects.filter(name='allusers').first()
-            if allusers_group:
-                document.groups.set([allusers_group])
-                document.save()
-            else:
-                logger.error("'allusers' group not found.")
-
-        logger.error(f"Document category: {doc_category}")
+        # Document category 1
         if doc_category == '1':
             logger.error("Private document...")
             allusers_group = Group.objects.filter(name='allusers').first()
@@ -448,6 +429,25 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
             # Saving document
             document.save()
             return redirect(self.success_url)
+
+        # Get groups
+        groups = form.cleaned_data.get('groups', [])
+        if groups:
+            document.groups.set(groups if isinstance(groups, list) else list(groups))
+        else:
+            allusers_group = Group.objects.filter(name='allusers').first()
+            if allusers_group:
+                document.groups.set([allusers_group])
+                document.save()
+            else:
+                logger.error("'allusers' group not found.")
+
+        for g in groups:
+            logger.error(f"Group: {g.name}")
+
+        if doc_category == '2':
+            document.status = 'processed'
+
         if doc_category == '3':
             logger.error("Setting deadline for category 3 document...")
             #document.deadline = form.cleaned_data.get('deadline')
@@ -456,11 +456,12 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
                 # Setting deadline time to 23:59
                 deadline_datetime = timezone.make_aware(datetime.combine(deadline_date, time(23, 59)))
                 document.deadline = deadline_datetime
+            document.status = 'pending'
+
         message = form.cleaned_data['message']
         generated_link = self.request.build_absolute_uri(
             reverse('mdf:document_page') + f"?doc_url={document.doc_url}"
         )
-        document.status = 'pending'
         # Saving document
         document.save()
         sendLinksToUsers(document, generated_link, message)
@@ -474,3 +475,44 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         print("Form errors:", form.errors)  # Vypsání chyb do konzole
         print("Form data:", form.data)
         return super().form_invalid(form)
+
+class MDFDocumentsUserDetailView(LoginRequiredMixin, TemplateView):
+    """
+    View for administrators to display details about user's document agreements
+    """
+    template_name = 'document_user_detail_page.html'
+    model = Document
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        user_id = self.request.GET.get('user_id')
+        if user_id is None:
+            raise Http404("User id not provided.")
+        # Ověření, že dokument existuje
+        user = User.objects.filter(zf_id=user_id).first()
+        if user_id is None:
+            raise Http404("User not exists!")
+        documents_list = []
+        document_filter = Document.objects.filter(groups__users=user, category=3).distinct()
+        print(Document.objects.filter(groups__users=user, category=3).distinct())
+        # document_filter = Document.objects.filter(groups__users=user, category=3).all()
+        for document in document_filter:
+            consent_exists = DocumentAgreement.objects.filter(user=user, document=document).exists()
+            print(f"Consent exists: {consent_exists}")
+            if consent_exists:
+                agreement = DocumentAgreement.objects.get(user=user, document=document)
+                print(f"Agreement: {agreement}")
+                agreed_at = agreement.agreed_at.strftime('%d/%m/%Y')
+            else:
+                agreement = '-'
+                agreed_at = '-'
+            documents_list.append({
+                'document': document,
+                'agreement_exists': consent_exists,
+                'agreement': agreement,
+                'agreed_at': agreed_at,
+            })
+
+
+        context['documents_list'] = documents_list
+        return context

@@ -1,6 +1,7 @@
 import logging
 
 from django.core.mail import send_mail
+from datetime import timedelta
 from django.urls import reverse
 from django.conf import settings
 from managed_docu_familiarization.static.Strings import string_constants
@@ -21,6 +22,21 @@ def verify_secure_link(signed_doc_id):
     try:
         doc_id = signer.unsign(signed_doc_id)
         return doc_id
+    except BadSignature:
+        return None
+
+def generate_secure_id(id):
+    signer = Signer()
+    signed_id = signer.sign(id)
+    return signed_id
+
+
+
+def verify_secure_id(signed_id):
+    signer = Signer()
+    try:
+        en_id = signer.unsign(signed_id)
+        return en_id
     except BadSignature:
         return None
 
@@ -136,3 +152,50 @@ def notify_owner_about_document_deadline(document):
         [to_email],
         fail_silently=False
     )
+
+
+def document_progress_chart(request, document):
+    # Získání rozsahu dat
+    responses = DocumentAgreement.objects.filter(document=document).order_by('-agreed_at')
+
+    # Zjištění posledního data souhlasu
+    if responses.exists():
+        last_agreement_date = responses.order_by('-agreed_at').first().agreed_at.date()
+    else:
+        last_agreement_date = document.deadline.date()  # Výchozí hodnota, pokud nejsou žádné souhlasy
+
+    # Získání rozsahu dat (od data vydání do posledního souhlasu nebo deadlinu)
+    start_date = document.release_date.date()
+    end_date = max(last_agreement_date, document.deadline.date())
+
+    # Vytvoření časového rozsahu a počítání souhlasů
+    current_date = start_date
+    data_points = []
+    agreed_count = 0
+    data_points.append({
+        'date': current_date.strftime('%Y-%m-%d'),
+        'count': agreed_count,
+    })
+    while current_date <= end_date:
+        if responses.filter(agreed_at__date=current_date).count() > 0:
+            agreed_count += responses.filter(agreed_at__date=current_date).count()
+            data_points.append({
+                'date': current_date.strftime('%Y-%m-%d'),
+                'count': agreed_count,
+            })
+        if document.deadline.date()  == current_date:
+            data_points.append({
+                'date': current_date.strftime('%Y-%m-%d'),
+                'count': agreed_count,
+            })
+        current_date += timedelta(days=1)
+
+    # Extrakce dat pro graf
+    labels = [point['date'] for point in data_points]
+    counts = [point['count'] for point in data_points]
+
+    return {
+        'labels': labels,
+        'counts': counts,
+        'deadline': document.deadline.strftime('%Y-%m-%d'),
+    }

@@ -4,9 +4,46 @@
 {% block title %}- MDF base template for users{% endblock title %}
 
 {% block css %}
+  <style>
+    .progress {
+      -webkit-box-shadow: 0 0.4rem 0.6rem rgba(0,0,0,0.15);
+      box-shadow: 0 0.4rem 0.6rem rgba(0,0,0,0.15);
+    }
+    .progress-bar {
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      -ms-flex-direction: column;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      flex-direction: column;
+      -ms-flex-pack: center;
+      -webkit-box-pack: center;
+      justify-content: center;
+      overflow: hidden;
+      color: #fff;
+      text-align: center;
+      white-space: nowrap;
+      background-color: #007bff;
+      -webkit-transition: width .6s ease;
+      transition: width .6s ease;
+    }
+    .progress-bar.red {
+        background-color: red;
+    }
+    .progress-bar.yellow {
+        background-color: yellow;
+        color: black;
+    }
+    .progress-bar.green {
+        background-color: green;
+    }
+  </style>
 {% endblock css %}
 
 {% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
 {% endblock javascript %}
 
 
@@ -18,21 +55,74 @@
 
 <div class="container-fluid mb-4">
 
-  <div>
-    <h2>Document stats:</h2>
-    <p>Document name: {{ document.doc_name }}</p>
-    <p>Document url: {{ document.doc_url }}</p>
-    <p>Release date: {{ document.release_date }}</p>
-    <p>Document owner: {{ document.owner.zf_id }}</p>
-    <p>Other responsible users:</p>
-    {% for user in responsible_users %}
-      <p>{{ user.zf_id }}</p>
-    {% endfor %}
-    <p>Category: {{ document.category }}</p>
-    <p>Number of agreements: {{ agreements_count }}/{{ users_count }}</p>
-    {% if is_uploaded %}
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Document details:</h2>
+      <div class="row">
+        <p class="col-md-4">Document name:</p>
+        <p class="col-md-6">{{ document.doc_name }}</p>
+      </div>
+      <div class="row">
+        <p class="col-md-4">Document url:</p>
+        <p class="col-md-6">{{ document.doc_url }}</p>
+      </div>
+      <div class="row">
+        <p class="col-md-4">Release date:</p>
+        <p class="col-md-6">{{ document.release_date }}</p>
+      </div>
+      <div class="row">
+        <p class="col-md-4">Document owner:</p>
+        <p class="col-md-6">{{ document.owner.zf_id }}</p>
+      </div>
+      <div class="row">
+        <p class="col-md-4">Other responsible users:</p>
+        <div class="col-md-6">
+          {% for user in responsible_users %}
+            <p>{{ user.zf_id }}</p>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="row">
+        <p class="col-md-4">Category:</p>
+        <p class="col-md-6">{{ document.category }}</p>
+      </div>
+      {% if is_uploaded %}
+      <p>Document is still in 'uploaded' mode!</p>
       <button class="btn btn-primary" onclick="sendEmailToResponsibleUsers('{{ document.doc_id }}')">Send notification</button>
     {% endif %}
+    </div>
+    <div class="col-md-6">
+      {% if document.category == 3 %}
+      <h2>Progress:</h2>
+      <!--<div class="progress" data-height="4" data-toggle="tooltip" title="" data-original-title="Progres" style="height: 4px;">
+        <div class="progress-bar bg-success" data-width="{{ agreements_count }}/{{ users_count }}" style="width: 100px;"></div>
+      </div>-->
+      <div class="row">
+        <p class="col-md-10">Number of people who have read the document</p>
+        <p class="col-md-2">{{ agreements_count }}/{{ users_count }}</p>
+      </div>
+
+      <div class="progress">
+            <div class="progress-bar
+                {% if progress_percentage < 50 %} red
+                {% elif progress_percentage < 100 %} yellow
+                {% else %} green
+                {% endif %}"
+                role="progressbar"
+                style="width: {{ progress_percentage }}%;"
+                aria-valuenow="{{ progress_percentage }}"
+                aria-valuemin="0"
+                aria-valuemax="100">
+                {{ progress_percentage|floatformat:1 }}%
+            </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <canvas id="progressChart"></canvas>
+        </div>
+      </div>
+      {% endif %}
+    </div>
   </div>
 
   {% if document.category == 3 %}
@@ -52,7 +142,7 @@
       <tbody>
           {% for agreement in agreements_list %}
           <tr>
-              <td>{{ agreement.user.zf_id }}</td>
+              <td><a href="{% url 'mdf:user_stats' %}?user_id={{ agreement.user.zf_id }}">{{ agreement.user.zf_id }}</a></td>
               <td>{{ agreement.status }}</td>
               <td>{{ agreement.agreed_at }}</td>
               <td>{{ agreement.reading_time }} s</td>
@@ -147,6 +237,106 @@ function sendEmail(userId, documentId) {
         alert("An error occurred while sending the email.");
     });
   }
+</script>
+<script>
+    // Data z backendu
+    const labels = {{ graph_details.labels|safe }};
+    const counts = {{ graph_details.counts|safe }};
+    const deadline = "{{ graph_details.deadline }}";
+
+    // Najdeme index deadlinu v datech
+    const deadlineDate = new Date(deadline);
+
+    // Konfigurace grafu
+    const data = {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Number of Agreements',
+                data: counts,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                pointRadius: 5, // Zvýraznění bodů
+                fill: false,
+                tension: 0.2, // Jemné zakřivení čar
+            },
+        ]
+    };
+
+    // Konfigurace grafu s deadline jako anotací
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            plugins: {
+                annotation: {
+                    annotations: {
+                        deadlineLine: {
+                            type: 'line',
+                            xMin: labels.indexOf(deadline),
+                            xMax: labels.indexOf(deadline),
+                            borderColor: 'red',
+                            borderWidth: 2,
+                            label: {
+                                content: 'Deadline',
+                                enabled: true,
+                                position: 'top',
+                                color: 'red',
+                            },
+                        },
+                    },
+                },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.raw;
+                            const date = context.label;
+                            return `Date: ${date}, Agreements: ${value}`;
+                        },
+                    },
+                },
+            },
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date',
+                        font: {
+                            size: 14,
+                        },
+                    },
+                    ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: 10,
+                    },
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Number of Agreements',
+                        font: {
+                            size: 14,
+                        },
+                    },
+                    beginAtZero: true,
+                },
+            },
+            elements: {
+                point: {
+                    hoverRadius: 7, // Zvýraznění bodu při najetí kurzoru
+                },
+            },
+        },
+    };
+
+    // Inicializace grafu
+    const progressChart = new Chart(
+        document.getElementById('progressChart'),
+        config
+    );
 </script>
 {% endblock content %}
 

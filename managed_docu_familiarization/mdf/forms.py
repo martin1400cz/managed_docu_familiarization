@@ -54,7 +54,9 @@ class DocumentForm(forms.Form):
     contact_users = forms.ModelMultipleChoiceField(
         #    widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         queryset=User.objects.all(),
-        widget=FilteredSelectMultiple("Users", is_stacked=False, attrs={'class': 'form-select form-control' , 'id': 'id_contact_users'}),
+        widget=FilteredSelectMultiple("Users", is_stacked=False, attrs={
+            'class': 'form-select form-control' ,
+            'id': 'id_contact_users'}),
         required=False,  # Může být prázdné
         label=string_constants.publishing_page_form_contact_users,
         help_text="Enter user IDs separated by commas.",

@@ -71,7 +71,7 @@ class Document(models.Model):
         users = User.objects.filter(groups__in=self.groups.all())
         owner = self.owner
         unique_set.update(users)
-        unique_set.remove(owner)
+        #unique_set.remove(owner)
         return list(unique_set)
 
     def __str__(self):
