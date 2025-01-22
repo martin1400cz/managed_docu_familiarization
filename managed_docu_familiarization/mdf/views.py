@@ -27,7 +27,8 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from .utils import get_documents_by_category, send_agreement, sendLinksToUsers, user_is_admin, \
     getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link, send_mail_to_user, \
-    send_link_to_owner_and_responsible_users, generate_document_link, verify_secure_id, document_progress_chart
+    send_link_to_owner_and_responsible_users, generate_document_link, verify_secure_id, document_progress_chart, \
+    get_users_without_agreements, send_mail_to_multiple_user
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -37,7 +38,8 @@ from ..users.models import User
 
 class MDFDocumentView(LoginRequiredMixin, TemplateView):
     """
-
+    View for user to display a document and send consent or download the document
+    User must be logged
     """
     model = Document
     template_name = 'document_view_page.html'
@@ -71,12 +73,12 @@ class MDFDocumentView(LoginRequiredMixin, TemplateView):
 
         if doc_url is None:
             raise Http404("Document URL not provided.")
-
-        # Ověření, že dokument existuje
+        # check if document exists
         try:
             document = Document.objects.get(doc_url=doc_url)
             category = document.category
         except Document.DoesNotExist:
+            #document does not exist - show error page
             raise Http404("The document was not found or you do not have access to it.")
         is_accepted = DocumentAgreement.objects.filter(document=document, user=self.request.user).exists()
         #is_ordinary_user = not self.request.user.groups.filter(name="MDF_admin").exists()
@@ -88,20 +90,6 @@ class MDFDocumentView(LoginRequiredMixin, TemplateView):
         context['file_url'] = getDirectDownloadLink(getFileIdFromLink(doc_url))
         self.doc_time = datetime.now()
         return context
-
-
-'''
-def download_google_drive_file(file_url):
-    response = requests.get(file_url)
-    if response.status_code == 200:
-        # Uložení souboru na disk
-        with open('downloaded_file', 'wb') as file:
-            file.write(response.content)
-        print("Soubor byl úspěšně stažen.")
-    else:
-        print("Chyba při stahování souboru.")
-'''
-
 
 class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
     """
@@ -164,7 +152,7 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
                 'agreements_list': agreements_list,
                 'is_uploaded': is_uploaded,
                 'progress_percentage': progress_percentage,
-                'graph_details' : document_progress_chart(self.request, document),
+                'graph_details' : document_progress_chart(document),
             }
         else:
             context = {
@@ -177,23 +165,19 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         try:
             logger = logging.getLogger(__name__)
-            logger.error("Stats - jsme v post!")
             data = json.loads(request.body)
             action = data.get('action')
             if action == 'send_email_user':
-                user_id = data.get('user_id')
-                logger.error(f"Stats - User id: {user_id}")
                 document_id = data.get('document_id')
                 logger.error(f"Stats - Doc id: {document_id}")
-
-                user = get_object_or_404(User, zf_id=user_id)
-
                 document = get_object_or_404(Document, doc_id=document_id)
+                users = get_users_without_agreements(document)
                 generated_link = generate_document_link(self.request, document)
+
                 subject = string_constants.email_subject_notification
                 message = f"Hello, please confirm that you have read the document.\nLink: {generated_link}"
 
-                send_mail_to_user(user, subject, message)
+                send_mail_to_multiple_user(users, subject, message)
                 return JsonResponse({'status': 'success', 'message': 'E-mail sent.'})
             elif action == 'send_email_resp_users':
                 document_id = data.get('document_id')
@@ -251,7 +235,6 @@ class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
 
             doc_id = document.doc_id
             encrypted_doc_id = generate_secure_link(doc_id)
-            # Generování URL s parametrem `doc_url`
             generated_link = request.build_absolute_uri(
                 reverse('mdf:publishing_page') + f"?doc_id={encrypted_doc_id}"
             )
@@ -260,7 +243,6 @@ class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
             return redirect(success_url)
 
 
-        # Opětovné načtení kontextu pro zobrazení stejné stránky
         context = self.get_context_data()
         context['form'] = form
         context['generated_link'] = generated_link
@@ -418,7 +400,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         # Document category 1
         if doc_category == '1':
             logger.error("Private document...")
-            allusers_group = Group.objects.filter(name='allusers').first()
+            allusers_group = Group.objects.filter(name=string_constants.all_users_group_name).first()
             if allusers_group:
                 document.groups.set([allusers_group])
                 #document.save()
@@ -435,19 +417,18 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         if groups:
             document.groups.set(groups if isinstance(groups, list) else list(groups))
         else:
-            allusers_group = Group.objects.filter(name='allusers').first()
+            allusers_group = Group.objects.filter(name=string_constants.all_users_group_name).first()
             if allusers_group:
                 document.groups.set([allusers_group])
                 document.save()
             else:
                 logger.error("'allusers' group not found.")
 
-        for g in groups:
-            logger.error(f"Group: {g.name}")
-
+        # Document category 3
         if doc_category == '2':
             document.status = 'processed'
 
+        # Document category 3
         if doc_category == '3':
             logger.error("Setting deadline for category 3 document...")
             #document.deadline = form.cleaned_data.get('deadline')
@@ -515,4 +496,5 @@ class MDFDocumentsUserDetailView(LoginRequiredMixin, TemplateView):
 
 
         context['documents_list'] = documents_list
+        context['user'] = user
         return context

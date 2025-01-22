@@ -14,7 +14,7 @@ def email_message_for_users(link):
 #Subject + message for users - sending notification from admin/author in document_stats page
 email_subject_notification = "Important notice"
 #email_message_for_user_notification = "Hello, please confirm that you have read the document."
-#Labels in admin_file_search_page_form
+#Labels in document_admin_page_form
 admin_page_form_document_name = "Document name:"
 admin_page_form_document_path = "Document url:"
 admin_page_form_document_owner = "Owner"
@@ -23,4 +23,8 @@ publishing_page_form_contact_users="Contact Users"
 #document_stats_page
 user_agreed="Agreed"
 user_no_agree_yet="-"
+
+# Groups
+all_users_group_name = 'allusers' #All users group name
+mdf_admin_group_name = 'MDF_admin' #Group name for mdf admins
 

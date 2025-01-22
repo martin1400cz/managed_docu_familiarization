@@ -81,7 +81,7 @@ DOCUMENTS_DIRECTORY = 'C:/Users/Rodina/Desktop/TestDocs' #Documents base dir
 
 #EMAIL_PORT = 1025
 #EMAIL_HOST = '127.0.0.1'
-EMAIL_USE_TLS = False  # Obvykle není potřeba TLS pro MailHog
+EMAIL_USE_TLS = False
 EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''  # Pro MailHog není třeba
+EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'noreply@zf.com'

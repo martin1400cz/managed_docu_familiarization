@@ -1,6 +1,7 @@
 import logging
 
 from celery import shared_task
+from django.template.context_processors import request
 from django.utils.timezone import now
 from .models import Document
 from django.core.mail import send_mail
