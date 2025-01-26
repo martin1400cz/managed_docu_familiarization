@@ -28,7 +28,7 @@ from django.core.mail import send_mail
 from .utils import get_documents_by_category, send_agreement, sendLinksToUsers, user_is_admin, \
     getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link, send_mail_to_user, \
     send_link_to_owner_and_responsible_users, generate_document_link, verify_secure_id, document_progress_chart, \
-    get_users_without_agreements, send_mail_to_multiple_user
+    get_users_without_agreements, send_mail_to_multiple_user, get_embed_url
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -50,44 +50,51 @@ class MDFDocumentView(LoginRequiredMixin, TemplateView):
         self.doc_time = datetime.now()
 
     def post(self, request, *args, **kwargs):
-        doc_url = self.request.GET.get('doc_url')
+        doc_id = self.request.GET.get('doc_id')
+        if doc_id is None:
+            raise Http404("Document URL not provided")
         user = self.request.user
-        document = Document.objects.get(doc_url=doc_url)
+        document = Document.objects.get(doc_id=verify_secure_id(doc_id))
         if 'consent' in request.POST:
             time_spent = int(request.POST.get('consent', 0))
-            if doc_url is None:
-                raise Http404("Document URL not provided")
-            # Zde můžete přidat logiku, co dělat po přijetí souhlasu (např. ukládání do databáze)
             message = "Thank you for your consent."
             #time_user = datetime.now() - self.doc_time
             #formatted_time = time(hour=time_spent // 3600, minute=(time_spent % 3600) // 60, second=time_spent % 60)
             send_agreement(document, user, time_spent)
-            return render(request, 'document_view_page.html', {'file_url': doc_url, 'message': message})
+            return render(request, 'document_view_page.html', {'file_url': document.doc_url, 'message': message})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Získání doc_url z GET parametrů
-        doc_url = self.request.GET.get('doc_url')
+        # Getting doc_id from GET parameters
+        #doc_url = self.request.GET.get('doc_url')
+        en_doc_id = self.request.GET.get('doc_id')
         category = None
 
-        if doc_url is None:
+        #if doc_url is None:
+        #    raise Http404("Document URL not provided.")
+        if en_doc_id is None:
             raise Http404("Document URL not provided.")
         # check if document exists
+        doc_id = verify_secure_id(en_doc_id)
         try:
-            document = Document.objects.get(doc_url=doc_url)
+            #document = Document.objects.get(doc_url=doc_url)
+            document = Document.objects.get(doc_id=doc_id)
             category = document.category
         except Document.DoesNotExist:
             #document does not exist - show error page
             raise Http404("The document was not found or you do not have access to it.")
         is_accepted = DocumentAgreement.objects.filter(document=document, user=self.request.user).exists()
         #is_ordinary_user = not self.request.user.groups.filter(name="MDF_admin").exists()
-        context['document_url'] = doc_url
+        context['document_url'] = document.doc_url
+        print(f"Doc_url: {document.doc_url}")
         context['category'] = category
         context['accepted'] = is_accepted
         #context['is_ordinary_user'] = is_ordinary_user
-        context['document_google_id'] = getFileIdFromLink(doc_url)
-        context['file_url'] = getDirectDownloadLink(getFileIdFromLink(doc_url))
+        #context['document_google_id'] = getFileIdFromLink(doc_url)
+        context['embed_url'] = get_embed_url(document)
+        context['file_url'] = getDirectDownloadLink(getFileIdFromLink(document.doc_url))
+        print(f"embed Doc_url: {get_embed_url(document)}")
         self.doc_time = datetime.now()
         return context
 
@@ -126,7 +133,7 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
                     agreement = agreement_map[user]
                     reading_time = agreement.reading_time
                     open_count = agreement.open_count
-                    formatted_date = agreement.agreed_at.strftime('%d/%m/%Y')
+                    formatted_date = agreement.agreed_at.strftime('%d.%m.%Y')
                     agreements_list.append({
                         'user': user,
                         'status': string_constants.user_agreed,
@@ -339,7 +346,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         except Document.DoesNotExist:
             return HttpResponseForbidden("Document not found!")
         self.generated_link = self.request.build_absolute_uri(
-            reverse('mdf:document_page') + f"?doc_url={self.document.doc_url}"
+            reverse('mdf:document_page') + f"?doc_id={generate_secure_link(self.document.doc_id)}"
         )
         #self.form_class = DocumentForm(request.POST, document_link=generated_link)
         return super().dispatch(request, *args, **kwargs)
@@ -350,7 +357,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         return kwargs
 
     def get_initial(self):
-        # Inicializuje formulář s hodnotou `doc_url` z URL parametrů
+        # Initializes the form with the `doc_url` and `doc_name` values from the URL parameters
 
         initial = super().get_initial()
         #self.doc_url = self.request.GET.get('doc_url', '')
@@ -441,7 +448,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
 
         message = form.cleaned_data['message']
         generated_link = self.request.build_absolute_uri(
-            reverse('mdf:document_page') + f"?doc_url={document.doc_url}"
+            reverse('mdf:document_page') + f"?doc_id={generate_secure_link(document.doc_id)}"
         )
         # Saving document
         document.save()
@@ -453,7 +460,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         logger.error("Form is invalid!")
         logger.error(f"Form errors: {form.errors}")
         logger.error(f"POST data: {self.request.POST}")
-        print("Form errors:", form.errors)  # Vypsání chyb do konzole
+        print("Form errors:", form.errors)  # Writing errors to the console
         print("Form data:", form.data)
         return super().form_invalid(form)
 
@@ -469,7 +476,7 @@ class MDFDocumentsUserDetailView(LoginRequiredMixin, TemplateView):
         user_id = self.request.GET.get('user_id')
         if user_id is None:
             raise Http404("User id not provided.")
-        # Ověření, že dokument existuje
+        # Verifying that a document exists
         user = User.objects.filter(zf_id=user_id).first()
         if user_id is None:
             raise Http404("User not exists!")
@@ -483,7 +490,7 @@ class MDFDocumentsUserDetailView(LoginRequiredMixin, TemplateView):
             if consent_exists:
                 agreement = DocumentAgreement.objects.get(user=user, document=document)
                 print(f"Agreement: {agreement}")
-                agreed_at = agreement.agreed_at.strftime('%d/%m/%Y')
+                agreed_at = agreement.agreed_at.strftime('%d.%m.%Y')
             else:
                 agreement = '-'
                 agreed_at = '-'
@@ -493,8 +500,6 @@ class MDFDocumentsUserDetailView(LoginRequiredMixin, TemplateView):
                 'agreement': agreement,
                 'agreed_at': agreed_at,
             })
-
-
         context['documents_list'] = documents_list
         context['user'] = user
         return context

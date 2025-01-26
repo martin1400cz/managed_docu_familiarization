@@ -5,32 +5,35 @@
 {% endblock %}
 
 {% block nav %}
-  <a class="navbar-brand" href="">Management document familiarization</a>
-  <div id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto nav_ul">
-      <li class="nav-item active nav_li">
-        <a class="nav-link zf-nav-link" href="{% url 'emp:emp_people_overview' %}">EMP Overview <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item active nav_li">
-        <a class="nav-link zf-nav-link" href="{% url 'mdf:base_page' %}">MDF Overview </a>
-      </li>
-      <li class="nav-item active nav_l">
-        <a class="nav-link zf-nav-link" href="{% url 'mdf:admin_file_search_page'%}">MDF Admin</a>
-      </li>
-        <div style="color:#fff;" class="form-inline my-2 my-lg-0">
-          <span class="bi bi-person-fill" style="color:black">&nbsp;{{ user }}
-            {# Kontrola, zda má uživatel groupu, nebo jestli je superuser - request.user|has_group:"TL" or user.is_superuser #}
-            {% if user.is_authenticated %}
-              <a class="nav_a zf-nav-link" href="{% url 'logout' %}" style="color:white; text-decoration:none;"> {% trans "logout" %}</a>
-              <a class="nav_a zf-nav-link" href="/admin" style="color:white; text-decoration:none;"> {% trans "Admin panel" %}</a>
-            {% else %}
-              <a class="nav_a zf-nav-link" href="{% url 'login' %}" style="color:white; text-decoration:none;"> {% trans "login" %}</a>
-            {% endif %}
-            - {{ APP_VERSION_NUMBER }}
-          </span>
-        </div>
-    </ul>
-  </div>
+<div id="navbarSupportedContent" class="container-fluid">
+  <ul class="navbar-nav nav_ul mr-auto mt-2 mt-lg-0">
+    <li class="nav-item active nav_li">
+       <a class="navbar-brand" href="#">
+         <img src="{% static 'images/ZF_logo/256px-ZF_logo_STD.png' %}" alt="ZF" width="30" height="30" class="d-inline-block align-text-top">
+         <span class="fw-bold">Management Document Familiarization 0.1.0</span>
+       </a>
+    </li>
+    <li class="nav-item active nav_li">
+      <a class="nav-link zf-nav-link" href="{% url 'emp:emp_people_overview' %}">EMP Overview <span class="sr-only">(current)</span></a>
+    </li>
+    <li class="nav-item active nav_li">
+      <a class="nav-link zf-nav-link" href="{% url 'mdf:base_page' %}">MDF Overview </a>
+    </li>
+    <li class="nav-item active nav_l">
+      <a class="nav-link zf-nav-link" href="{% url 'mdf:admin_file_search_page'%}">MDF Admin</a>
+    </li>
+  </ul>
+  <span class="navbar-text user-info text-light">&nbsp;{{ user }} |
+    {# Kontrola, zda má uživatel groupu, nebo jestli je superuser - request.user|has_group:"TL" or user.is_superuser #}
+    {% if user.is_authenticated %}
+    <a class="text-light" href="{% url 'logout' %}"> {% trans "logout" %}</a>
+    <a class="text-light" href="/admin"> {% trans "Admin panel" %}</a>
+    {% else %}
+    <a class="text-light" href="{% url 'login' %}"> {% trans "login" %}</a>
+    {% endif %}
+    - {{ APP_VERSION_NUMBER }}
+  </span>
+</div>
 {% endblock nav %}
 
     {% block layout %}

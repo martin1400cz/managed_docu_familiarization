@@ -36,6 +36,32 @@ def verify_secure_id(signed_id):
     except BadSignature:
         return None
 
+def get_embed_url(document):
+    """
+    Transforms a URL obtained from SharePoint into an Embed URL.
+    """
+    base_embed_url = "https://trw1.sharepoint.com/sites/ManagedDocumentationFamiliarization-shared/_layouts/15/Doc.aspx"
+    # Extracting a filename from a URL
+    file_name = document.doc_url.split("/")[-1].split("?")[0]
+
+    document_id = get_document_id_from_sharepoint(document)
+    # Creating an Embed URL
+    embed_url = f"{base_embed_url}?sourcedoc={document_id}&file={file_name}&action=embedview"
+    return embed_url
+
+def get_document_id_from_sharepoint(document):
+    return "PLACEHOLDER_DOCUMENT_ID"
+
+def extract_document_id_from_embed_url(document):
+    """
+    Extracts the unique document ID (if needed) from a relative or absolute URL.
+    Prerequisite: Documents are at an absolute URL that contains the sourcedoc ID
+    """
+    if "sourcedoc=" in document.doc_url:
+        return document.doc_url.split("sourcedoc=")[1].split("&")[0]
+    # If sourcedoc is not available, it returns a placeholder or work with another extraction method.
+    return "PLACEHOLDER_DOCUMENT_ID"
+
 def getDirectDownloadLink(fileId):
     """
     Function for getting a direct link to file saved on Google drive
@@ -45,7 +71,7 @@ def getDirectDownloadLink(fileId):
 
 def generate_document_link(request, document):
     generated_link = request.build_absolute_uri(
-        reverse('mdf:document_page') + f"?doc_url={document.doc_url}"
+        reverse('mdf:document_page') + f"?doc_id={generate_secure_link(document.doc_id)}"
     )
     return generated_link
 
@@ -57,7 +83,7 @@ def generate_document_link_task(document, domain=None, protocol="https"):
     if not domain:
         domain = getattr(settings, "SITE_DOMAIN", "localhost:8000")
 
-    relative_path = reverse('mdf:document_page') + f"?doc_url={document.doc_url}"
+    relative_path = reverse('mdf:document_page') + f"?doc_id={generate_secure_link(document.doc_id)}"
     return f"{protocol}://{domain}{relative_path}"
 
 def getFileIdFromLink(sharedLink):
@@ -197,19 +223,20 @@ def document_progress_chart(document):
     data_points = []
     agreed_count = 0
     data_points.append({
-        'date': current_date.strftime('%Y-%m-%d'),
+        'date': current_date.strftime('%d.%m.%Y'),
         'count': agreed_count,
     })
     while current_date <= end_date:
+
         if responses.filter(agreed_at__date=current_date).count() > 0:
             agreed_count += responses.filter(agreed_at__date=current_date).count()
             data_points.append({
-                'date': current_date.strftime('%Y-%m-%d'),
+                'date': current_date.strftime('%d.%m.%Y'),
                 'count': agreed_count,
             })
-        if document.deadline.date()  == current_date:
+        elif document.deadline.date() == current_date:
             data_points.append({
-                'date': current_date.strftime('%Y-%m-%d'),
+                'date': current_date.strftime('%d.%m.%Y'),
                 'count': agreed_count,
             })
         current_date += timedelta(days=1)
@@ -221,5 +248,5 @@ def document_progress_chart(document):
     return {
         'labels': labels,
         'counts': counts,
-        'deadline': document.deadline.strftime('%Y-%m-%d'),
+        'deadline': document.deadline.strftime('%d.%m.%Y'),
     }

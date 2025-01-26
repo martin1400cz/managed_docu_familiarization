@@ -33,7 +33,7 @@
                 {% for document in documents_list %}
                 <tr>
                     <td>{{ document.document.doc_name }}</td>
-                    <td>{{ document.document.release_date|date:"d/m/Y" }}</td>
+                    <td>{{ document.document.release_date|date:"d.m.Y" }}</td>
                     {% if document.agreement_exists %}
                       <td><p>Yes</p></td>
                       <td><p>{{ document.agreed_at }}</p></td>

@@ -50,10 +50,10 @@
   </head>
 
   <body class="d-flex flex-column h-100 pt-5">
-    <nav class="header-navbar navbar fixed-top navbar-expand-sm navbar-dark zf-gradient-background">
+    <header class="header-navbar navbar fixed-top navbar-expand-sm navbar-dark zf-gradient-background">
       {% block nav %}
       {% endblock nav %}
-    </nav>
+    </header>
 
     {% if global_message %}
       <div class="global-message">
@@ -67,8 +67,6 @@
 
         {% block modal %}{% endblock modal %}
 
-    <div class="b-example-divider"></div>
-
     <div class="container">
 
         <footer class="py-3 my-4">
@@ -78,8 +76,6 @@
         </footer>
 
     </div>
-
-    <div class="b-example-divider"></div>
     {% block inline_javascript %}
       {# Script tags with only code, no src (defer by default) #}
     {% endblock inline_javascript %}

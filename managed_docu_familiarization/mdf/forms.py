@@ -57,7 +57,7 @@ class DocumentForm(forms.Form):
         widget=FilteredSelectMultiple("Users", is_stacked=False, attrs={
             'class': 'form-select form-control' ,
             'id': 'id_contact_users'}),
-        required=False,  # Může být prázdné
+        required=False,  # It may be empty
         label=string_constants.publishing_page_form_contact_users,
         help_text="Enter user IDs separated by commas.",
     )
@@ -90,10 +90,10 @@ class DocumentForm(forms.Form):
     deadline = forms.DateTimeField(
         required=False,
         #widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'dd/mm/yyyy', 'class': 'form-control col col-md-3', 'id': 'id_deadline'}),
-        input_formats=['%d/%m/%Y'],  # Formát, který očekáváme
-        label='Set a deadline for this document',  # Vlastní popisek
-        help_text="Select a date and time when the document should be finalized."  # Pomocný text
+        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'dd.mm.yyyy', 'class': 'form-control col col-md-3', 'id': 'id_deadline'}),
+        input_formats=['%d.%m.%Y'],  # The format we expect
+        label='Set a deadline for this document',  # Custom label
+        help_text="Select a date and time when the document should be finalized."  # Help text
     )
 
     message = forms.CharField(

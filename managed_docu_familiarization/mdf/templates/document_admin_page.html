@@ -52,7 +52,7 @@
 {% block content %}
 <div class="container mt-5">
   <h1>Document Selection for Sending</h1>
-  <form method="post" action="{% url 'mdf:admin_file_search_page' %}">
+  <form class="" method="post" action="{% url 'mdf:admin_file_search_page' %}">
     {% csrf_token %}
     {{ form.media }}
     <div class="form-group mb-4 pb-4">
@@ -74,7 +74,8 @@
   {% if generated_link %}
     <p>Vygenerovaný odkaz pro vlastníka: <a href="{{ generated_link }}">{{ generated_link }}</a></p>
   {% endif %}
-  <script>
+</div>
+<script>
     // JavaScript pro nastavení URL dokumentu do textového pole
     function setDocumentUrl(url) {
       document.querySelector('[name="document_path"]').value = url;
@@ -86,5 +87,4 @@
       }
     });
   </script>
-</div>
 {% endblock %}

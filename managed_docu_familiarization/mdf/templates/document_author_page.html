@@ -96,102 +96,102 @@
   </div>
 </div>
 
-    <script type="text/javascript">
-      // Initialize the FilteredSelectMultiple widget on page load
-      //window.addEventListener('load', function()
-      document.addEventListener('DOMContentLoaded', function(){
-          const groupSelectElement = document.getElementById("id_groups");
-          const contactUserSelectElement = document.getElementById("id_users");
-          if (groupSelectElement) {
-              SelectFilter.init("id_groups", "Groups", 0);
-          }
-          if (contactUserSelectElement) {
-              SelectFilter.init("id_users", "Users", 0);
-          }
-      });
+<script type="text/javascript">
+  // Initialize the FilteredSelectMultiple widget on page load
+  //window.addEventListener('load', function()
+  document.addEventListener('DOMContentLoaded', function(){
+  const groupSelectElement = document.getElementById("id_groups");
+  const contactUserSelectElement = document.getElementById("id_users");
+  if (groupSelectElement) {
+     SelectFilter.init("id_groups", "Groups", 0);
+  }
+  if (contactUserSelectElement) {
+     SelectFilter.init("id_users", "Users", 0);
+  }
+  });
 
-      // JavaScript to show/hide the group selection based on category choice
-      document.addEventListener('DOMContentLoaded', function() {
-          // Get radio buttons and the group-selection div
-          const categoryChoices = document.querySelectorAll('.category-choice input');
-          const groupSelection = document.getElementById('group-selection');
-          const deadlineSelection = document.getElementById('deadline-selection');
-          const messageEmail = document.getElementById('email-message');
-          // Function to toggle the visibility of the group-selection div
-          function toggleGroupSelection() {
-              const selectedCategory = document.querySelector('.category-choice input:checked');
-              if (selectedCategory && (selectedCategory.value === '2' || selectedCategory.value === '3')) {
-                  groupSelection.style.display = 'block';
-                  messageEmail.style.display = 'block';
-                  if (selectedCategory.value === '3') {
-                      deadlineSelection.style.display = 'block';
-                  } else {
-                      deadlineSelection.style.display = 'none';
-                  }
-              } else {
-                  groupSelection.style.display = 'none';
-                  deadlineSelection.style.display = 'none';
-                  messageEmail.style.display = 'none';
-              }
+  // JavaScript to show/hide the group selection based on category choice
+  document.addEventListener('DOMContentLoaded', function() {
+      // Get radio buttons and the group-selection div
+      const categoryChoices = document.querySelectorAll('.category-choice input');
+      const groupSelection = document.getElementById('group-selection');
+      const deadlineSelection = document.getElementById('deadline-selection');
+      const messageEmail = document.getElementById('email-message');
+      // Function to toggle the visibility of the group-selection div
+      function toggleGroupSelection() {
+          const selectedCategory = document.querySelector('.category-choice input:checked');
+          if (selectedCategory && (selectedCategory.value === '2' || selectedCategory.value === '3')) {
+             groupSelection.style.display = 'block';
+             messageEmail.style.display = 'block';
+             if (selectedCategory.value === '3') {
+                deadlineSelection.style.display = 'block';
+             } else {
+                deadlineSelection.style.display = 'none';
+             }
+          } else {
+             groupSelection.style.display = 'none';
+             deadlineSelection.style.display = 'none';
+             messageEmail.style.display = 'none';
           }
+      }
 
-          // Attach event listeners to each radio button
-          categoryChoices.forEach(choice => choice.addEventListener('change', toggleGroupSelection));
-          // Initialize visibility based on the current selection
-          toggleGroupSelection();
-      });
-      document.addEventListener('DOMContentLoaded', function () {
-          const deadlineField = document.getElementById('id_deadline');
-          const contactUsersField = document.getElementById('id_contact_users');
-          const messageField = document.getElementById('id_message');
-
-          // Funkce pro aktualizaci/nahrazení části zprávy
-          function replaceOrAddSection(text, sectionTitle, newValue) {
-              const sectionRegex = new RegExp(`${sectionTitle}:.*?(\\n|$)`, 'i');
-              if (newValue) {
-                  const newSection = `${sectionTitle}: ${newValue}\n`;
-                  if (sectionRegex.test(text)) {
-                     return text.replace(sectionRegex, newSection);
-                  } else {
-                      return text + newSection;
-                  }
-              } else {
-                  // Pokud hodnota není, sekci odstraníme
-                  return text.replace(sectionRegex, '');
-              }
+      // Attach event listeners to each radio button
+      categoryChoices.forEach(choice => choice.addEventListener('change', toggleGroupSelection));
+      // Initialize visibility based on the current selection
+      toggleGroupSelection();
+  });
+  document.addEventListener('DOMContentLoaded', function () {
+      const deadlineField = document.getElementById('id_deadline');
+      const contactUsersField = document.getElementById('id_contact_users');
+      const contactUsersFieldTo = document.getElementById('id_contact_users_to');
+      const messageField = document.getElementById('id_message');
+      // Function for updating/replacing part of a message
+      function replaceOrAddSection(text, sectionTitle, newValue) {
+          const sectionRegex = new RegExp(`${sectionTitle}:.*?(\\n|$)`, 'i');
+          if (newValue) {
+             const newSection = `${sectionTitle}: ${newValue}\n`;
+             if (sectionRegex.test(text)) {
+                return text.replace(sectionRegex, newSection);
+             } else {
+                return text + newSection;
+             }
+          } else {
+             // If the value is not there, we delete the section
+             return text.replace(sectionRegex, '');
           }
+      }
 
-          /*function getSelectedUsersText() {
-            return Array.from(contactUsersField.options)
+      /*function getSelectedUsersText() {
+          return Array.from(contactUsersField.options)
                 .filter(option => option.selected)
                 .map(option => option.text)
                 .join(', ');
           }*/
 
-          function getSelectedUsersText() {
-            return Array.from(contactUsersField.selectedOptions)
-                .map(option => option.text)
-                .join(', ');
-          }
+      function getSelectedUsersText() {
+         var options = document.getElementById('id_contact_users_to').options;
+         return Array.from(options)
+            .map( option  => option.text)
+            .join(', ');
+      }
 
-          // Hlavní funkce pro aktualizaci zprávy
-          function updateMessage() {
-              let currentMessage = messageField.value;
+      // Main functions for updating the message
+      function updateMessage() {
+          let currentMessage = messageField.value;
 
 
-              const deadline = deadlineField.value;
-              currentMessage = replaceOrAddSection(currentMessage, 'Deadline', deadline);
-              const selectedUsers = getSelectedUsersText();
-              currentMessage = replaceOrAddSection(currentMessage, 'Contact Users', selectedUsers);
-              // Nastavit zpět do pole message
-              messageField.value = currentMessage.trim() + '\n';
-          }
-
-          // Připojení event listenerů
-          deadlineField.addEventListener('change', updateMessage);
-          contactUsersField.addEventListener('change', updateMessage);
-      });
-    </script>
+          const deadline = deadlineField.value;
+          currentMessage = replaceOrAddSection(currentMessage, 'Deadline', deadline);
+          const selectedUsers = getSelectedUsersText();
+          currentMessage = replaceOrAddSection(currentMessage, 'Contact Users', selectedUsers);
+          // Set back to message field
+          messageField.value = currentMessage.trim() + '\n';
+      }
+      // Connecting event listeners
+      deadlineField.addEventListener('change', updateMessage);
+      contactUsersField.addEventListener('change', updateMessage);
+   });
+</script>
 {% else %}
 <div class="centered-content">
   <h2 class="mb-4">The document has already been published!</h2>

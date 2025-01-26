@@ -72,11 +72,11 @@
                 {% for document in documents_list %}
                 <tr>
                     <td>{{ document.document.doc_name }}</td>
-                    <td>{{ document.document.release_date|date:"d/m/Y" }}</td>
+                    <td>{{ document.document.release_date|date:"d.m.Y" }}</td>
                     <td>{{ document.document.category }}</td>
                     <td>{{ document.document.status }}</td>
                     <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
-                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.document.doc_url }}"> Zobrazit</a></td>
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_id={{ document.encrypted_id }}"> Show</a></td>
                     <td><a href="{% url 'mdf:document_stats' %}?doc_id={{ document.encrypted_id }}">Show document details</a></td>
                 </tr>
                 {% empty %}
@@ -103,11 +103,11 @@
                 {% for document in documents_list %}
                 <tr>
                     <td>{{ document.document.doc_name }}</td>
-                    <td>{{ document.document.release_date|date:"d/m/Y" }}</td>
+                    <td>{{ document.document.release_date|date:"d.m.Y" }}</td>
                     <td>{{ document.document.category }}</td>
                     <td>{{ document.document.status }}</td>
                     <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
-                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.document.doc_url }}"> Zobrazit</a></td>
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_id={{ document.encrypted_id }}"> Show</a></td>
                     <td>
                       {% if document.document.owner == request.user %}
                         <a href="{% url 'mdf:document_stats' %}?doc_id={{ document.encrypted_id }}">Show document details</a>
@@ -135,7 +135,7 @@
                 {% for document in documents_list %}
                 <tr>
                     <td>{{ document.document.doc_name }}</td>
-                    <td>{{ document.document.release_date|date:"d/m/Y" }}</td>
+                    <td>{{ document.document.release_date|date:"d.m.Y" }}</td>
                     <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
                     <td>{% if document.agree_exists == '-' %}
                             <p class="font-weight-normal">-</p>
@@ -145,7 +145,7 @@
                             <p class="font-weight-normal text-danger">Not accepted</p>
                         {% endif %}
                     </td>
-                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_url={{ document.document.doc_url }}"> Zobrazit</a></td>
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_id={{ document.encrypted_id }}"> Show</a></td>
                 </tr>
                 {% empty %}
                 <tr>
