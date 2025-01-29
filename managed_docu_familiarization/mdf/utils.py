@@ -8,6 +8,7 @@ from managed_docu_familiarization.static.Strings import string_constants
 from managed_docu_familiarization.mdf.models import Document, DocumentAgreement
 from managed_docu_familiarization.users.models import User
 from django.core.signing import Signer, BadSignature
+from urllib.parse import urlparse
 
 
 def generate_secure_link(doc_id):
@@ -36,7 +37,35 @@ def verify_secure_id(signed_id):
     except BadSignature:
         return None
 
-def get_embed_url(document):
+# Google Drive
+def getFileIdFromLink(sharedLink):
+    """
+    Function for getting a file id from link - Google drive
+    """
+    try:
+        return sharedLink.split('/d/')[1].split('/')[0]
+    except IndexError as e:
+        return 'testId'
+
+def getDirectDownloadLink(fileId):
+    """
+    Function for getting a direct link to file saved on Google drive
+    """
+    directLink = f"https://drive.google.com/uc?export=download&id={fileId}"
+    return directLink
+
+def generate_preview_link(file_url):
+    """
+    Creates a preview link based on a shared Google Drive link.
+    """
+    parsed_url = urlparse(file_url)
+    if 'drive.google.com' in parsed_url.netloc and '/file/d/' in parsed_url.path:
+        file_id = parsed_url.path.split('/d/')[1].split('/')[0]
+        return f"https://drive.google.com/file/d/{file_id}/preview"
+    return file_url  # Returns the original URL if it is not a Google Drive link
+
+# Sharepoint
+def get_embed_url_sharepoint(document):
     """
     Transforms a URL obtained from SharePoint into an Embed URL.
     """
@@ -52,7 +81,7 @@ def get_embed_url(document):
 def get_document_id_from_sharepoint(document):
     return "PLACEHOLDER_DOCUMENT_ID"
 
-def extract_document_id_from_embed_url(document):
+def extract_document_id_from_embed_url_sharepoint(document):
     """
     Extracts the unique document ID (if needed) from a relative or absolute URL.
     Prerequisite: Documents are at an absolute URL that contains the sourcedoc ID
@@ -62,13 +91,7 @@ def extract_document_id_from_embed_url(document):
     # If sourcedoc is not available, it returns a placeholder or work with another extraction method.
     return "PLACEHOLDER_DOCUMENT_ID"
 
-def getDirectDownloadLink(fileId):
-    """
-    Function for getting a direct link to file saved on Google drive
-    """
-    directLink = f"https://drive.google.com/uc?export=download&id={fileId}"
-    return directLink
-
+###################################################################
 def generate_document_link(request, document):
     generated_link = request.build_absolute_uri(
         reverse('mdf:document_page') + f"?doc_id={generate_secure_link(document.doc_id)}"
@@ -85,15 +108,6 @@ def generate_document_link_task(document, domain=None, protocol="https"):
 
     relative_path = reverse('mdf:document_page') + f"?doc_id={generate_secure_link(document.doc_id)}"
     return f"{protocol}://{domain}{relative_path}"
-
-def getFileIdFromLink(sharedLink):
-    """
-    Function for getting a file id from link
-    """
-    try:
-        return sharedLink.split('/d/')[1].split('/')[0]
-    except IndexError as e:
-        return 'testId'
 
 def user_is_admin(user):
     """

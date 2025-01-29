@@ -5,31 +5,36 @@
 
 {% block css %}
 <style>
-  /* Zajištění centrování obsahu */
+  /* Ensuring content is centered */
   .centered-content {
-    min-height: 100vh; /* Výška stránky */
+    min-height: 100vh; /* Page height */
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Vertikální centrování */
-    align-items: center; /* Horizontální centrování */
-    text-align: center; /* Zarovnání textu na střed */
+    justify-content: center; /* Vertical centering */
+    align-items: center; /* Horizontal centering */
+    text-align: center; /* Center text alignment */
   }
 
   iframe {
-    max-width: 80%; /* Omezení šířky iframe */
-    margin: 0 auto; /* Centrovaný iframe */
+    border: 2px solid ##7A7A7A;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+    margin: 0 auto; /* Center alignment */
+    display: block; /* For center alignment */
+    max-width: 90%; /* Maximum width for smaller screens */
+    min-width: 80%; /* Minimum width for smaller screens */
   }
 
   button {
-    margin-top: 20px; /* Odstup nad tlačítkem */
+    margin-top: 20px; /* Spacing above the button*/
   }
 
   hr {
-    width: 80%; /* Zarovnání a šířka hr pro estetičnost */
+    width: 80%; /* Alignment and width of hr for aesthetics */
   }
 
   .download-link {
-    margin-top: 10px; /* Odstup u odkazů */
+    margin-top: 10px; /* Link spacing */
   }
 </style>
 {% endblock css %}
@@ -43,22 +48,19 @@
 {% endblock inline_javascript %}
 
 {% block content %}
-<div class="centered-content">
-  <h1>Document preview: {{ document.doc_name }}</h1>
+<div class="centered-content container">
+  <h1 class="border-bottom">Document preview: {{ document.doc_name }}</h1>
   {% if message %}
     <p style="color: green;">{{ message }}</p>
   {% else %}
-    <iframe class="embed-responsive-item" src="{{ embed_url }}" width="100%" height="800px">
+  <iframe class="embed-responsive-item border-bottom" src="{{ document_url }}" width="100%" height="800px">
     <!--<iframe src="https://drive.google.com/viewerng/viewer?url={{ document_url }}=en&pid=explorer&efh=false&a=v&chrome=false&embedded=true" frameborder="0">-->
     <!--<iframe class="justify-content-center embed-responsive-item" src="https://docs.google.com/viewer?srcid={{document_google_id}}&pid=explorer&efh=false&a=v&chrome=false&embedded=true" width="100%" height="800px">-->
       This browser does not support viewing PDF documents.
-        <a href="{{ document.doc_url }}">Download document</a>
     </iframe>
-    <!--<iframe class="justify-content-center embed-responsive-item" src="{{ document_url }}" width="100%" height="800px">
-      <a href="{{ document.doc_url }}">Stáhnout dokument</a>
-    </iframe>-->
+
   {% endif %}
-    <div class="border-bottom pb-3 mb-3">
+    <div class="border-bottom ">
       {% if category == 3 %}
         {% if accepted %}
           <p>Consent sent!</p>
@@ -76,7 +78,7 @@
         {% endif %}
       {% endif %}
     </div>
-    <div class="py-3 my-4">
+    <div class="">
       <hr>
       <h3>Download document</h3>
       <p>
@@ -97,6 +99,4 @@
         document.getElementById('timeSpent').value = timeSpent;
     }
 </script>
-
-
 {% endblock content %}

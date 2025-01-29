@@ -11,7 +11,6 @@ app_name = "mdf"
 urlpatterns = [
     #path("", MDFView.as_view(), name="mdf_index"),
     path("mdfdocuments/document/", MDFDocumentView.as_view(), name="document_page"),
-    path("mdfdocuments/document/send-email/", MDFDocumentView.as_view(), name="document_page"),
     path("mdfdocuments/overview/", MDFDocumentsOverview.as_view(), name="base_page"),
     path('mdfdocuments/agreements/', MDFDocumentStatsView.as_view(), name='document_stats'),
     #path('mdfdocuments/agreements/<str:doc_id>/', MDFDocumentStatsView.as_view(), name='document_stats'),

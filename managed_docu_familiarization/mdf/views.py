@@ -5,6 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Subquery
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.timezone import now
 from datetime import timedelta, datetime, time
 
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -28,7 +29,7 @@ from django.core.mail import send_mail
 from .utils import get_documents_by_category, send_agreement, sendLinksToUsers, user_is_admin, \
     getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link, send_mail_to_user, \
     send_link_to_owner_and_responsible_users, generate_document_link, verify_secure_id, document_progress_chart, \
-    get_users_without_agreements, send_mail_to_multiple_user, get_embed_url
+    get_users_without_agreements, send_mail_to_multiple_user, get_embed_url_sharepoint, generate_preview_link
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -86,15 +87,17 @@ class MDFDocumentView(LoginRequiredMixin, TemplateView):
             raise Http404("The document was not found or you do not have access to it.")
         is_accepted = DocumentAgreement.objects.filter(document=document, user=self.request.user).exists()
         #is_ordinary_user = not self.request.user.groups.filter(name="MDF_admin").exists()
-        context['document_url'] = document.doc_url
+        #context['document_url'] = document.doc_url
+        timestamp = now().timestamp()
+        context['document_url'] = generate_preview_link(document.doc_url) + f"?cache-bust={timestamp}"
         print(f"Doc_url: {document.doc_url}")
         context['category'] = category
         context['accepted'] = is_accepted
         #context['is_ordinary_user'] = is_ordinary_user
         #context['document_google_id'] = getFileIdFromLink(doc_url)
-        context['embed_url'] = get_embed_url(document)
+        #context['embed_url'] = get_embed_url_sharepoint(document) # Sharepoint embed url
         context['file_url'] = getDirectDownloadLink(getFileIdFromLink(document.doc_url))
-        print(f"embed Doc_url: {get_embed_url(document)}")
+        #print(f"embed Doc_url: {get_embed_url_sharepoint(document)}")
         self.doc_time = datetime.now()
         return context
 
@@ -354,6 +357,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['document_link'] = self.generated_link
+        kwargs['document_name'] = self.document.doc_name
         return kwargs
 
     def get_initial(self):

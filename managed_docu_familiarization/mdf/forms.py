@@ -36,10 +36,10 @@ class FileSearchForm(forms.Form):
 
 
 class DocumentForm(forms.Form):
-    def __init__(self, *args, document_link=None, **kwargs):
+    def __init__(self, *args, document_name=None, document_link=None, **kwargs):
         super().__init__(*args, **kwargs)
         if document_link:
-            prefilled_text = (string_constants.email_message_for_users(document_link))
+            prefilled_text = (string_constants.email_message_for_users(document_name, document_link))
             self.fields['message'].initial = prefilled_text
     #filter_horizontal = ('groups',)
 
@@ -99,10 +99,11 @@ class DocumentForm(forms.Form):
     message = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
-            'rows': 10,
-            'cols': 50,
+            'rows': 15,
+            'cols': 150,
             'placeholder': 'Write here a message for users...',
             'id': 'id_message',
+            'class': 'form-control',
         }),
         #initial=string_constants.email_message_for_users,
         label="Email message:",
