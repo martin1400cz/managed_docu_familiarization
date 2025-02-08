@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 
 from managed_docu_familiarization.mdf import views
 #from managed_docu_familiarization.mdf.views import MDFView
-from managed_docu_familiarization.mdf.views import MDFDocumentsOverview, MDFDocumentsAdding, MDFAdminSearchDocument, \
+from managed_docu_familiarization.mdf.views import MDFDocumentsOverview, MDFDocumentsAdding, MDF_admin_document_adding, \
     MDFDocumentView, MDFDocumentStatsView, MDFDocumentsUserDetailView
 
 app_name = "mdf"
@@ -19,6 +19,6 @@ urlpatterns = [
     #path('mdfdocuments/agreements/send-email/', MDFDocumentStatsView.as_view(), name='document_stats'),
     path("mdfdocuments/overview/add/", MDFDocumentsAdding.as_view(), name="publishing_page"),
     path("mdfdocuments/overview/add/<str:file_name>/", MDFDocumentsAdding.as_view(), name="publishing_page"),
-    path('mdfdocuments/admin-file-search/', MDFAdminSearchDocument.as_view(), name='admin_file_search_page'),
-    path('mdfdocuments/admin-file-search/send-link/<str:file_name>/', MDFAdminSearchDocument.as_view(), name='send_link_to_owner'),
+    path('mdfdocuments/admin-file-search/', MDF_admin_document_adding.as_view(), name='admin_file_search_page'),
+    path('mdfdocuments/admin-file-search/send-link/<str:file_name>/', MDF_admin_document_adding.as_view(), name='send_link_to_owner'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

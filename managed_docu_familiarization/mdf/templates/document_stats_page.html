@@ -84,7 +84,7 @@
       </div>
       <div class="row">
         <p class="col-md-4">Category:</p>
-        <p class="col-md-6">{{ document.category }}</p>
+        <p class="col-md-6">{{ document_category }}</p>
       </div>
       {% if document.category == 3 %}
         <div class="row">
@@ -107,6 +107,11 @@
       <div class="row">
         <p class="col-md-10">Number of people who have read the document</p>
         <p class="col-md-2">{{ agreements_count }}/{{ users_count }}</p>
+      </div>
+
+      <div class="row">
+        <p class="col-md-10">Document consents status:</p>
+        <p class="col-md-2">{{ document.status }}</p>
       </div>
 
       <div class="progress">

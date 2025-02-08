@@ -163,6 +163,7 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
                 'is_uploaded': is_uploaded,
                 'progress_percentage': progress_percentage,
                 'graph_details' : document_progress_chart(document),
+                'document_category': Document.get_category_text(document),
             }
         else:
             context = {
@@ -202,14 +203,14 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 
-class MDFAdminSearchDocument(LoginRequiredMixin, TemplateView):
+class MDF_admin_document_adding(LoginRequiredMixin, TemplateView):
     """
     View for admin to search a document and generate link for owner
     v0.1 - This is demo version - without using emails, just display the link!
     v0.2 - Advanced version - displays the link + sends the link to the owner.
     """
 
-    template_name = 'document_admin_page.html'
+    template_name = 'document_admin_adding_document_page.html'
     generated_link = None   # link for user, contains document url
 
     def dispatch(self, request, *args, **kwargs):
@@ -280,6 +281,7 @@ class MDFDocumentsOverview(LoginRequiredMixin, View):
             for document in documents:
                 documents_list.append({
                     'document': document,
+                    'document_category': Document.get_category_text(document),
                     'encrypted_id': generate_secure_link(document.doc_id)
                 })
         elif tab == 'author' and is_owner:
@@ -289,6 +291,7 @@ class MDFDocumentsOverview(LoginRequiredMixin, View):
             for document in my_documents:
                 documents_list.append({
                     'document': document,
+                    'document_category': Document.get_category_text(document),
                     'encrypted_id': generate_secure_link(document.doc_id)
                 })
         else:
@@ -381,11 +384,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
         #print("KWARGS:", kwargs)  # Debugging
         context = super().get_context_data(**kwargs)
         context['is_uploaded'] = self.document.is_uploaded  # If document is in 'uploaded' status - if it is in 'pending' status or another, user cannot add details about document
-        #context['form'] = (
-        #    DocumentForm(self.request.POST)
-        #    if self.request.POST
-        #    else DocumentForm()
-        #)
+        context['info_text'] = string_constants.info_text
         return context
 
     def form_valid(self, form):

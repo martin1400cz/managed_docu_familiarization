@@ -74,6 +74,12 @@ class Document(models.Model):
         #unique_set.remove(owner)
         return list(unique_set)
 
+    def get_category_text(self):
+        for key, value in FORMAT_CHOICES:
+            if key == self.category:
+                return value
+        return 'Unknown category'
+
     def __str__(self):
         return self.doc_name
 

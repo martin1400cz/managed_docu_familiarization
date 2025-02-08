@@ -69,6 +69,9 @@
       </div>
       <div class="form-group category-choice m-auto p-4 border-bottom border-top">
         {{ form.category.label_tag }} {{ form.category }} {{ form.category.errors }}
+        <span data-bs-toggle="tooltip" data-bs-html="true" title="{{ info_text }}">
+            <i class="bi bi-info-circle"></i>
+        </span>
       </div>
       <div id="deadline-selection" class="form-group m-auto p-4 border-bottom" style="display: none;">
         {{ form.deadline.label_tag }} {{ form.deadline }} {{ form.deadline.errors }}
@@ -91,14 +94,14 @@
   // Initialize the FilteredSelectMultiple widget on page load
   //window.addEventListener('load', function()
   document.addEventListener('DOMContentLoaded', function(){
-  const groupSelectElement = document.getElementById("id_groups");
-  const contactUserSelectElement = document.getElementById("id_users");
-  if (groupSelectElement) {
-     SelectFilter.init("id_groups", "Groups", 0);
-  }
-  if (contactUserSelectElement) {
-     SelectFilter.init("id_users", "Users", 0);
-  }
+    const groupSelectElement = document.getElementById("id_groups");
+    const contactUserSelectElement = document.getElementById("id_users");
+    if (groupSelectElement) {
+      SelectFilter.init("id_groups", "Groups", 0);
+    }
+    if (contactUserSelectElement) {
+      SelectFilter.init("id_users", "Users", 0);
+    }
   });
 
   // JavaScript to show/hide the group selection based on category choice
@@ -182,6 +185,13 @@
       deadlineField.addEventListener('change', updateMessage);
       contactUsersField.addEventListener('change', updateMessage);
    });
+  // Showing popup info
+  document.addEventListener("DOMContentLoaded", function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
 </script>
 {% else %}
 <div class="centered-content">
