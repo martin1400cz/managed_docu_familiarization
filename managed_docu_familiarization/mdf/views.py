@@ -29,7 +29,8 @@ from django.core.mail import send_mail
 from .utils import get_documents_by_category, send_agreement, sendLinksToUsers, user_is_admin, \
     getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link, send_mail_to_user, \
     send_link_to_owner_and_responsible_users, generate_document_link, verify_secure_id, document_progress_chart, \
-    get_users_without_agreements, send_mail_to_multiple_user, get_embed_url_sharepoint, generate_preview_link
+    get_users_without_agreements, send_mail_to_multiple_user, get_embed_url_sharepoint, generate_preview_link, \
+    is_from_google, get_sharepoint_url
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -86,15 +87,13 @@ class MDFDocumentView(LoginRequiredMixin, TemplateView):
             #document does not exist - show error page
             raise Http404("The document was not found or you do not have access to it.")
         is_accepted = DocumentAgreement.objects.filter(document=document, user=self.request.user).exists()
-        #is_ordinary_user = not self.request.user.groups.filter(name="MDF_admin").exists()
-        #context['document_url'] = document.doc_url
         timestamp = now().timestamp()
-        context['document_url'] = generate_preview_link(document.doc_url) + f"?cache-bust={timestamp}"
+        context['is_from_google'] = is_from_google(document)
+        context['doc_url_shp'] = get_sharepoint_url(document)
+        context['document_url'] = generate_preview_link(document.doc_url) + f"?cache-bust={timestamp}"  # Embed url to document in Google Drive
         print(f"Doc_url: {document.doc_url}")
         context['category'] = category
         context['accepted'] = is_accepted
-        #context['is_ordinary_user'] = is_ordinary_user
-        #context['document_google_id'] = getFileIdFromLink(doc_url)
         #context['embed_url'] = get_embed_url_sharepoint(document) # Sharepoint embed url
         context['file_url'] = getDirectDownloadLink(getFileIdFromLink(document.doc_url))
         #print(f"embed Doc_url: {get_embed_url_sharepoint(document)}")
@@ -273,7 +272,7 @@ class MDFDocumentsOverview(LoginRequiredMixin, View):
         logger = logging.getLogger(__name__)
         logger.error(f"Tab: {tab}")
         is_admin = request.user.groups.filter(name="MDF_admin").exists()
-        is_owner = request.user.groups.filter(name="MDF_authors").exists()
+        is_author = request.user.groups.filter(name="MDF_authors").exists()
         if tab == 'admin' and is_admin:
             documents_list = []
             logger.error("I am in admin")
@@ -284,7 +283,7 @@ class MDFDocumentsOverview(LoginRequiredMixin, View):
                     'document_category': Document.get_category_text(document),
                     'encrypted_id': generate_secure_link(document.doc_id)
                 })
-        elif tab == 'author' and is_owner:
+        elif tab == 'author' and is_author:
             documents_list = []
             logger.error("I am in author")
             my_documents = Document.objects.filter(owner=request.user)
@@ -324,7 +323,7 @@ class MDFDocumentsOverview(LoginRequiredMixin, View):
             # 'my_documents': my_documents,
             'documents_list': documents_list,
             'is_admin': is_admin,
-            'is_author': is_owner,
+            'is_author': is_author,
             'active_tab': tab,
         }
 
@@ -344,6 +343,9 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
     generated_link = None
 
     def dispatch(self, request, *args, **kwargs):
+        is_author = request.user.groups.filter(name="MDF_authors").exists()
+        if not is_author:
+            return HttpResponseForbidden("You do not have permission to view this page!")
         doc_id = self.request.GET.get('doc_id', '')
         decrypted_id = verify_secure_link(doc_id)
         self.doc_id = decrypted_id

@@ -47,7 +47,7 @@
         <!-- Tables -->
         {% if active_tab == 'admin' and is_admin %}
         <h2>All documents</h2>
-        {% elif active_tab == 'author' %}
+        {% elif active_tab == 'author' and is_author %}
         <h2>My documents</h2>
         {% else %}
         <h2>Documents for you</h2>
@@ -85,7 +85,7 @@
                 </tr>
                 {% endfor %}
             </tbody>
-        {% elif active_tab == 'author' %}
+        {% elif active_tab == 'author' and is_author %}
           <!-- Author table -->
             <thead>
 

@@ -8,7 +8,9 @@ from managed_docu_familiarization.static.Strings import string_constants
 from managed_docu_familiarization.mdf.models import Document, DocumentAgreement
 from managed_docu_familiarization.users.models import User
 from django.core.signing import Signer, BadSignature
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs, urlunparse, urlencode
+import re
+
 
 
 def generate_secure_link(doc_id):
@@ -37,10 +39,33 @@ def verify_secure_id(signed_id):
     except BadSignature:
         return None
 
+def is_from_google(document):
+    return string_constants.google_drive_prefix in document.doc_url
+
 # Google Drive
+def get_sharepoint_url(document):
+    # Rozparsování URL
+    parsed_url = urlparse(document.doc_url)
+    # Oprava cesty: odstranění "/r/"
+    fixed_path = re.sub(r"/r/", "/", parsed_url.path)
+    # Zpracování parametrů
+    query_params = parse_qs(parsed_url.query)
+    # Ujistíme se, že obsahuje "?web=1"
+    query_params["web"] = ["1"]
+    # Sestavení opravené URL
+    fixed_url = urlunparse((
+        parsed_url.scheme,
+        parsed_url.netloc,
+        fixed_path,
+        parsed_url.params,
+        urlencode(query_params, doseq=True),
+        parsed_url.fragment
+    ))
+    return fixed_url
+
 def getFileIdFromLink(sharedLink):
     """
-    Function for getting a file id from link - Google drive
+    Function returns a file id from url - Google drive
     """
     try:
         return sharedLink.split('/d/')[1].split('/')[0]
@@ -79,6 +104,11 @@ def get_embed_url_sharepoint(document):
     return embed_url
 
 def get_document_id_from_sharepoint(document):
+    """
+    Function returns an ID of file on SharePoint
+    :param document:
+    :return: Document id from document url
+    """
     return "PLACEHOLDER_DOCUMENT_ID"
 
 def extract_document_id_from_embed_url_sharepoint(document):

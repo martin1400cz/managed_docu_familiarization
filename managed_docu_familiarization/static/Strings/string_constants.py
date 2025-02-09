@@ -14,10 +14,15 @@ def email_message_for_users(document_name, link):
 #Subject + message for users - sending notification from admin/author in document_stats page
 email_subject_notification = "Important notice"
 #email_message_for_user_notification = "Hello, please confirm that you have read the document."
+
+#Google Drive url prefix
+google_drive_prefix = "drive.google.com/file/d/"
+
 #Labels in document_admin_page_form
 admin_page_form_document_name = "Document name:"
 admin_page_form_document_path = "Document url:"
 admin_page_form_document_owner = "Owner"
+
 #Labels in publishing_page_form
 publishing_page_form_contact_users="Contact Users"
 #document_stats_page

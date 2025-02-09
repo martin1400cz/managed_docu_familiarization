@@ -6,33 +6,33 @@
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
     <style>
-        /* Zajištění centrování celé stránky */
+        /* Ensuring centering of the entire page */
         .centered-content {
-            min-height: 100vh; /* Výška stránky */
+            min-height: 100vh; /* Page height */
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Vertikální zarovnání */
-            align-items: center; /* Horizontální zarovnání */
-            text-align: center; /* Text na střed */
+            justify-content: center; /* Vertical alignment */
+            align-items: center; /* Horizontal alignment */
+            text-align: center; /* Center text */
         }
 
         .category-choice {
             display: flex;
-            flex-direction: column; /* Vertikální uspořádání */
+            flex-direction: column; /* Vertical arrangement */
         }
 
         .category-choice label {
-            display: flex; /* Uspořádání obsahu v řádku */
-            align-items: center; /* Vertikální zarovnání textu */
-            gap: 10px; /* Mezera mezi radiobuttonem a textem */
+            display: flex; /* Arranging content in a row */
+            align-items: center; /* Vertical text alignment */
+            gap: 10px; /* Space between radiobutton and text */
         }
 
         .category-choice input[type="radio"] {
-            margin: 0; /* Odstranění defaultního odsazení */
+            margin: 0; /* Removing default indentation */
         }
 
         .list-container {
-            width: 100%; /* Přizpůsobení šířce kontejneru */
+            width: 100%; /* Adapting to container width */
         }
 
         .list {
@@ -43,7 +43,7 @@
         }
 
         button {
-            margin-top: 20px; /* Odstup tlačítka od ostatních prvků */
+            margin-top: 20px; /* Button spacing from other elements */
         }
     </style>
 {% endblock css %}
