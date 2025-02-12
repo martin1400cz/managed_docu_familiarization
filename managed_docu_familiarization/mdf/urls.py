@@ -5,17 +5,23 @@ from django.conf.urls.static import static
 from managed_docu_familiarization.mdf import views
 #from managed_docu_familiarization.mdf.views import MDFView
 from managed_docu_familiarization.mdf.views import MDFDocumentsOverview, MDFDocumentsAdding, MDF_admin_document_adding, \
-    MDFDocumentView, MDFDocumentStatsView, MDFDocumentsUserDetailView
+    MDFDocumentView, MDFDocumentStatsView, MDFDocumentsUserDetailView, open_document_base_page, open_document_stats, \
+    open_document_user_detail
 
 app_name = "mdf"
 urlpatterns = [
     #path("", MDFView.as_view(), name="mdf_index"),
+    # document_page - view to display the document
     path("mdfdocuments/document/", MDFDocumentView.as_view(), name="document_page"),
+
     path("mdfdocuments/overview/", MDFDocumentsOverview.as_view(), name="base_page"),
+    path("mdfdocuments/overview/open/<str:enc_doc_id>/", open_document_base_page, name="open_document_view"),
+
     path('mdfdocuments/agreements/', MDFDocumentStatsView.as_view(), name='document_stats'),
-    #path('mdfdocuments/agreements/<str:doc_id>/', MDFDocumentStatsView.as_view(), name='document_stats'),
+    path('mdfdocuments/agreements/open/<str:enc_doc_id>/', open_document_stats, name='open_document_stats'),
+
     path('mdfdocuments/user_stats/', MDFDocumentsUserDetailView.as_view(), name='user_stats'),
-    path('mdfdocuments/user_stats/<str:user_id>/', MDFDocumentsUserDetailView.as_view(), name='user_stats'),
+    path('mdfdocuments/user_stats/open/<str:user_id>/', open_document_user_detail, name='open_user_stats'),
     #path('mdfdocuments/agreements/send-email/', MDFDocumentStatsView.as_view(), name='document_stats'),
     path("mdfdocuments/overview/add/", MDFDocumentsAdding.as_view(), name="publishing_page"),
     path("mdfdocuments/overview/add/<str:file_name>/", MDFDocumentsAdding.as_view(), name="publishing_page"),

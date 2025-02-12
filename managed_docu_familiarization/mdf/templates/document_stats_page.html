@@ -154,7 +154,7 @@
       <tbody>
           {% for agreement in agreements_list %}
           <tr>
-              <td><a href="{% url 'mdf:user_stats' %}?user_id={{ agreement.user.zf_id }}">{{ agreement.user.zf_id }}</a></td>
+              <td><a href="{% url 'mdf:open_user_stats' agreement.user.zf_id %}">{{ agreement.user.zf_id }}</a></td>
               <td>{{ agreement.status }}</td>
               <td>{{ agreement.agreed_at }}</td>
               <td>{{ agreement.reading_time }} s</td>

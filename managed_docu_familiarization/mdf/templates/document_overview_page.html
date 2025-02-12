@@ -18,9 +18,10 @@
 
 <div class="container mt-5">
         <h1>Documents List</h1>
+        <!-- Navigation bar -->
         <div class="navbar navbar-expand-lg navbar-light bg-light">
           <ul class="nav">
-          {% if is_admin %}
+            {% if is_admin %}
             <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
             <li class="nav-item">
               <a class="nav-link" href="?tab=user">Documents for you</a>
@@ -32,16 +33,16 @@
               <a class="nav-link" href="?tab=admin">All documents</a>
             </li>
 
-          {% elif is_author %}
+            {% elif is_author %}
             <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
-          <li class="nav-item">
-            <a class="nav-link" href="?tab=user">Documents for you</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="?tab=author">My documents</a>
-          </li>
+            <li class="nav-item">
+              <a class="nav-link" href="?tab=user">Documents for you</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="?tab=author">My documents</a>
+            </li>
+            {% endif %}
           </ul>
-          {% endif %}
         </div>
 
         <!-- Tables -->
@@ -76,8 +77,8 @@
                     <td>{{ document.document_category }}</td>
                     <td>{{ document.document.status }}</td>
                     <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
-                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_id={{ document.encrypted_id }}"> Show</a></td>
-                    <td><a href="{% url 'mdf:document_stats' %}?doc_id={{ document.encrypted_id }}">Show document details</a></td>
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:open_document_view' document.encrypted_id %}"> Show</a></td>
+                    <td><a href="{% url 'mdf:open_document_stats' document.encrypted_id %}">Show document details</a></td>
                 </tr>
                 {% empty %}
                 <tr>
@@ -85,8 +86,8 @@
                 </tr>
                 {% endfor %}
             </tbody>
-        {% elif active_tab == 'author' and is_author %}
           <!-- Author table -->
+        {% elif active_tab == 'author' and is_author %}
             <thead>
 
                 <tr>
@@ -107,10 +108,10 @@
                     <td>{{ document.document_category }}</td>
                     <td>{{ document.document.status }}</td>
                     <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
-                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_id={{ document.encrypted_id }}"> Show</a></td>
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:open_document_view' document.encrypted_id %}"> Show</a></td>
                     <td>
                       {% if document.document.owner == request.user %}
-                        <a href="{% url 'mdf:document_stats' %}?doc_id={{ document.encrypted_id }}">Show document details</a>
+                        <a href="{% url 'mdf:open_document_stats' document.encrypted_id %}">Show document details</a>
                       {% endif %}
                     </td>
                 </tr>
@@ -145,7 +146,8 @@
                             <p class="font-weight-normal text-danger">Not accepted</p>
                         {% endif %}
                     </td>
-                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_id={{ document.encrypted_id }}"> Show</a></td>
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:open_document_view' document.encrypted_id %}"> Show</a></td>
+                    <!--<td><a class="bi bi-filetype-pdf" href="{% url 'mdf:document_page' %}?doc_id={{ document.encrypted_id }}"> Show</a></td>-->
                 </tr>
                 {% empty %}
                 <tr>

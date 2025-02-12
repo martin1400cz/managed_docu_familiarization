@@ -21,23 +21,8 @@
             display: flex;
             flex-direction: column; /* Vertikální uspořádání formuláře */
             gap: 20px; /* Odstup mezi prvky formuláře */
-            max-width: 600px; /* Maximální šířka formuláře */
-            width: 100%; /* Přizpůsobení šířce stránky */
-        }
-
-        .list-container {
-            width: 100%; /* Přizpůsobení šířce kontejneru */
-        }
-
-        .list {
-            border: 1px solid #ccc;
-            padding: 10px;
-            height: 200px;
-            overflow-y: auto;
-        }
-
-        button {
-            margin-top: 20px; /* Odstup tlačítka od ostatních prvků */
+            max-width: 70%; /* Maximální šířka formuláře */
+            /*width: 100%;*/ /* Přizpůsobení šířce stránky */
         }
     </style>
 {% endblock css %}
@@ -50,22 +35,34 @@
 {% endblock inline_javascript %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5 centered-content">
   <h1>Document Selection for Sending</h1>
   <form class="" method="post" action="{% url 'mdf:admin_file_search_page' %}">
     {% csrf_token %}
     {{ form.media }}
-    <div class="form-group mb-4 pb-4">
-        {{ form.document_name.label_tag }} {{ form.document_name }}
+    <div class="form-row form-group mb-4 pb-4">
+        <p class="col-sm-2 col-form-label text-right">{{ form.document_name.label_tag }}</p>
+        <div class="col-sm-10">
+        {{ form.document_name }}
+        </div>
     </div>
-    <div class="form-group mb-4 pb-4">
-        {{ form.document_path.label_tag }} {{ form.document_path }}
+    <div class="form-row form-group mb-4 pb-4">
+        <p class="col-sm-2 col-form-label text-right">{{ form.document_path.label_tag }}</p>
+        <div class="col-sm-10">
+        {{ form.document_path }}
+        </div>
     </div>
-    <div class="form-group mb-4 pb-4">
-        {{ form.owner.label_tag }} {{ form.owner }}
+    <div class="form-row form-group mb-4 pb-4">
+        <p class="col-sm-2 col-form-label text-right">{{ form.owner.label_tag }}</p>
+        <div class="col-sm-10">
+        {{ form.owner }}
+        </div>
     </div>
-    <div id="responsible_users_div" class="form-group mb-4 pb-4">
-      {{ form.responsible_users.label }}{{ form.responsible_users }}
+    <div id="responsible_users_div" class="form-row form-group mb-4 pb-4">
+        <p class="col-sm-2 col-form-label text-right">{{ form.responsible_users.label_tag }}</p>
+        <div class="col-sm-10">
+        {{ form.responsible_users }}
+        </div>
     </div>
     <button type="submit" class="btn btn-success mt-3">Send Document Link</button>
   </form>

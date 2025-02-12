@@ -60,7 +60,8 @@
       This browser does not support viewing PDF documents.
       </iframe>
     {% else %}
-      <a href="{{ doc_url_shp }}" class="btn btn-primary" target="_blank">
+      <!--<a href="{{ doc_url_shp }}" class="btn btn-primary" target="_blank">-->
+      <a href="{{ document.doc_url }}" class="btn btn-primary" target="_blank">
           OPEN DOCUMENT
       </a>
     {% endif %}
@@ -93,7 +94,7 @@
       {% if is_from_google %}
         <a class="download-link" href="{{ file_url }}" download>Download document</a>
       {% else %}
-        <a class="download-link" href="{{ doc_url_shp }}" download>Download document</a>
+        <a class="download-link" href="{{ file_url_sharepoint }}" download>Download document</a>
       {% endif %}
       <hr>
       <p><a href="{% url 'mdf:base_page' %}">Back to list of documents</a></p>

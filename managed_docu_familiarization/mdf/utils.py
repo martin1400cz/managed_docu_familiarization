@@ -39,10 +39,10 @@ def verify_secure_id(signed_id):
     except BadSignature:
         return None
 
+# Google Drive
 def is_from_google(document):
     return string_constants.google_drive_prefix in document.doc_url
 
-# Google Drive
 def get_sharepoint_url(document):
     # Rozparsování URL
     parsed_url = urlparse(document.doc_url)
@@ -61,6 +61,37 @@ def get_sharepoint_url(document):
         urlencode(query_params, doseq=True),
         parsed_url.fragment
     ))
+    return fixed_url
+
+def fix_sharepoint_download_url(document):
+    """
+    Opraví SharePoint URL tak, aby soubor byl přímo stažen místo otevření v prohlížeči.
+    """
+    parsed_url = urlparse(document.doc_url)
+
+    # Oprava cesty – odstranění "/r/"
+    fixed_path = re.sub("", "", parsed_url.path)
+
+    # Úprava parametrů – odstranění nepotřebných a přidání "download=1"
+    query_params = parse_qs(parsed_url.query)
+
+    # Odstraníme nepotřebné parametry
+    query_params.pop("csf", None)
+    query_params.pop("e", None)
+
+    # Přidáme "download=1"
+    query_params["download"] = ["1"]
+
+    # Vytvoření nové URL
+    fixed_url = urlunparse((
+        parsed_url.scheme,
+        parsed_url.netloc,
+        fixed_path,
+        parsed_url.params,
+        urlencode(query_params, doseq=True),
+        parsed_url.fragment
+    ))
+    print(f"Fixed URL: {fixed_url}")
     return fixed_url
 
 def getFileIdFromLink(sharedLink):

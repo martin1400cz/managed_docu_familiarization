@@ -8,15 +8,15 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from managed_docu_familiarization.static.Strings import string_constants
 
 class FileSearchForm(forms.Form):
-    document_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
+    document_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control w-75'}),
                                     max_length=255,
                                     required=True,
                                     label=string_constants.admin_page_form_document_name)
-    document_path = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}),
+    document_path = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control w-75'}),
                                     label=string_constants.admin_page_form_document_path,
                                     max_length=255,
                                     required=True)
-    owner = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control'}),
+    owner = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control w-75'}),
                                    queryset=User.objects.all(),
                                    label=string_constants.admin_page_form_document_owner,
                                    required=True)
@@ -24,7 +24,7 @@ class FileSearchForm(forms.Form):
         queryset=User.objects.all(),
         widget=FilteredSelectMultiple("Responsible_users", is_stacked=False, attrs={'class': 'form-select form-control'}),
         required=False,
-        label=string_constants.publishing_page_form_contact_users,
+        label=string_constants.publishing_page_form_responsible_users,
         help_text="Enter user IDs separated by commas.",
     )
     class Media:

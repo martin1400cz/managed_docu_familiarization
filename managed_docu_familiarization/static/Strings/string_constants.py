@@ -25,6 +25,8 @@ admin_page_form_document_owner = "Owner"
 
 #Labels in publishing_page_form
 publishing_page_form_contact_users="Contact Users"
+#Labels in adding_page_form
+publishing_page_form_responsible_users="Other responsible persons"
 #document_stats_page
 user_agreed="Agreed"
 user_no_agree_yet="-"

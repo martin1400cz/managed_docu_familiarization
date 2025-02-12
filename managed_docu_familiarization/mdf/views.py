@@ -17,20 +17,15 @@ from django.views.generic import View, TemplateView, FormView, DetailView
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth.models import Group
 
-from config import settings
 from managed_docu_familiarization.static.Strings import string_constants
 from managed_docu_familiarization.mdf.forms import DocumentForm
 from managed_docu_familiarization.mdf.forms import FileSearchForm
 from managed_docu_familiarization.mdf.models import Document, DocumentAgreement
-import os
-from django.conf import settings
-from django.contrib import messages
-from django.core.mail import send_mail
 from .utils import get_documents_by_category, send_agreement, sendLinksToUsers, user_is_admin, \
     getDirectDownloadLink, getFileIdFromLink, generate_secure_link, verify_secure_link, send_mail_to_user, \
     send_link_to_owner_and_responsible_users, generate_document_link, verify_secure_id, document_progress_chart, \
     get_users_without_agreements, send_mail_to_multiple_user, get_embed_url_sharepoint, generate_preview_link, \
-    is_from_google, get_sharepoint_url
+    is_from_google, get_sharepoint_url, fix_sharepoint_download_url
 from django.http import HttpResponse
 
 from ..users.models import User
@@ -68,17 +63,15 @@ class MDFDocumentView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Getting doc_id from GET parameters
-        #doc_url = self.request.GET.get('doc_url')
-        en_doc_id = self.request.GET.get('doc_id')
+        # Getting doc_id from request session
+        enc_doc_id = self.request.session.get('selected_doc_id')
+
         category = None
 
-        #if doc_url is None:
-        #    raise Http404("Document URL not provided.")
-        if en_doc_id is None:
+        if enc_doc_id is None:
             raise Http404("Document URL not provided.")
         # check if document exists
-        doc_id = verify_secure_id(en_doc_id)
+        doc_id = verify_secure_id(enc_doc_id)
         try:
             #document = Document.objects.get(doc_url=doc_url)
             document = Document.objects.get(doc_id=doc_id)
@@ -88,14 +81,16 @@ class MDFDocumentView(LoginRequiredMixin, TemplateView):
             raise Http404("The document was not found or you do not have access to it.")
         is_accepted = DocumentAgreement.objects.filter(document=document, user=self.request.user).exists()
         timestamp = now().timestamp()
+        context['document'] = document
         context['is_from_google'] = is_from_google(document)
         context['doc_url_shp'] = get_sharepoint_url(document)
         context['document_url'] = generate_preview_link(document.doc_url) + f"?cache-bust={timestamp}"  # Embed url to document in Google Drive
-        print(f"Doc_url: {document.doc_url}")
+        print(f"Doc_url: {get_sharepoint_url(document)}")
         context['category'] = category
         context['accepted'] = is_accepted
         #context['embed_url'] = get_embed_url_sharepoint(document) # Sharepoint embed url
         context['file_url'] = getDirectDownloadLink(getFileIdFromLink(document.doc_url))
+        context['file_url_sharepoint'] = fix_sharepoint_download_url(document)
         #print(f"embed Doc_url: {get_embed_url_sharepoint(document)}")
         self.doc_time = datetime.now()
         return context
@@ -107,10 +102,13 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
     template_name = 'document_stats_page.html'
     document = None
     def get_context_data(self, **kwargs):
-        doc_id = self.request.GET.get('doc_id')
-        dec_id = verify_secure_link(doc_id) # Decrypted document id (doc_id)
+        #doc_id = self.request.GET.get('doc_id')
+        enc_doc_id = self.request.session.get('selected_doc_id')
+        if enc_doc_id is None:
+            raise Http404("Document URL not provided.")
+        doc_id = verify_secure_link(enc_doc_id) # Decrypted document id (doc_id)
 
-        document = get_object_or_404(Document, doc_id=dec_id)
+        document = get_object_or_404(Document, doc_id=doc_id)
         self.document = document
         # groups = document.groups.all()
         is_uploaded = self.document.is_uploaded
@@ -330,6 +328,37 @@ class MDFDocumentsOverview(LoginRequiredMixin, View):
         return render(request, self.template_name, context=context)
 
 
+def open_document_base_page(request, enc_doc_id):
+    """
+    Function saves value enc_doc_id to request.session and redirects to mdf:document_page template
+    :param request:
+    :param enc_doc_id: encrypted document id (doc_id)
+    :return:
+    """
+    request.session['selected_doc_id'] = enc_doc_id
+    return redirect('mdf:document_page')  # Redirect to a page document_page
+
+def open_document_stats(request, enc_doc_id):
+    """
+    Function saves value enc_doc_id to request.session and redirects to mdf:document_stats template
+    :param request:
+    :param enc_doc_id: encrypted document id (doc_id)
+    :return:
+    """
+    request.session['selected_doc_id'] = enc_doc_id
+    return redirect('mdf:document_stats')  # Redirect to a page document_page
+
+def open_document_user_detail(request, user_id):
+    """
+    Function saves value enc_doc_id to request.session and redirects to mdf:document_stats template
+    :param request:
+    :param user_id: user id (zf_id)
+    :return:
+    """
+    request.session['selected_user_id'] = user_id
+    return redirect('mdf:user_stats')  # Redirect to a page document_page
+
+
 class MDFDocumentsAdding(LoginRequiredMixin, FormView):
     """
     View for owners to add a document to database and add information. After adding a groups, program will choose certain users and will send them an email - this will be added later.
@@ -478,7 +507,8 @@ class MDFDocumentsUserDetailView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        user_id = self.request.GET.get('user_id')
+        #user_id = self.request.GET.get('user_id')
+        user_id = self.request.session.get('selected_user_id')
         if user_id is None:
             raise Http404("User id not provided.")
         # Verifying that a document exists
