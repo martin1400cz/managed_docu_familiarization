@@ -200,14 +200,81 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 
-class MDF_admin_document_adding(LoginRequiredMixin, TemplateView):
+class MDF_admin_document_add(LoginRequiredMixin, TemplateView):
     """
     View for admin to search a document and generate link for owner
     v0.1 - This is demo version - without using emails, just display the link!
     v0.2 - Advanced version - displays the link + sends the link to the owner.
     """
 
-    template_name = 'document_admin_adding_document_page.html'
+    template_name = 'document_admin_adding_page.html'
+    generated_link = None   # link for user, contains document url
+    document = None
+
+    def dispatch(self, request, *args, **kwargs):
+        if not user_is_admin(request.user):
+            return HttpResponseForbidden("You do not have permission to view this page.")
+            #raise PermissionDenied
+        doc_id = self.request.session.get('selected_doc_id_update')
+
+        if doc_id is not None:
+            self.document = Document.objects.get(doc_id=doc_id)
+            #raise Http404("Document not find!")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        generated_link = None
+        action = self.request.GET.get('a')
+        print(f"Action: {action}")
+        if action == 'set':
+            print("Setting....")
+            documents = Document.get_latest_documents()
+            context['documents'] = documents
+            context['is_updating'] = True
+        context['form'] = FileSearchForm()
+
+        context['generated_link'] =  generated_link
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = FileSearchForm(request.POST)
+        generated_link = None
+
+        if form.is_valid():
+            doc_owner = form.cleaned_data['owner']
+            document = Document.objects.create(
+                doc_name=form.cleaned_data['document_name'],
+                doc_url=form.cleaned_data['document_path'],
+                category='1',
+                owner=doc_owner
+            )
+            responsible_users = form.cleaned_data.get('responsible_users', [])
+            if responsible_users:
+                document.responsible_users.set(responsible_users if isinstance(responsible_users, list) else list(responsible_users))
+                document.save()
+
+            doc_id = document.doc_id
+            encrypted_doc_id = generate_secure_link(doc_id)
+            generated_link = request.build_absolute_uri(
+                reverse('mdf:publishing_page') + f"?doc_id={encrypted_doc_id}"
+            )
+            send_link_to_owner_and_responsible_users(request, document, generated_link)
+            success_url = '/mdf/mdfdocuments/admin-file-search/'
+            return redirect(success_url)
+
+
+        context = self.get_context_data()
+        context['form'] = form
+        context['generated_link'] = generated_link
+        return self.render_to_response(context)
+
+class MDF_admin_document_list(LoginRequiredMixin, TemplateView):
+    """
+    View for admin to search a document, add document or update/delete document
+    """
+
+    template_name = 'document_admin_view_page.html'
     generated_link = None   # link for user, contains document url
 
     def dispatch(self, request, *args, **kwargs):
@@ -217,11 +284,16 @@ class MDF_admin_document_adding(LoginRequiredMixin, TemplateView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        generated_link = None
         context = super().get_context_data(**kwargs)
-        context['form'] = FileSearchForm()
-
-        context['generated_link'] =  generated_link
+        documents = Document.get_latest_documents()
+        documents_list = []
+        for document in documents:
+            documents_list.append({
+                'document': document,
+                'encrypted_id': generate_secure_link(document.doc_id),
+            })
+        context['documents_list'] = documents_list
+        context['is_updating'] = True
         return context
 
     def post(self, request, *args, **kwargs):
@@ -357,6 +429,16 @@ def open_document_user_detail(request, user_id):
     """
     request.session['selected_user_id'] = user_id
     return redirect('mdf:user_stats')  # Redirect to a page document_page
+
+def open_admin_file_search(request, doc_id):
+    """
+    Function saves value doc_id to request.session and redirects to mdf:admin_add_document_page template
+    :param request:
+    :param doc_id: document id (doc_id)
+    :return:
+    """
+    request.session['selected_doc_id_update'] = doc_id
+    return redirect('mdf:admin_add_document_page')  # Redirect to a page document_page
 
 
 class MDFDocumentsAdding(LoginRequiredMixin, FormView):

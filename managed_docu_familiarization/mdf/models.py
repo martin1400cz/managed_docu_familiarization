@@ -48,6 +48,52 @@ class Document(models.Model):
     deadline = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='uploaded')
     groups = models.ManyToManyField(Group, related_name='document_groups', blank=True, null=True)
+    doc_ver = models.PositiveIntegerField(default=1)  # verze dokumentu
+    previous_version = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
+
+    def save_new_version(self, new_doc_name, new_doc_url, new_release_date):
+        """
+        Creates a new version of document
+        """
+        new_version = Document.objects.create(
+            doc_name=new_doc_name,
+            doc_url=new_doc_url,
+            groups=self.groups.all(),
+            owner=self.owner,
+            release_date=new_release_date,
+            doc_ver=self.doc_ver + 1,
+            previous_version=self
+        )
+        return new_version
+
+    def get_all_versions(self):
+        """
+        Returns a list of all versions of a document.
+        """
+        versions = []
+        doc = self
+        while doc:
+            versions.append(doc)
+            doc = doc.previous_version
+        return versions[::-1]  # Returns versions from oldest to newest
+
+    def get_latest_version(self):
+        """
+        Returns the latest version of the document.
+        """
+        doc = self
+        while Document.objects.filter(previous_version=doc).exists():
+            doc = Document.objects.get(previous_version=doc)
+        return doc
+
+    @classmethod
+    def get_latest_documents(cls):
+        """
+        Returns latest version documents
+        """
+        return cls.objects.filter(previous_version__isnull=True) | cls.objects.exclude(
+            doc_id__in=cls.objects.filter(previous_version__isnull=False).values_list('previous_version', flat=True)
+        )
 
     @property
     def is_uploaded(self):

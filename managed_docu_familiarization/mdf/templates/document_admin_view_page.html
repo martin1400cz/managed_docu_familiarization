@@ -1,0 +1,86 @@
+{% extends 'layout/_grid.html' %}
+{% load static i18n user_tags %}
+
+{% block title %}- MDF base template for users {% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
+    <style>
+        /* Zajištění centrování celé stránky */
+        .centered-content {
+            min-height: 100vh; /* Výška stránky */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Vertikální zarovnání */
+            align-items: center; /* Horizontální zarovnání */
+            text-align: center; /* Text na střed */
+        }
+
+        /* Formulář a obsah */
+        .container {
+            display: flex;
+            flex-direction: column; /* Vertikální uspořádání formuláře */
+            gap: 20px; /* Odstup mezi prvky formuláře */
+            max-width: 70%; /* Maximální šířka formuláře */
+            /*width: 100%;*/ /* Přizpůsobení šířce stránky */
+        }
+    </style>
+{% endblock css %}
+
+{% block javascript %}
+{% endblock javascript %}
+
+
+{% block inline_javascript %}
+{% endblock inline_javascript %}
+
+{% block content %}
+<div class="container mt-5 centered-content">
+  <h1>Document Selection for Sending</h1>
+  <div>
+    <ul class="nav">
+            <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
+            <li class="nav-item">
+              <a href="{% url 'mdf:admin_add_document_page' %}" class="btn btn-primary mb-3">➕ Add new document</a>
+            </li>
+    </ul>
+  </div>
+      <div>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+                <th>Document name</th>
+                <th>Link</th>
+                <th>Owner</th>
+                <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for document in documents_list %}
+            <tr>
+                <td>{{ document.document.doc_name }}</td>
+                <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:open_document_view' document.encrypted_id %}">Open</a></td>
+                <td>{{ document.document.owner }}</td>
+                <td>
+                    <a href="{% url 'mdf:open_admin_add_document_page' document.document.doc_id %}" class="btn btn-warning btn-sm">✏️ Update</a>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ document.document.doc_id }})">🗑️ Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+</div>
+<script>
+    // JavaScript to set document URL to text field
+    function setDocumentUrl(url) {
+      document.querySelector('[name="document_path"]').value = url;
+    }
+    document.addEventListener('DOMContentLoaded', function(){
+      const responsibleUserSelectElement = document.getElementById("id_users");
+      if (contactUserSelectElement) {
+        SelectFilter.init("id_users", "Responsible_users", 0);
+      }
+    });
+</script>
+{% endblock content %}
