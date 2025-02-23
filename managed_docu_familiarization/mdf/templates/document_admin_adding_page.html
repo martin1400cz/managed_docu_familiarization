@@ -39,7 +39,7 @@
   <h1>Document Selection for Sending</h1>
   <div>
   </div>
-      <form class="" method="post" action="{% url 'mdf:admin_file_search_page' %}">
+      <form class="" method="post" action="{% url 'mdf:admin_add_document_page' %}">
         {% csrf_token %}
         {{ form.media }}
         <div class="form-row form-group mb-4 pb-4">
@@ -66,6 +66,8 @@
             {{ form.responsible_users }}
             </div>
         </div>
+        <input type="hidden" name="document" value="{{ document }}">
+        <input type="hidden" name="action" value="{{ action }}">
         <button type="submit" class="btn btn-success mt-3">Add new document</button>
       </form>
 

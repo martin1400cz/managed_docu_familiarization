@@ -5,7 +5,7 @@
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
-    <style>
+    <!--<style>
         /* Zajištění centrování celé stránky */
         .centered-content {
             min-height: 100vh; /* Výška stránky */
@@ -24,7 +24,7 @@
             max-width: 70%; /* Maximální šířka formuláře */
             /*width: 100%;*/ /* Přizpůsobení šířce stránky */
         }
-    </style>
+    </style>-->
 {% endblock css %}
 
 {% block javascript %}
@@ -32,41 +32,60 @@
 
 
 {% block inline_javascript %}
+  {% include 'part/datatables.html' with datatables_element_id='mdf_document_overview_table' search_panes_columns='[0,1,2,3]' fixed_columns='1' %}
 {% endblock inline_javascript %}
 
 {% block content %}
 <div class="container mt-5 centered-content">
-  <h1>Document Selection for Sending</h1>
+  <h1>Document admin view</h1>
   <div>
     <ul class="nav">
-            <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
             <li class="nav-item">
-              <a href="{% url 'mdf:admin_add_document_page' %}" class="btn btn-primary mb-3">➕ Add new document</a>
+              <a href="{% url 'mdf:admin_add_document_page' %}?action={{ action_add }}" class="btn btn-primary mb-3">Add new document</a>
             </li>
     </ul>
   </div>
       <div>
-        <table class="table table-bordered">
+        <table aria-describedby="Documents overview"
+               id="mdf_document_overview_table"
+               class="table overview-datatable">
           <thead>
             <tr>
                 <th>Document name</th>
+                <th>Release Date</th>
+                <th>Version</th>
+                <th>Category</th>
                 <th>Link</th>
                 <th>Owner</th>
+                <th>Show document</th>
+                <th>Show stats</th>
                 <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {% for document in documents_list %}
-            <tr>
-                <td>{{ document.document.doc_name }}</td>
-                <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:open_document_view' document.encrypted_id %}">Open</a></td>
-                <td>{{ document.document.owner }}</td>
-                <td>
-                    <a href="{% url 'mdf:open_admin_add_document_page' document.document.doc_id %}" class="btn btn-warning btn-sm">✏️ Update</a>
-                    <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ document.document.doc_id }})">🗑️ Delete</button>
-                </td>
-            </tr>
-            {% endfor %}
+                <tr>
+                    <td>{{ document.document.doc_name }}</td>
+                    <td>{{ document.document.release_date|date:"d.m.Y" }}</td>
+                    <td>{{ document.document.doc_ver }}</td>
+                    <td>{{ document.document_category }}</td>
+                    <td>{{ document.document.status }}</td>
+                    <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
+                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:open_document_view' document.encrypted_id %}"> Show</a></td>
+                    <td><a href="{% url 'mdf:open_document_stats' document.encrypted_id %}">Show document details</a></td>
+                    <td>
+                      <div>
+                        <a href="{% url 'mdf:open_admin_add_document_page' document.document.doc_id %}?action={{ action_update }}" class="btn btn-warning btn-sm">✏️ Update</a>
+                        <button class="btn btn-danger btn-sm" onclick="confirmDelete({{ document.document.doc_id }})">🗑️ Delete</button>
+                      </div>
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No documents found.</td>
+                </tr>
+                {% endfor %}
           </tbody>
         </table>
       </div>

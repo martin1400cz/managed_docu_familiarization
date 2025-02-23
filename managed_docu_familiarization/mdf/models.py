@@ -2,6 +2,7 @@ import uuid
 
 import django.contrib.auth.models
 from django.db import models
+from django.db.models import Subquery, OuterRef, Max, Exists
 from django.utils.translation import gettext_lazy as _
 
 from managed_docu_familiarization.users.models import User as User
@@ -9,7 +10,9 @@ from managed_docu_familiarization.users.models import Group as Group
 
 
 class DocumentsManager(models.Manager):
-
+    """
+    A custom manager for the document model.
+    """
     def get_queryset(self):
         related_fields = [
             ]
@@ -20,12 +23,14 @@ class DocumentsManager(models.Manager):
     def for_user(self, user):
         return self.filter(owner=user)
 
+# Category formats
 FORMAT_CHOICES = (
     (1, 'Private documents'),
     (2, 'Public documents'),
     (3, 'Documents for certain groups'),
 )
 
+# Document's status
 STATUS_CHOICES = (
     ('uploaded', 'Uploaded'),  # Document has been uploaded by admin
     ('pending', 'Pending'),    # Document has been published by owner
@@ -35,7 +40,7 @@ STATUS_CHOICES = (
 
 class Document(models.Model):
     """
-
+    Document model - represents a document using a reference to it
     """
     doc_id = models.AutoField(primary_key=True)
     doc_name = models.CharField(max_length=255)
@@ -47,23 +52,25 @@ class Document(models.Model):
     contact_users = models.ManyToManyField(User, related_name='document_contact_users', null=True, blank=True)
     deadline = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='uploaded')
-    groups = models.ManyToManyField(Group, related_name='document_groups', blank=True, null=True)
-    doc_ver = models.PositiveIntegerField(default=1)  # verze dokumentu
-    previous_version = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
+    groups = models.ManyToManyField(Group, related_name='document_groups', blank=True, null=True) # groups of target users
+    doc_ver = models.PositiveIntegerField(default=1)  # document version
+    previous_version = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL) # instance of previous document
 
-    def save_new_version(self, new_doc_name, new_doc_url, new_release_date):
+    def save_new_version(self, new_doc_name, new_doc_url, new_owner, responsible_users):
         """
         Creates a new version of document
         """
         new_version = Document.objects.create(
             doc_name=new_doc_name,
             doc_url=new_doc_url,
-            groups=self.groups.all(),
-            owner=self.owner,
-            release_date=new_release_date,
+            owner=new_owner,
+            category=self.category,
             doc_ver=self.doc_ver + 1,
             previous_version=self
         )
+
+        new_version.groups.set(self.groups.all())
+        new_version.responsible_users.set(responsible_users)
         return new_version
 
     def get_all_versions(self):
@@ -91,8 +98,8 @@ class Document(models.Model):
         """
         Returns latest version documents
         """
-        return cls.objects.filter(previous_version__isnull=True) | cls.objects.exclude(
-            doc_id__in=cls.objects.filter(previous_version__isnull=False).values_list('previous_version', flat=True)
+        return cls.objects.filter(
+            ~Exists(cls.objects.filter(previous_version=OuterRef('pk')))
         )
 
     @property

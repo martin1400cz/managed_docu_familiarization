@@ -21,19 +21,7 @@
         <!-- Navigation bar -->
         <div class="navbar navbar-expand-lg navbar-light bg-light">
           <ul class="nav">
-            {% if is_admin %}
-            <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
-            <li class="nav-item">
-              <a class="nav-link" href="?tab=user">Documents for you</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="?tab=author">My documents</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="?tab=admin">All documents</a>
-            </li>
-
-            {% elif is_author %}
+            {% if is_author %}
             <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
             <li class="nav-item">
               <a class="nav-link" href="?tab=user">Documents for you</a>
@@ -46,9 +34,7 @@
         </div>
 
         <!-- Tables -->
-        {% if active_tab == 'admin' and is_admin %}
-        <h2>All documents</h2>
-        {% elif active_tab == 'author' and is_author %}
+        {% if active_tab == 'author' and is_author %}
         <h2>My documents</h2>
         {% else %}
         <h2>Documents for you</h2>
@@ -56,38 +42,9 @@
         <table aria-describedby="Overview of the Employees"
                id="mdf_document_overview_table"
                class="table overview-datatable tab_user">
-        <!-- Admin table -->
-        {% if active_tab == 'admin' and is_admin %}
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Release Date</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                    <th>Author</th>
-                    <th>Show document</th>
-                    <th>Show stats</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for document in documents_list %}
-                <tr>
-                    <td>{{ document.document.doc_name }}</td>
-                    <td>{{ document.document.release_date|date:"d.m.Y" }}</td>
-                    <td>{{ document.document_category }}</td>
-                    <td>{{ document.document.status }}</td>
-                    <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
-                    <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:open_document_view' document.encrypted_id %}"> Show</a></td>
-                    <td><a href="{% url 'mdf:open_document_stats' document.encrypted_id %}">Show document details</a></td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5">No documents found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-          <!-- Author table -->
-        {% elif active_tab == 'author' and is_author %}
+        <!-- Author table -->
+
+        {% if active_tab == 'author' and is_author %}
             <thead>
 
                 <tr>

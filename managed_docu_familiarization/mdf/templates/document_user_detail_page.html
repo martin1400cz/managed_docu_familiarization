@@ -11,7 +11,7 @@
 
 
 {% block inline_javascript %}
-  {% include 'part/datatables.html' with datatables_element_id='mdf_document_stats_table' search_panes_columns='[1]' fixed_columns='1' %}
+  {% include 'part/datatables.html' with datatables_element_id='mdf_document_user_overview_table' search_panes_columns='[1]' fixed_columns='1' %}
 {% endblock inline_javascript %}
 
 {% block content %}
@@ -19,7 +19,7 @@
       <h2 class="mb-4">User detail View - {{user.zf_id}}</h2>
 
       <table aria-describedby="Overview of the Documents for user"
-               id="mdf_document_overview_table"
+               id="mdf_document_user_overview_table"
                class="table overview-datatable tab_user">
             <thead>
                 <tr>

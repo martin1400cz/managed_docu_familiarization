@@ -67,15 +67,11 @@
 
         {% block modal %}{% endblock modal %}
 
-    <div class="container">
+    <footer class="zf-footer">
+      {% block footer %}
 
-        <footer class="py-3 my-4">
-          {% block footer %}
-
-          {% endblock footer %}
-        </footer>
-
-    </div>
+      {% endblock footer %}
+    </footer>
     {% block inline_javascript %}
       {# Script tags with only code, no src (defer by default) #}
     {% endblock inline_javascript %}
