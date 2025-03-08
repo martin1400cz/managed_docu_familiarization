@@ -1,18 +1,11 @@
 import logging
-import os
 import json
-from django.core.exceptions import PermissionDenied
-from django.db.models import Subquery
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.timezone import now
 from datetime import timedelta, datetime, time
-
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponseForbidden, JsonResponse
-from django.utils.decorators import method_decorator
 from django.views.generic import View, TemplateView, FormView, DetailView
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth.models import Group
@@ -30,8 +23,6 @@ from django.http import HttpResponse
 
 from ..users.models import User
 
-
-#import requests
 
 class MDFDocumentView(LoginRequiredMixin, TemplateView):
     """
@@ -109,6 +100,7 @@ class MDFDocumentStatsView(LoginRequiredMixin, TemplateView):
         enc_doc_id = self.request.session.get('selected_doc_id')
         if enc_doc_id is None:
             raise Http404("Document URL not provided.")
+
         doc_id = verify_secure_link(enc_doc_id) # Decrypted document id (doc_id)
 
         document = get_object_or_404(Document, doc_id=doc_id)
@@ -244,10 +236,18 @@ class MDF_admin_document_add(LoginRequiredMixin, FormView):
         return initial
 
     def get_context_data(self, **kwargs):
+        """
+
+        :param kwargs:
+        :return:
+        """
         context = super().get_context_data(**kwargs)
         generated_link = None
         context['action'] = self.action
-        context['document'] = generate_secure_id(self.document.doc_id)
+        self.request.session['action'] = self.action
+        if self.action == 'update' and self.document is not None:
+            context['document'] = generate_secure_id(self.document.doc_id)
+
         context['generated_link'] = generated_link
         return context
 
@@ -256,13 +256,9 @@ class MDF_admin_document_add(LoginRequiredMixin, FormView):
         generated_link = None
 
         if form.is_valid():
-            get_action = request.POST.get('action')
-            get_document = request.POST.get('document')
-            document = Document.objects.get(doc_id=verify_secure_id(get_document))
-            if document is None:
-                return HttpResponse(("Something went wrong..."))
+            #get_action = request.POST.get('action')
+            get_action = self.request.session.get('action')
             print(f"action is {get_action}")
-            print(f"document is {document.doc_id}")
             doc_name = form.cleaned_data['document_name']
             doc_url = form.cleaned_data['document_path']
             doc_owner = form.cleaned_data['owner']
@@ -282,7 +278,11 @@ class MDF_admin_document_add(LoginRequiredMixin, FormView):
                         responsible_users if isinstance(responsible_users, list) else list(responsible_users))
                 new_document.save()
 
-            elif get_action == 'update' and document is not None:
+            elif get_action == 'update':
+                get_document = request.POST.get('document')
+                document = Document.objects.get(doc_id=verify_secure_id(get_document))
+                if document is None:
+                    return HttpResponse("Something went wrong...")
                 print("Updating document...")
                 new_document = Document.save_new_version(document, doc_name, doc_url, doc_owner, responsible_users)
                 if responsible_users:
@@ -291,12 +291,15 @@ class MDF_admin_document_add(LoginRequiredMixin, FormView):
                 new_document.save()
 
             if new_document is None:
-                return HttpResponse(("Something went wrong..."))
+                return HttpResponse("Something went wrong...")
+
+            # Creating a link for an owner
             doc_id = new_document.doc_id
-            encrypted_doc_id = generate_secure_link(doc_id)
+            encrypted_doc_id = generate_secure_link(doc_id) #document id encryption
             generated_link = request.build_absolute_uri(
                 reverse('mdf:publishing_page') + f"?doc_id={encrypted_doc_id}"
             )
+            # Sending an email with link to the owner
             send_link_to_owner_and_responsible_users(request, new_document, generated_link)
             success_url = 'mdf:admin_file_search_page'
             return redirect(success_url)

@@ -52,7 +52,6 @@
                     <th>Release Date</th>
                     <th>Category</th>
                     <th>Status</th>
-                    <th>Author</th>
                     <th>Show document</th>
                     <th>Show stats</th>
                 </tr>
@@ -64,7 +63,6 @@
                     <td>{{ document.document.release_date|date:"d.m.Y" }}</td>
                     <td>{{ document.document_category }}</td>
                     <td>{{ document.document.status }}</td>
-                    <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
                     <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:open_document_view' document.encrypted_id %}"> Show</a></td>
                     <td>
                       {% if document.document.owner == request.user %}

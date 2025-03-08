@@ -32,6 +32,7 @@ urlpatterns = [
     path('mdfdocuments/admin-file-search/', MDF_admin_document_list.as_view(), name='admin_file_search_page'),
     path('mdfdocuments/admin-file-search/open/<str:doc_id>', open_admin_add_document_page,name='open_admin_add_document_page'),
     path('mdfdocuments/admin-file-search/open/<str:doc_id><str:action>', open_admin_add_document_page, name='open_admin_add_document_page'),
+    path('mdfdocuments/admin-file-search/open/<str:action>', open_admin_add_document_page, name='open_admin_add_document_page'),
     path('mdfdocuments/admin-add-document/', MDF_admin_document_add.as_view(), name='admin_add_document_page'),
     path('mdfdocuments/admin-add-document/<str:action>', MDF_admin_document_add.as_view(), name='admin_add_document_page'),
     path('mdfdocuments/admin-file-search/send-link/<str:file_name>/', MDF_admin_document_add.as_view(), name='send_link_to_owner'),
