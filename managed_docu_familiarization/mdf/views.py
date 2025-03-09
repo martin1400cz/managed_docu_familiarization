@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib.auth.models import Group
 
 from managed_docu_familiarization.static.Strings import string_constants
-from managed_docu_familiarization.mdf.forms import DocumentForm
+from managed_docu_familiarization.mdf.forms import DocumentForm, DocumentApprovalForm
 from managed_docu_familiarization.mdf.forms import FileSearchForm
 from managed_docu_familiarization.mdf.models import Document, DocumentAgreement
 from .utils import get_documents_by_category, send_agreement, sendLinksToUsers, user_is_admin, \
@@ -23,6 +23,178 @@ from django.http import HttpResponse
 
 from ..users.models import User
 
+
+
+
+def open_document_base_page(request, enc_doc_id):
+    """
+    Function saves value enc_doc_id to request.session and redirects to mdf:document_page template
+    :param request:
+    :param enc_doc_id: encrypted document id (doc_id)
+    :return:
+    """
+    request.session['selected_doc_id'] = enc_doc_id
+    return redirect('mdf:document_page')  # Redirect to a page document_page
+
+def open_document_stats(request, enc_doc_id):
+    """
+    Function saves value enc_doc_id to request.session and redirects to mdf:document_stats template
+    :param request:
+    :param enc_doc_id: encrypted document id (doc_id)
+    :return:
+    """
+    request.session['selected_doc_id'] = enc_doc_id
+    return redirect('mdf:document_stats')  # Redirect to a page document_page
+
+def open_document_user_detail(request, user_id):
+    """
+    Function saves value enc_doc_id to request.session and redirects to mdf:document_stats template
+    :param request:
+    :param user_id: user id (zf_id)
+    :return:
+    """
+    request.session['selected_user_id'] = user_id
+    return redirect('mdf:user_stats')  # Redirect to a page document_page
+
+def open_admin_add_document_page(request, doc_id):
+    """
+    Function saves value doc_id to request.session and redirects to mdf:admin_add_document_page template
+    :param request:
+    :param doc_id: document id (doc_id)
+    :return:
+    """
+    request.session['selected_doc_id_update'] = doc_id
+    action = request.GET.get('action')
+    base_url = reverse('mdf:admin_add_document_page',kwargs={'action': action})
+
+    redirect_url = f"{base_url}?action={action}"
+    return redirect(redirect_url)     # Redirect to a page document_page
+
+def open_document_approval(request, enc_doc_id):
+    """
+    Function saves value enc_doc_id to request.session and redirects to mdf:document_page template
+    :param request:
+    :param enc_doc_id: encrypted document id (doc_id)
+    :return:
+    """
+    request.session['selected_doc_id'] = enc_doc_id
+    return redirect('mdf:document_approval')  # Redirect to a page document_page
+
+
+class MDFDocumentApprovalView(LoginRequiredMixin, FormView):
+    """
+
+    """
+    template_name = 'document_approval_page.html'
+
+    form_class = DocumentApprovalForm
+    document = None
+    doc_id = None
+    generated_link = None
+    is_author = None
+    is_approver = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.is_author = request.user.groups.filter(name="MDF_authors").exists()
+        self.is_approver = request.user.groups.filter(name="MDF_approvers").exists()
+        if (not self.is_author) or (not self.is_approver):
+            return HttpResponseForbidden("You do not have permission to view this page!")
+        get_doc_id = self.request.GET.get('doc_id')
+        if get_doc_id is None:
+            enc_doc_id = self.request.session.get('selected_doc_id')
+        else:
+            enc_doc_id = get_doc_id
+
+        if enc_doc_id is None:
+            raise Http404("Document URL not provided.")
+        # check if document exists
+        doc_id = verify_secure_id(enc_doc_id)
+        self.doc_id = doc_id
+        try:
+            self.document = Document.objects.get(doc_id=doc_id)
+        except Document.DoesNotExist:
+            return HttpResponseForbidden("Document not found!")
+        self.generated_link = self.request.build_absolute_uri(
+            reverse('mdf:document_page') + f"?doc_id={generate_secure_link(self.document.doc_id)}"
+        )
+        # self.form_class = DocumentForm(request.POST, document_link=generated_link)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_initial(self):
+        # Initializes the form with the `doc_url` and `doc_name` values from the URL parameters
+
+        initial = super().get_initial()
+        # self.doc_url = self.request.GET.get('doc_url', '')
+        # self.document = Document.objects.get(doc_id=decrypted_id)
+        # self.document = get_object_or_404(Document, doc_id=decrypted_id)
+        # if self.document is None:
+        # return HttpResponseForbidden("Document not found!")
+
+        initial['document_url'] = self.document.doc_url
+
+        initial['document_name'] = self.document.doc_name
+        # initial['message'] = string_constants.email_message_for_users
+        return initial
+
+    def get_context_data(self, **kwargs):
+        # print("KWARGS:", kwargs)  # Debugging
+        context = super().get_context_data(**kwargs)
+        context['document'] = self.document
+        context['document_category'] = Document.get_document_category_text(self.document)
+        context['is_waiting_owner'] = self.document.is_waiting_owner
+        context['is_owner'] = self.document.owner == self.request.user
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = DocumentApprovalForm(request.POST)
+        generated_link = None
+
+        if form.is_valid():
+            print("Form is valid")
+            doc_id = request.POST.get('document_id')
+            #is_waiting_owner = self.request.session.get('is_waiting_owner')
+            try:
+                document = Document.objects.get(doc_id=doc_id)
+            except Document.DoesNotExist:
+                return HttpResponseForbidden("Document not found!")
+            if document is None:
+                return HttpResponseForbidden("Document not found!")
+            if document.is_waiting_owner:
+                print("Waiting owner")
+                responsible_users = form.cleaned_data.get('responsible_users', [])
+                if responsible_users:
+                    document.responsible_users.set(
+                        responsible_users if isinstance(responsible_users, list) else list(responsible_users))
+                document.status = 'waiting'
+
+                if request.user in set(responsible_users):
+                    document.approved_by_users.add(request.user)
+                document.save()
+            else:
+                print("Waiting")
+                if request.user in set(Document.get_responsible_users(document)):
+                    document.approved_by_users.add(request.user)
+                document.save()
+
+            responsible_users = sorted(document.responsible_users.all(), key=lambda user: user.zf_id)
+            approved_by_users = sorted(document.approved_by_users.all(), key=lambda user: user.zf_id)
+            if responsible_users == approved_by_users:
+                encrypted_doc_id = generate_secure_link(document.doc_id)
+                generated_link = request.build_absolute_uri(
+                    reverse('mdf:publishing_page') + f"?doc_id={encrypted_doc_id}"
+                )
+                # Sending an email with link to the owner
+                send_link_to_owner_and_responsible_users(request, document, generated_link)
+                document.status = 'uploaded'
+                document.save()
+
+
+            success_url = 'mdf:base_page'
+            return redirect(success_url)
+        print("Something went wrong")
+        context = self.get_context_data()
+        context['form'] = form
+        return self.render_to_response(context)
 
 class MDFDocumentView(LoginRequiredMixin, TemplateView):
     """
@@ -38,11 +210,18 @@ class MDFDocumentView(LoginRequiredMixin, TemplateView):
         self.doc_time = datetime.now()
 
     def post(self, request, *args, **kwargs):
-        doc_id = self.request.GET.get('doc_id')
-        if doc_id is None:
-            raise Http404("Document URL not provided")
+        get_doc_id = self.request.GET.get('doc_id')
+        if get_doc_id is None:
+            enc_doc_id = self.request.session.get('selected_doc_id')
+        else:
+            enc_doc_id = get_doc_id
+
+        if enc_doc_id is None:
+            raise Http404("Document URL not provided.")
+        # check if document exists
+        doc_id = verify_secure_id(enc_doc_id)
         user = self.request.user
-        document = Document.objects.get(doc_id=verify_secure_id(doc_id))
+        document = Document.objects.get(doc_id=doc_id)
         if 'consent' in request.POST:
             time_spent = int(request.POST.get('consent', 0))
             message = "Thank you for your consent."
@@ -262,6 +441,7 @@ class MDF_admin_document_add(LoginRequiredMixin, FormView):
             doc_name = form.cleaned_data['document_name']
             doc_url = form.cleaned_data['document_path']
             doc_owner = form.cleaned_data['owner']
+            doc_category = form.cleaned_data['document_category']
             new_document = None
             responsible_users = form.cleaned_data.get('responsible_users', [])
             print("Valid form...")
@@ -271,11 +451,10 @@ class MDF_admin_document_add(LoginRequiredMixin, FormView):
                     doc_name=doc_name,
                     doc_url=doc_url,
                     category='1',
-                    owner=doc_owner
+                    owner=doc_owner,
+                    doc_category=doc_category,
                 )
-                if responsible_users:
-                    new_document.responsible_users.set(
-                        responsible_users if isinstance(responsible_users, list) else list(responsible_users))
+                new_document.status = 'waiting_owner'
                 new_document.save()
 
             elif get_action == 'update':
@@ -285,9 +464,7 @@ class MDF_admin_document_add(LoginRequiredMixin, FormView):
                     return HttpResponse("Something went wrong...")
                 print("Updating document...")
                 new_document = Document.save_new_version(document, doc_name, doc_url, doc_owner, responsible_users)
-                if responsible_users:
-                    new_document.responsible_users.set(
-                        responsible_users if isinstance(responsible_users, list) else list(responsible_users))
+                new_document.status = 'waiting_owner'
                 new_document.save()
 
             if new_document is None:
@@ -332,6 +509,7 @@ class MDF_admin_document_list(LoginRequiredMixin, TemplateView):
             documents_list.append({
                 'document': document,
                 'document_category': Document.get_category_text(document),
+                'document_status': Document.get_document_status_text(document),
                 'encrypted_id': generate_secure_link(document.doc_id),
             })
         context['documents_list'] = documents_list
@@ -352,20 +530,11 @@ class MDFDocumentsOverview(LoginRequiredMixin, View):
         tab = request.GET.get('tab', 'user')
         logger = logging.getLogger(__name__)
         logger.error(f"Tab: {tab}")
-        is_admin = request.user.groups.filter(name="MDF_admin").exists()
         is_author = request.user.groups.filter(name="MDF_authors").exists()
-        if tab == 'admin' and is_admin:
-            documents_list = []
-            logger.error("I am in admin")
-            documents = Document.get_latest_documents()
-            for document in documents:
-                documents_list.append({
-                    'document': document,
-                    'document_category': Document.get_category_text(document),
-                    'encrypted_id': generate_secure_link(document.doc_id)
-                })
-        elif tab == 'author' and is_author:
-            documents_list = []
+        is_approver = request.user.groups.filter(name="MDF_approvers").exists()
+        documents_list = []
+        if tab == 'author' and is_author:
+
             logger.error("I am in author")
             my_documents = Document.get_latest_documents().filter(owner=request.user)
             for document in my_documents:
@@ -374,8 +543,19 @@ class MDFDocumentsOverview(LoginRequiredMixin, View):
                     'document_category': Document.get_category_text(document),
                     'encrypted_id': generate_secure_link(document.doc_id)
                 })
+        elif tab == 'approver' and is_approver:
+            logger.error("I am in approver")
+            approving_documents = Document.get_latest_documents().filter(
+                (Q(responsible_users=request.user) & Q(status='waiting')) |
+                (Q(status='waiting_owner') & Q(owner=request.user))
+            ).distinct()
+            for document in approving_documents:
+                documents_list.append({
+                    'document': document,
+                    'document_category': Document.get_category_text(document),
+                    'encrypted_id': generate_secure_link(document.doc_id)
+                })
         else:
-            documents_list = []
             # document_filter = Document.objects.filter(groups__users=request.user, category=3).distinct()
             document_filter = Document.get_latest_documents().filter(
                 Q(groups__users=request.user),
@@ -393,69 +573,17 @@ class MDFDocumentsOverview(LoginRequiredMixin, View):
                     'encrypted_id': generate_secure_link(document.doc_id),
                     'agree_exists': consent_exists
                 })
-
-        # If request user is admin -> it should not open a basic view for user, however admin must see what other users do
-        # if is_admin:
-        #    #logger.error(f"Tab: {tab}")
-        #    if tab is 'user':
-        #        tab = 'admin'
-
-        # print(mdf_documents)
         context = {
             # 'mdf_documents': documents,
             # 'my_documents': my_documents,
             'documents_list': documents_list,
-            'is_admin': is_admin,
             'is_author': is_author,
+            'is_approver': is_approver,
             'active_tab': tab,
         }
 
         return render(request, self.template_name, context=context)
 
-
-def open_document_base_page(request, enc_doc_id):
-    """
-    Function saves value enc_doc_id to request.session and redirects to mdf:document_page template
-    :param request:
-    :param enc_doc_id: encrypted document id (doc_id)
-    :return:
-    """
-    request.session['selected_doc_id'] = enc_doc_id
-    return redirect('mdf:document_page')  # Redirect to a page document_page
-
-def open_document_stats(request, enc_doc_id):
-    """
-    Function saves value enc_doc_id to request.session and redirects to mdf:document_stats template
-    :param request:
-    :param enc_doc_id: encrypted document id (doc_id)
-    :return:
-    """
-    request.session['selected_doc_id'] = enc_doc_id
-    return redirect('mdf:document_stats')  # Redirect to a page document_page
-
-def open_document_user_detail(request, user_id):
-    """
-    Function saves value enc_doc_id to request.session and redirects to mdf:document_stats template
-    :param request:
-    :param user_id: user id (zf_id)
-    :return:
-    """
-    request.session['selected_user_id'] = user_id
-    return redirect('mdf:user_stats')  # Redirect to a page document_page
-
-def open_admin_add_document_page(request, doc_id):
-    """
-    Function saves value doc_id to request.session and redirects to mdf:admin_add_document_page template
-    :param request:
-    :param doc_id: document id (doc_id)
-    :return:
-    """
-    request.session['selected_doc_id_update'] = doc_id
-    action = request.GET.get('action')
-    base_url = reverse('mdf:admin_add_document_page',kwargs={'action': action})
-
-    redirect_url = f"{base_url}?action={action}"
-    return redirect(redirect_url)     # Redirect to a page document_page
 
 class MDFDocumentsAdding(LoginRequiredMixin, FormView):
     """
@@ -563,7 +691,7 @@ class MDFDocumentsAdding(LoginRequiredMixin, FormView):
             else:
                 logger.error("'allusers' group not found.")
 
-        # Document category 3
+        # Document category 2
         if doc_category == '2':
             document.status = 'processed'
 

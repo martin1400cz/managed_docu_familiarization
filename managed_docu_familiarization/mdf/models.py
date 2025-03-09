@@ -23,6 +23,14 @@ class DocumentsManager(models.Manager):
     def for_user(self, user):
         return self.filter(owner=user)
 
+
+DOCUMENT_CATEGORY_CHOICES = (
+    (1, "Standard"),
+    (2, "Guideline"),
+    (3, "Workflows"),
+    (4, "Manual"),
+)
+
 # Category formats
 FORMAT_CHOICES = (
     (1, 'Private documents'),
@@ -32,10 +40,12 @@ FORMAT_CHOICES = (
 
 # Document's status
 STATUS_CHOICES = (
-    ('uploaded', 'Uploaded'),  # Document has been uploaded by admin
-    ('pending', 'Pending'),    # Document has been published by owner
-    ('processed', 'Processed'),# Document has been processed
-    ('expired', 'Expired')     # Document has been expired
+    ('uploaded', 'Uploaded'),
+    ('waiting_owner', 'Waiting for owner'),
+    ('waiting', 'Waiting'),
+    ('pending', 'Pending'),             # Document has been published by owner
+    ('processed', 'Processed'),         # Document has been processed
+    ('expired', 'Expired'),             # Document has been expired
 )
 
 class Document(models.Model):
@@ -45,13 +55,15 @@ class Document(models.Model):
     doc_id = models.AutoField(primary_key=True)
     doc_name = models.CharField(max_length=255)
     doc_url = models.CharField(max_length=500, blank=True, null=True)
-    category = models.PositiveSmallIntegerField('Category', choices=FORMAT_CHOICES)
+    doc_category = models.PositiveSmallIntegerField('Document category', choices=DOCUMENT_CATEGORY_CHOICES, null=True, blank=True)
+    category = models.PositiveSmallIntegerField('Category', choices=FORMAT_CHOICES, default=1)
     release_date = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_owner')
     responsible_users = models.ManyToManyField(User, related_name='document_responsible_users', null=True, blank=True)
+    approved_by_users = models.ManyToManyField(User, related_name='document_users_approved', null=True, blank=True)
     contact_users = models.ManyToManyField(User, related_name='document_contact_users', null=True, blank=True)
     deadline = models.DateTimeField(null=True, blank=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='uploaded')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='uploaded')
     groups = models.ManyToManyField(Group, related_name='document_groups', blank=True, null=True) # groups of target users
     doc_ver = models.PositiveIntegerField(default=1)  # document version
     previous_version = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL) # instance of previous document
@@ -64,7 +76,7 @@ class Document(models.Model):
             doc_name=new_doc_name,
             doc_url=new_doc_url,
             owner=new_owner,
-            category=self.category,
+            doc_category=self.doc_category,
             doc_ver=self.doc_ver + 1,
             previous_version=self
         )
@@ -103,6 +115,13 @@ class Document(models.Model):
         )
 
     @property
+    def is_waiting_owner(self):
+        return self.status == 'waiting_owner'
+
+    def is_waiting(self):
+        return self.status == 'waiting'
+
+    @property
     def is_uploaded(self):
         return self.status == 'uploaded'
 
@@ -132,6 +151,18 @@ class Document(models.Model):
             if key == self.category:
                 return value
         return 'Unknown category'
+
+    def get_document_category_text(self):
+        for key, value in DOCUMENT_CATEGORY_CHOICES:
+            if key == self.doc_category:
+                return value
+        return 'Unknown document category'
+
+    def get_document_status_text(self):
+        for key, value in STATUS_CHOICES:
+            if key == self.status:
+                return value
+        return 'Unknown status'
 
     def __str__(self):
         return self.doc_name

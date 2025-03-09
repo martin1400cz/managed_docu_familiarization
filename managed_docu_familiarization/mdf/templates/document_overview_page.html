@@ -23,12 +23,17 @@
           <ul class="nav">
             {% if is_author %}
             <!--<a href="{% url 'mdf:publishing_page' %}">Add New Document</a>-->
-            <li class="nav-item">
-              <a class="nav-link" href="?tab=user">Documents for you</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="?tab=author">My documents</a>
-            </li>
+              <li class="nav-item">
+                <a class="nav-link" href="?tab=user">Documents for you</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="?tab=author">My documents</a>
+              </li>
+            {% endif %}
+            {% if is_approver %}
+              <li class="nav-item">
+                <a class="nav-link" href="?tab=approver">Documents for approval</a>
+              </li>
             {% endif %}
           </ul>
         </div>
@@ -36,6 +41,8 @@
         <!-- Tables -->
         {% if active_tab == 'author' and is_author %}
         <h2>My documents</h2>
+        {% elif active_tab == 'approver' and is_approver %}
+        <h2>Document for approval</h2>
         {% else %}
         <h2>Documents for you</h2>
         {% endif %}
@@ -69,6 +76,29 @@
                         <a href="{% url 'mdf:open_document_stats' document.encrypted_id %}">Show document details</a>
                       {% endif %}
                     </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No documents found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          {% elif active_tab == 'approver' and is_approver %}
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Release Date</th>
+                    <th>Category</th>
+                    <th>Owner</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for document in documents_list %}
+                <tr>
+                    <td><a href="{% url 'mdf:open_document_approval' document.encrypted_id%}">{{ document.document.doc_name }}</a></td>
+                    <td>{{ document.document.release_date|date:"d.m.Y" }}</td>
+                    <td>{{ document.document_category }}</td>
+                    <td>{{ document.document.owner }}</td>
                 </tr>
                 {% empty %}
                 <tr>

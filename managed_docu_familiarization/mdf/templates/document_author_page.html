@@ -4,7 +4,7 @@
 {% block title %}- MDF base template for users{% endblock title %}
 
 {% block css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">-->
     <style>
         /* Ensuring centering of the entire page */
         .centered-content {
@@ -58,30 +58,39 @@
       {% csrf_token %}
       {{ form.media }}
       <div class="m-auto border-bottom">
-        <label for="document_div" class="form-label">Document Info:</label>
+        <label for="document_div" class="form-label">1. Document Info:</label>
         <div id="document_div" class="form-group">
           {{ form.name.label_tag }} {{ form.name }} {{ form.name.errors }}
           {{ form.url.label_tag }} {{ form.url }} {{ form.url.errors }}
         </div>
       </div>
-      <div id="contact_user_div" class="form-group m-auto p-4">
-        {{ form.contact_users.label_tag }} {{ form.contact_users }} {{ form.contact_users.errors }}
+      <div class="m-auto border-bottom">
+        <label for="contact_user_div" class="form-label">2. Additional information:</label>
+        <div id="contact_user_div" class="form-group m-auto p-4">
+          {{ form.contact_users.label_tag }} {{ form.contact_users }} {{ form.contact_users.errors }}
+        </div>
       </div>
-      <div class="form-group category-choice m-auto p-4 border-bottom border-top">
-        {{ form.category.label_tag }} {{ form.category }} {{ form.category.errors }}
-        <span data-bs-toggle="tooltip" data-bs-html="true" title="{{ info_text }}">
-            <i class="bi bi-info-circle"></i>
-        </span>
+      <div>
+        <label for="inclusion_div" class="form-label">3. Document inclusion</label>
+        <div id="inclusion_div" class="form-group m-auto p-4">
+          <div class="form-group category-choice m-auto p-4 border-bottom border-top">
+            {{ form.category.label_tag }} {{ form.category }} {{ form.category.errors }}
+            <span data-bs-toggle="tooltip" data-bs-html="true" title="{{ info_text }}">
+              <i class="bi bi-info-circle"></i>
+            </span>
+          </div>
+          <div id="deadline-selection" class="form-group m-auto p-4 border-bottom" style="display: none;">
+            {{ form.deadline.label_tag }} {{ form.deadline }} {{ form.deadline.errors }}
+          </div>
+          <div id="group-selection" class="form-group m-auto p-4" style="display: none;">
+            {{ form.groups.label_tag }} {{ form.groups }} {{ form.groups.errors }}
+          </div>
+          <div id="email-message" class="form-group border-bottom border-top m-auto p-4" style="display: none;">
+            {{ form.message.label_tag }} {{ form.message }} {{ form.message.errors }}
+          </div>
+        </div>
       </div>
-      <div id="deadline-selection" class="form-group m-auto p-4 border-bottom" style="display: none;">
-        {{ form.deadline.label_tag }} {{ form.deadline }} {{ form.deadline.errors }}
-      </div>
-      <div id="group-selection" class="form-group m-auto p-4" style="display: none;">
-        {{ form.groups.label_tag }} {{ form.groups }} {{ form.groups.errors }}
-      </div>
-      <div id="email-message" class="form-group border-bottom border-top m-auto p-4" style="display: none;">
-        {{ form.message.label_tag }} {{ form.message }} {{ form.message.errors }}
-      </div>
+
       <div class="m-4 p-4 border-bottom">
         <button type="submit" class="btn btn-success mt-3">Add Document</button>
       </div>

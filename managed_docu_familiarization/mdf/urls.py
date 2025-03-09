@@ -6,7 +6,8 @@ from managed_docu_familiarization.mdf import views
 #from managed_docu_familiarization.mdf.views import MDFView
 from managed_docu_familiarization.mdf.views import MDFDocumentsOverview, MDFDocumentsAdding, MDF_admin_document_add, \
     MDFDocumentView, MDFDocumentStatsView, MDFDocumentsUserDetailView, open_document_base_page, open_document_stats, \
-    open_document_user_detail, open_admin_add_document_page, MDF_admin_document_list
+    open_document_user_detail, open_admin_add_document_page, MDF_admin_document_list, MDFDocumentApprovalView, \
+    open_document_approval
 
 app_name = "mdf"
 urlpatterns = [
@@ -22,6 +23,10 @@ urlpatterns = [
     # documents_stats - view to display statistics about a document
     path('mdfdocuments/agreements/', MDFDocumentStatsView.as_view(), name='document_stats'),
     path('mdfdocuments/agreements/open/<str:enc_doc_id>/', open_document_stats, name='open_document_stats'),
+
+    # document_approval - view for approvers to check a document
+    path('mdfdocuments/approvals/', MDFDocumentApprovalView.as_view(), name='document_approval'),
+    path('mdfdocuments/approvals/open/<str:enc_doc_id>/', open_document_approval, name='open_document_approval'),
 
     path('mdfdocuments/user_stats/', MDFDocumentsUserDetailView.as_view(), name='user_stats'),
     path('mdfdocuments/user_stats/open/<str:user_id>/', open_document_user_detail, name='open_user_stats'),

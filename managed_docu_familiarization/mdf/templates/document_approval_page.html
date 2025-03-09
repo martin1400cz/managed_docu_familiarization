@@ -1,0 +1,77 @@
+{% extends 'layout/_grid.html' %}
+{% load static i18n user_tags %}
+
+{% block title %}- MDF base template for users{% endblock title %}
+
+{% block css %}
+{% endblock css %}
+
+{% block javascript %}
+{% endblock javascript %}
+
+
+{% block inline_javascript %}
+  {% include 'part/datatables.html' with datatables_element_id='managed_docu_familiarization_table' search_panes_columns='[1]' fixed_columns='1' %}
+{% endblock inline_javascript %}
+
+{% block content %}
+<div class="centered-content">
+  <h2>Document approve</h2>
+  <div class="container" style="display: flex; flex-direction: column; max-width: 60%;">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.media }}
+      <div class="m-auto border-bottom">
+        <label for="document_div" class="form-label">1. Check document:</label>
+        <div id="document_div" class="form-group">
+          <div class="form-group">
+            {{ form.document_name.label_tag }} {{ form.document_name }} {{ form.document_name.errors }}
+          </div>
+          <div class="form-group">
+            {{ form.document_url.label_tag }} {{ form.document_url }} {{ form.document_url.errors }}
+          </div>
+          <div class="row">
+            <p class="col-md-4">Document owner:</p>
+            <p class="col-md-6">{{ document.owner.zf_id }}</p>
+          </div>
+          <div class="row">
+            <p class="col-md-4">Document category:</p>
+            <p class="col-md-6">{{ document_category }}</p>
+          </div>
+          <div class="row">
+            <p class="col-md-4">Version:</p>
+            <p class="col-md-6">{{ document.doc_ver }}</p>
+          </div>
+        </div>
+      </div>
+      {% if is_waiting_owner and is_owner%}
+        <div class="m-auto border-bottom">
+          <label for="responsible_users_div" class="form-label">2. Next approvers:</label>
+          <div id="responsible_users_div" class="form-group m-auto p-4">
+            <div class="form-group">
+              {{ form.responsible_users.label_tag }}{{ form.responsible_users }}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      <input type="hidden" name="document_id" value="{{ document.doc_id }}">
+      <input type="hidden" name="is_waiting_owner" value="{{ is_waiting_owner }}">
+      <button type="submit" class="btn btn-success mt-3">Approve document</button>
+    </form>
+  </div>
+</div>
+
+<script>
+    // JavaScript to set document URL to text field
+    function setDocumentUrl(url) {
+      document.querySelector('[name="document_path"]').value = url;
+    }
+    document.addEventListener('DOMContentLoaded', function(){
+      const responsibleUserSelectElement = document.getElementById("id_users");
+      if (contactUserSelectElement) {
+        SelectFilter.init("id_users", "Responsible_users", 0);
+      }
+    });
+</script>
+
+{% endblock content %}

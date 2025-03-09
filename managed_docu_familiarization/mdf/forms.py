@@ -7,6 +7,34 @@ from django.contrib.auth.models import Group
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from managed_docu_familiarization.static.Strings import string_constants
 
+
+class DocumentApprovalForm(forms.Form):
+    document_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
+                           max_length=255,
+                           required=True)
+
+    document_url = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'form-control', 'readonly': 'readonly'}),
+        max_length=500,
+        required=True)
+
+    responsible_users = forms.ModelMultipleChoiceField(
+        queryset=User.objects.filter(groups__name="MDF_approvers"),
+        widget=FilteredSelectMultiple("Responsible_users", is_stacked=False,
+                                      attrs={'class': 'form-select form-control'}),
+        required=False,
+        label=string_constants.publishing_page_form_responsible_users,
+        help_text="Enter user IDs separated by commas.",
+    )
+
+    class Media:
+        css = {
+            'all': ['admin/css/widgets.css'],
+        }
+        # Adding this javascript is crucial
+        js = ['/admin/jsi18n/']
+
+
 class FileSearchForm(forms.Form):
     document_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control w-75'}),
                                     max_length=255,
@@ -20,19 +48,21 @@ class FileSearchForm(forms.Form):
                                    queryset=User.objects.all(),
                                    label=string_constants.admin_page_form_document_owner,
                                    required=True)
-    responsible_users = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(),
-        widget=FilteredSelectMultiple("Responsible_users", is_stacked=False, attrs={'class': 'form-select form-control'}),
-        required=False,
-        label=string_constants.publishing_page_form_responsible_users,
-        help_text="Enter user IDs separated by commas.",
+
+    choices = [
+        (1, "Standard"),
+        (2, "Guideline"),
+        (3, "Workflows"),
+        (4, "Manual"),
+    ]
+
+    document_category = forms.ChoiceField(
+        choices=choices,
+        # widget=forms.RadioSelect(attrs={'class': 'form-check-input category-choice'}),
+        widget=forms.RadioSelect,
+        label="Document Category",
+        required=True,
     )
-    class Media:
-        css = {
-            'all': ['admin/css/widgets.css'],
-        }
-        # Adding this javascript is crucial
-        js = ['/admin/jsi18n/']
 
 
 class DocumentForm(forms.Form):
@@ -74,7 +104,7 @@ class DocumentForm(forms.Form):
         choices=choices,
         #widget=forms.RadioSelect(attrs={'class': 'form-check-input category-choice'}),
         widget=forms.RadioSelect,
-        label="Document Category",
+        label="Publication category",
         required=True,
     )
 
