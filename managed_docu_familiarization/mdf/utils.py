@@ -204,25 +204,13 @@ def exists_users_agreement(user, document):
 
 # emails
 
-def send_link_to_owner_and_responsible_users(request, document, generated_link):
+def send_link_to_complete_document(document, generated_link):
     """
     Function for sending a generated link with document url to a document author for adding other informations
     """
-    logger = logging.getLogger(__name__)
-    owner = document.owner
-    users = document.get_all_important_users()
-
-    responsible_users_text = "\n".join(f"{user.first_name} {user.last_name}" for user in users)
-
     subject = "Adding information to a document"
     #from_email = settings.EMAIL_HOST_USER
-    for user in users:
-        message = f"Hello {user.first_name} {user.last_name},\n\n" \
-              f"please click on the following link and complete the document information:\n{generated_link}\n" \
-              f"Responsible users: \n{responsible_users_text}\n" \
-              f"Thank you!"
-        send_mail_to_user(user, subject, message)
-        #send_mail(subject, message, from_email, [user.email],fail_silently=False)
+    send_mail_to_user(document.owner, subject, string_constants.email_message_to_complete_document(generated_link, document.doc_name))
 
 
 def send_mail_to_user(user, subject, message):

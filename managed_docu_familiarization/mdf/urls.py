@@ -4,9 +4,9 @@ from django.conf.urls.static import static
 
 from managed_docu_familiarization.mdf import views
 #from managed_docu_familiarization.mdf.views import MDFView
-from managed_docu_familiarization.mdf.views import MDFDocumentsOverview, MDFDocumentsAdding, MDF_admin_document_add, \
+from managed_docu_familiarization.mdf.views import MDFDocumentsOverview, MDFDocumentsAdding, MDFAdminDocumentAdd, \
     MDFDocumentView, MDFDocumentStatsView, MDFDocumentsUserDetailView, open_document_base_page, open_document_stats, \
-    open_document_user_detail, open_admin_add_document_page, MDF_admin_document_list, MDFDocumentApprovalView, \
+    open_document_user_detail, open_admin_add_document_page, MDFAdminDocumentList, MDFDocumentApprovalView, \
     open_document_approval
 
 app_name = "mdf"
@@ -26,6 +26,7 @@ urlpatterns = [
 
     # document_approval - view for approvers to check a document
     path('mdfdocuments/approvals/', MDFDocumentApprovalView.as_view(), name='document_approval'),
+    path('mdfdocuments/approvals/<str:enc_doc_id>', MDFDocumentApprovalView.as_view(), name='document_approval'),
     path('mdfdocuments/approvals/open/<str:enc_doc_id>/', open_document_approval, name='open_document_approval'),
 
     path('mdfdocuments/user_stats/', MDFDocumentsUserDetailView.as_view(), name='user_stats'),
@@ -34,11 +35,11 @@ urlpatterns = [
     path("mdfdocuments/overview/add/", MDFDocumentsAdding.as_view(), name="publishing_page"),
     path("mdfdocuments/overview/add/<str:file_name>/", MDFDocumentsAdding.as_view(), name="publishing_page"),
 
-    path('mdfdocuments/admin-file-search/', MDF_admin_document_list.as_view(), name='admin_file_search_page'),
+    path('mdfdocuments/admin-file-search/', MDFAdminDocumentList.as_view(), name='admin_file_search_page'),
     path('mdfdocuments/admin-file-search/open/<str:doc_id>', open_admin_add_document_page,name='open_admin_add_document_page'),
     path('mdfdocuments/admin-file-search/open/<str:doc_id><str:action>', open_admin_add_document_page, name='open_admin_add_document_page'),
     path('mdfdocuments/admin-file-search/open/<str:action>', open_admin_add_document_page, name='open_admin_add_document_page'),
-    path('mdfdocuments/admin-add-document/', MDF_admin_document_add.as_view(), name='admin_add_document_page'),
-    path('mdfdocuments/admin-add-document/<str:action>', MDF_admin_document_add.as_view(), name='admin_add_document_page'),
-    path('mdfdocuments/admin-file-search/send-link/<str:file_name>/', MDF_admin_document_add.as_view(), name='send_link_to_owner'),
+    path('mdfdocuments/admin-add-document/', MDFAdminDocumentAdd.as_view(), name='admin_add_document_page'),
+    path('mdfdocuments/admin-add-document/<str:action>', MDFAdminDocumentAdd.as_view(), name='admin_add_document_page'),
+    path('mdfdocuments/admin-file-search/send-link/<str:file_name>/', MDFAdminDocumentAdd.as_view(), name='send_link_to_owner'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

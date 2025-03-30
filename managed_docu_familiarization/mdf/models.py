@@ -52,23 +52,24 @@ class Document(models.Model):
     """
     Document model - represents a document using a reference to it
     """
-    doc_id = models.AutoField(primary_key=True)
-    doc_name = models.CharField(max_length=255)
-    doc_url = models.CharField(max_length=500, blank=True, null=True)
-    doc_category = models.PositiveSmallIntegerField('Document category', choices=DOCUMENT_CATEGORY_CHOICES, null=True, blank=True)
-    category = models.PositiveSmallIntegerField('Category', choices=FORMAT_CHOICES, default=1)
-    release_date = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_owner')
-    responsible_users = models.ManyToManyField(User, related_name='document_responsible_users', null=True, blank=True)
-    approved_by_users = models.ManyToManyField(User, related_name='document_users_approved', null=True, blank=True)
-    contact_users = models.ManyToManyField(User, related_name='document_contact_users', null=True, blank=True)
-    deadline = models.DateTimeField(null=True, blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='uploaded')
-    groups = models.ManyToManyField(Group, related_name='document_groups', blank=True, null=True) # groups of target users
-    doc_ver = models.PositiveIntegerField(default=1)  # document version
+    doc_id = models.AutoField(primary_key=True) # Document id
+    doc_name = models.CharField(max_length=255) # Document name
+    doc_url = models.CharField(max_length=500, blank=True, null=True) # Document url
+    doc_category = models.PositiveSmallIntegerField('Document category', choices=DOCUMENT_CATEGORY_CHOICES, null=True, blank=True) # Document type category
+    category = models.PositiveSmallIntegerField('Category', choices=FORMAT_CHOICES, default=1) # Publication category
+    release_date = models.DateTimeField(auto_now_add=True) # Release date
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_owner') # Document owner
+    responsible_users = models.ManyToManyField(User, related_name='document_responsible_users', null=True, blank=True) # Responsible users to document approval
+    approved_by_users = models.ManyToManyField(User, related_name='document_users_approved', null=True, blank=True) # List of user who approved document
+    contact_users = models.ManyToManyField(User, related_name='document_contact_users', null=True, blank=True) # Contact users
+    deadline = models.DateTimeField(null=True, blank=True) # Deadline of collecting consents
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='uploaded') # Document status
+    groups = models.ManyToManyField(Group, related_name='document_groups', blank=True, null=True) # Groups of target users
+    #doc_ver = models.PositiveIntegerField(default=1)  # document version
+    doc_ver = models.CharField(max_length=25)  # document version
     previous_version = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL) # instance of previous document
 
-    def save_new_version(self, new_doc_name, new_doc_url, new_owner, responsible_users):
+    def save_new_version(self, new_doc_name, new_doc_url, new_owner, responsible_users, new_doc_version):
         """
         Creates a new version of document
         """
@@ -77,7 +78,7 @@ class Document(models.Model):
             doc_url=new_doc_url,
             owner=new_owner,
             doc_category=self.doc_category,
-            doc_ver=self.doc_ver + 1,
+            doc_ver=new_doc_version,
             previous_version=self
         )
 

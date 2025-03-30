@@ -14,7 +14,7 @@ class DocumentApprovalForm(forms.Form):
                            required=True)
 
     document_url = forms.CharField(widget=forms.TextInput(
-        attrs={'class': 'form-control', 'readonly': 'readonly'}),
+        attrs={'class': 'form-control', 'readonly': 'readonly', 'onclick': "window.open(this.value, '_blank')"}),
         max_length=500,
         required=True)
 
@@ -22,7 +22,7 @@ class DocumentApprovalForm(forms.Form):
         queryset=User.objects.filter(groups__name="MDF_approvers"),
         widget=FilteredSelectMultiple("Responsible_users", is_stacked=False,
                                       attrs={'class': 'form-select form-control'}),
-        required=False,
+        required=True,
         label=string_constants.publishing_page_form_responsible_users,
         help_text="Enter user IDs separated by commas.",
     )
@@ -48,6 +48,11 @@ class FileSearchForm(forms.Form):
                                    queryset=User.objects.all(),
                                    label=string_constants.admin_page_form_document_owner,
                                    required=True)
+
+    version = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control w-25'}),
+                              label="Document version:",
+                              max_length=25,
+                              required=True)
 
     choices = [
         (1, "Standard"),
