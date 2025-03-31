@@ -14,11 +14,21 @@ import re
 
 
 def generate_secure_link(doc_id):
+    """
+    Function returns encrypted doc_id
+    :param doc_id:
+    :return:
+    """
     signer = Signer()
     signed_doc_id = signer.sign(doc_id)
     return signed_doc_id
 
 def verify_secure_link(signed_doc_id):
+    """
+    Function returns decrypted doc_id
+    :param signed_doc_id:
+    :return:
+    """
     signer = Signer()
     try:
         doc_id = signer.unsign(signed_doc_id)
@@ -27,11 +37,21 @@ def verify_secure_link(signed_doc_id):
         return None
 
 def generate_secure_id(n_id):
+    """
+    Function returns encrypted id
+    :param n_id:
+    :return:
+    """
     signer = Signer()
     signed_id = signer.sign(n_id)
     return signed_id
 
 def verify_secure_id(signed_id):
+    """
+    Function returns decrypted id
+    :param signed_id:
+    :return:
+    """
     signer = Signer()
     try:
         en_id = signer.unsign(signed_id)
@@ -41,18 +61,28 @@ def verify_secure_id(signed_id):
 
 # Google Drive
 def is_from_google(document):
+    """
+    Function returns if a document is from Google Drive
+    :param document:
+    :return:
+    """
     return string_constants.google_drive_prefix in document.doc_url
 
 def get_sharepoint_url(document):
-    # Rozparsování URL
+    """
+    Function returns transformed document url from Sharepoint
+    :param document:
+    :return:
+    """
+    # URL parsing
     parsed_url = urlparse(document.doc_url)
-    # Oprava cesty: odstranění "/r/"
+    # removing an /r/ parameter from path "/r/"
     fixed_path = re.sub(r"/r/", "/", parsed_url.path)
-    # Zpracování parametrů
+    # Parameter processing
     query_params = parse_qs(parsed_url.query)
-    # Ujistíme se, že obsahuje "?web=1"
+    # Let's make sure it contains "?web=1"
     query_params["web"] = ["1"]
-    # Sestavení opravené URL
+    # Build a fixed URL
     fixed_url = urlunparse((
         parsed_url.scheme,
         parsed_url.netloc,
@@ -154,6 +184,12 @@ def extract_document_id_from_embed_url_sharepoint(document):
 
 ###################################################################
 def generate_document_link(request, document):
+    """
+    Function generates a link for a document
+    :param request:
+    :param document:
+    :return:
+    """
     generated_link = request.build_absolute_uri(
         reverse('mdf:document_page') + f"?doc_id={generate_secure_link(document.doc_id)}"
     )
@@ -162,7 +198,7 @@ def generate_document_link(request, document):
 
 def generate_document_link_task(document, domain=None, protocol="https"):
     """
-
+    function generates a link for document to document view page
     """
     if not domain:
         domain = getattr(settings, "SITE_DOMAIN", "localhost:8000")
@@ -177,29 +213,61 @@ def user_is_admin(user):
     return user.is_authenticated and user.groups.filter(name=string_constants.mdf_admin_group_name).exists()
 
 def get_documents_by_category(category):
+    """
+    Function returns a documents by publishing category
+    :param category:
+    :return:
+    """
     return Document.objects.get(category=category)
 
 def send_agreement(document, user, time_spent):
+    """
+    Function creates a new record of a document agreement
+    :param document:
+    :param user:
+    :param time_spent:
+    :return:
+    """
     DocumentAgreement.objects.create(
         user=user,
         document=document,
         reading_time=time_spent,
-        open_count=1
     )
     return True
 
 def get_users_accepted_count(document):
+    """
+    Function returns a count of users who has sent an agreement
+    :param document:
+    :return:
+    """
     return len(DocumentAgreement.objects.filter(document=document))
 
 def get_users_accepted(document):
+    """
+    Function returns users who has sent an agreement
+    :param document:
+    :return:
+    """
     return User.objects.filter(document_stats__document=document).distinct()
 
 def get_users_without_agreements(document):
+    """
+    Function returns users who have not sent an agreement
+    :param document:
+    :return:
+    """
     all_users = document.get_users_from_groups()
     users_agreed = get_users_accepted(document)
     return list(set(all_users) - set(users_agreed))
 
 def exists_users_agreement(user, document):
+    """
+    Function returns if user has send an agreement
+    :param user:
+    :param document:
+    :return:
+    """
     return DocumentAgreement.objects.filter(user=user, document=document).exists()
 
 # emails
@@ -214,6 +282,13 @@ def send_link_to_complete_document(document, generated_link):
 
 
 def send_mail_to_user(user, subject, message):
+    """
+    Function sends an email to an user
+    :param user:
+    :param subject:
+    :param message:
+    :return:
+    """
     from_email = settings.DEFAULT_FROM_EMAIL
     send_mail(subject, message, from_email, [user.email], fail_silently=False)
 
@@ -228,15 +303,18 @@ def send_mail_to_multiple_user(users, subject, message):
         send_mail_to_user(user, subject, message)
 
 def sendLinksToUsers(document, generated_link, mess):
+    """
+    Function send emails with link to users
+    :param document:
+    :param generated_link:
+    :param mess:
+    :return:
+    """
     users = document.get_users_from_groups()
     subject = string_constants.email_subject_accept
-    from_email = settings.DEFAULT_FROM_EMAIL
-    #message = f"{mess}\n\nLink: {generated_link}"
     # Sending emails
     for user in users:
         send_mail_to_user(user, subject, mess)
-        #user_email = user.email
-        #send_mail(subject, mess, from_email, [user_email], fail_silently=False)
 
 def notify_users_about_document_deadline(document):
     """
@@ -246,9 +324,7 @@ def notify_users_about_document_deadline(document):
     subject = f'Deadline expired for document {document.doc_name}'
     message = f'Hello\n'\
               f'The deadline for the document "{document.doc_name}" has expired.\n' \
-              f'Please confirm that you have read the document.\n' \
-              f'Document link: {generate_document_link_task(document, None, "https")}'
-
+              f'Please confirm that you have read the document.\n'
     for user in users:
         if not exists_users_agreement(user, document):
             send_mail_to_user(user, subject, message)

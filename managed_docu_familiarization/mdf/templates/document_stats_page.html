@@ -152,7 +152,6 @@
               <th>Status</th>
               <th>Date of agreement</th>
               <th>Reading time</th>
-              <th>Number of views</th>
           </tr>
       </thead>
       <tbody>
@@ -162,7 +161,6 @@
               <td>{{ agreement.status }}</td>
               <td>{{ agreement.agreed_at }}</td>
               <td>{{ agreement.reading_time }} s</td>
-              <td>{{ agreement.open_count }}</td>
           </tr>
           {% endfor %}
       </tbody>
@@ -242,15 +240,15 @@ function sendEmailToResponsibleUsers(documentId) {
 }
 </script>
 <script>
-    // Data z backendu
+    // Data from the backend
     const labels = {{ graph_details.labels|safe }};
     const counts = {{ graph_details.counts|safe }};
     const deadline = "{{ graph_details.deadline }}";
 
-    // Najdeme index deadlinu v datech
+    // We find the deadline index in the data
     const deadlineIndex = labels.indexOf(deadline);
 
-    // Konfigurace grafu
+    // Chart configuration
     const data = {
         labels: labels,
         datasets: [
@@ -260,14 +258,14 @@ function sendEmailToResponsibleUsers(documentId) {
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 2,
                 pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-                pointRadius: 5, // Zvýraznění bodů
+                pointRadius: 5, // Highlighting points
                 fill: false,
-                tension: 0.2, // Jemné zakřivení čar
+                tension: 0.2, // Subtle curvature of lines
             },
         ]
     };
 
-    // Konfigurace grafu s deadline jako anotací
+    // Configuring a chart with deadline as an annotation
     const config = {
         type: 'line',
         data: data,
@@ -321,10 +319,10 @@ function sendEmailToResponsibleUsers(documentId) {
                 y: {
                     ticks: {
                       callback: function(value) {
-                        // Zobrazuje pouze celá čísla
+                        // Displays only integers
                         return Number.isInteger(value) ? value : null;
                       },
-                      stepSize: 1, // Zajistí, že popisky budou skákat po 1
+                      stepSize: 1, // Makes labels jump by 1
                       beginAtZero: true, // Values starts at 0
                     },
                     title: {

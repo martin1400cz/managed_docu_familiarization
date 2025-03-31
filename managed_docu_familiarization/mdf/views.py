@@ -99,19 +99,13 @@ class MDFDocumentApprovalView(AccessControlMixin, LoginRequiredMixin, FormView):
     is_approver = None
 
     permission_required = []  # List of required permissions for the view
-    required_groups = [string_constants.mdf_admin_group_name, string_constants.mdf_authors_group_name]
-
-    def check_user_groups(self, request):
-        self.is_author = request.user.groups.filter(name="MDF_authors").exists()
-        self.is_approver = request.user.groups.filter(name="MDF_approvers").exists()
-
-        # If user is not in both required groups, return a forbidden response
-        if not self.is_author or not self.is_approver:
-            return HttpResponseForbidden("You do not have permission to view this page!")
+    required_groups = [string_constants.mdf_admin_group_name, string_constants.mdf_authors_group_name, string_constants.mdf_responsible_users_group_name]
 
     def dispatch(self, request, *args, **kwargs):
+
         # Check if the user belongs to the "MDF_authors" or "MDF_approvers" groups
-        self.check_user_groups(request)
+        self.is_author = request.user.groups.filter(name=string_constants.mdf_admin_group_name).exists()
+        self.is_approver = request.user.groups.filter(name=string_constants.mdf_responsible_users_group_name).exists()
 
         # Retrieve document ID from the GET parameter or session
         get_doc_id = self.request.GET.get('enc_doc_id')
@@ -141,6 +135,7 @@ class MDFDocumentApprovalView(AccessControlMixin, LoginRequiredMixin, FormView):
     def get_initial(self):
         # Initializes the form with the `document_url` and `document_name` values from the document
         initial = super().get_initial()
+        form = DocumentApprovalForm(document=self.document)
         initial['document_url'] = self.document.doc_url
         initial['document_name'] = self.document.doc_name
         return initial
@@ -154,12 +149,26 @@ class MDFDocumentApprovalView(AccessControlMixin, LoginRequiredMixin, FormView):
         context['is_owner'] = self.document.owner == self.request.user
         return context
 
+    def get_form_kwargs(self):
+        """
+        Pass additional arguments to the form (document).
+        """
+        kwargs = super().get_form_kwargs()
+        kwargs['document'] = self.document  # Pass the document to the form
+        return kwargs
+
     def post(self, request, *args, **kwargs):
-        form = DocumentApprovalForm(request.POST)
+        doc_id = request.POST.get('document_id')
+        try:
+            document = Document.objects.get(doc_id=doc_id)
+        except Document.DoesNotExist:
+            return HttpResponseForbidden("Document not found!")
+        form = DocumentApprovalForm(data=request.POST, document=document)
 
         # If the form is valid, proceed with approval actions
         if form.is_valid():
             print("Form is valid")
+
             doc_id = request.POST.get('document_id')
             try:
                 document = Document.objects.get(doc_id=doc_id)
@@ -182,12 +191,13 @@ class MDFDocumentApprovalView(AccessControlMixin, LoginRequiredMixin, FormView):
                 )
                 subject = "Document for approval"
                 mess = string_constants.email_message_to_approve_document(generated_link)
-                send_mail_to_multiple_user(responsible_users, subject, mess)
+                responsible_users_no_owner = responsible_users.exclude(zf_id=document.owner.zf_id)
+                send_mail_to_multiple_user(responsible_users_no_owner, subject, mess)
                 document.save()
             else:
                 # Handle the case where the document is not waiting for the owner
                 if request.user in set(Document.get_responsible_users(document)):
-                    if request.user not in set(document.approved_by_users):
+                    if request.user not in set(document.approved_by_users.all()):
                         document.approved_by_users.add(request.user)
                 document.save()
 
@@ -210,7 +220,6 @@ class MDFDocumentApprovalView(AccessControlMixin, LoginRequiredMixin, FormView):
             return redirect(success_url)
 
         # If form is invalid, render the form with errors
-        print("Something went wrong")
         context = self.get_context_data()
         context['form'] = form
         return self.render_to_response(context)
@@ -344,14 +353,12 @@ class MDFDocumentStatsView(AccessControlMixin, LoginRequiredMixin, TemplateView)
                 if user in agreement_map:
                     agreement = agreement_map[user]
                     reading_time = agreement.reading_time
-                    open_count = agreement.open_count
                     formatted_date = agreement.agreed_at.strftime('%d.%m.%Y')
                     agreements_list.append({
                         'user': user,
                         'status': string_constants.user_agreed,
                         'agreed_at': formatted_date,
                         'reading_time': reading_time,
-                        'open_count': open_count,
                     })
                 else:
                     agreements_list.append({
@@ -359,7 +366,6 @@ class MDFDocumentStatsView(AccessControlMixin, LoginRequiredMixin, TemplateView)
                         'status': string_constants.user_no_agree_yet,
                         'agreed_at': '-',
                         'reading_time': '-',
-                        'open_count': 0,
                     })
 
             # Calculate the progress percentage of agreements
@@ -388,14 +394,12 @@ class MDFDocumentStatsView(AccessControlMixin, LoginRequiredMixin, TemplateView)
 
     def post(self, request, *args, **kwargs):
         try:
-            logger = logging.getLogger(__name__)
             data = json.loads(request.body)
             action = data.get('action')
 
             # Handle 'send_email_user' action to send email notifications to users without agreements
             if action == 'send_email_user':
                 document_id = data.get('document_id')
-                logger.error(f"Stats - Doc id: {document_id}")
                 document = get_object_or_404(Document, doc_id=document_id)
                 users = get_users_without_agreements(document)
                 generated_link = generate_document_link(self.request, document)
@@ -441,13 +445,9 @@ class MDFAdminDocumentAdd(AccessControlMixin, LoginRequiredMixin, FormView):
     required_groups = [string_constants.mdf_admin_group_name]
 
     def dispatch(self, request, *args, **kwargs):
-        # Ensure that the user is an admin to access this view
-        if not user_is_admin(request.user):
-            return HttpResponseForbidden("You do not have permission to view this page.")
 
         # Get the action from the URL parameters
         self.action = self.request.GET.get('action')
-        print(f"action = {self.action}")
 
         # If the action is 'update', retrieve the document to be updated from the session
         if self.action == 'update':
@@ -499,7 +499,6 @@ class MDFAdminDocumentAdd(AccessControlMixin, LoginRequiredMixin, FormView):
         if form.is_valid():
             # Retrieve action from session
             get_action = self.request.session.get('action')
-            print(f"action is {get_action}")
 
             # Get form data for document details
             doc_name = form.cleaned_data['document_name']
@@ -510,11 +509,8 @@ class MDFAdminDocumentAdd(AccessControlMixin, LoginRequiredMixin, FormView):
             new_document = None
             responsible_users = form.cleaned_data.get('responsible_users', [])
 
-            print("Valid form...")
-
             # If the action is 'add', create a new document
             if get_action == 'add':
-                print("Adding new document...")
                 new_document = Document.objects.create(
                     doc_name=doc_name,
                     doc_url=doc_url,
@@ -533,10 +529,11 @@ class MDFAdminDocumentAdd(AccessControlMixin, LoginRequiredMixin, FormView):
                 if document is None:
                     return HttpResponse("Something went wrong...")
 
-                print("Updating document...")
                 new_document = Document.save_new_version(document, doc_name, doc_url, doc_owner, responsible_users,
                                                          new_doc_version)
                 new_document.status = 'waiting_owner'
+                document.status = 'expired'
+                document.save()
                 new_document.save()
 
             # If no document was created or updated, return an error message
@@ -577,10 +574,6 @@ class MDFAdminDocumentList(AccessControlMixin, LoginRequiredMixin, TemplateView)
     required_groups = [string_constants.mdf_admin_group_name]  # Required group for access (admin only)
 
     def dispatch(self, request, *args, **kwargs):
-        # Ensure that the user is an admin to access this view
-        if not user_is_admin(request.user):
-            return HttpResponseForbidden("You do not have permission to view this page.")
-            # Raise PermissionDenied if needed: raise PermissionDenied
         # Continue handling the request if the user is an admin
         return super().dispatch(request, *args, **kwargs)
 
@@ -622,8 +615,6 @@ class MDFDocumentsOverview(AccessControlMixin, LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         # Retrieves the selected tab from the request (default is 'user' tab)
         tab = request.GET.get('tab', 'user')
-        logger = logging.getLogger(__name__)  # Logger for debugging and tracking
-        logger.error(f"Tab: {tab}")  # Logs the selected tab for reference
 
         # Check if the user belongs to the 'MDF_authors' and 'MDF_approvers' groups
         is_author = request.user.groups.filter(name="MDF_authors").exists()
@@ -632,7 +623,6 @@ class MDFDocumentsOverview(AccessControlMixin, LoginRequiredMixin, View):
 
         # If the 'author' tab is selected and the user is an author
         if tab == 'author' and is_author:
-            logger.error("I am in author")  # Logs when the user is in the author tab
             # Fetch the documents where the user is the owner
             my_documents = Document.get_latest_documents().filter(owner=request.user)
             for document in my_documents:
@@ -640,22 +630,24 @@ class MDFDocumentsOverview(AccessControlMixin, LoginRequiredMixin, View):
                 documents_list.append({
                     'document': document,
                     'document_category': Document.get_category_text(document),
+                    'document_status': Document.get_document_status_text(document),
                     'encrypted_id': generate_secure_link(document.doc_id)
                 })
 
         # If the 'approver' tab is selected and the user is an approver
         elif tab == 'approver' and is_approver:
-            logger.error("I am in approver")  # Logs when the user is in the approver tab
             # Fetch documents assigned to the user for approval
             approving_documents = Document.get_latest_documents().filter(
-                (Q(responsible_users=request.user) & Q(status='waiting')) |
-                (Q(status='waiting_owner') & Q(owner=request.user))
+                Q(status='waiting_owner', owner=request.user) |  # The user is the owner and the status is 'waiting_owner'
+                (Q(status='waiting') & Q(responsible_users=request.user) & ~Q(approved_by_users=request.user))
+                # User is in responsible_users but not in approved_by_users
             ).distinct()
             for document in approving_documents:
                 # Prepare each document for the list with its category and a secure link
                 documents_list.append({
                     'document': document,
-                    'document_category': Document.get_category_text(document),
+                    'document_category': Document.get_document_category_text(document),
+                    'document_status': Document.get_document_status_text(document),
                     'encrypted_id': generate_secure_link(document.doc_id)
                 })
 
@@ -672,11 +664,10 @@ class MDFDocumentsOverview(AccessControlMixin, LoginRequiredMixin, View):
                 else:
                     consent_exists = '-'
 
-                # Logs the document name and consent status for debugging
-                logger.error(f"doc name: {document.doc_name}, consent_exists: {consent_exists}")
                 # Add document to the list with consent status (if applicable)
                 documents_list.append({
                     'document': document,
+                    'document_category': Document.get_document_category_text(document),
                     'encrypted_id': generate_secure_link(document.doc_id),
                     'agree_exists': consent_exists
                 })
@@ -706,15 +697,12 @@ class MDFDocumentsAdding(AccessControlMixin, LoginRequiredMixin, FormView):
     doc_id = None  # Document ID
     generated_link = None  # Generated secure link for the document
     permission_required = []  # List of required permissions (not used here)
-    required_groups = [string_constants.mdf_authors_group_name]  # Only users in this group can access the page
+    required_groups = [string_constants.mdf_admin_group_name, string_constants.mdf_authors_group_name]  # Only users in this group can access the page
 
     def dispatch(self, request, *args, **kwargs):
         """
         Handles the incoming request. Ensures the user is an author and has access to the document.
         """
-        is_author = request.user.groups.filter(name="MDF_authors").exists()  # Check if the user is in the authors group
-        if not is_author:
-            return HttpResponseForbidden("You do not have permission to view this page!")  # Deny access if not an author
 
         # Retrieve and decrypt the document ID from the URL
         doc_id = self.request.GET.get('doc_id', '')
@@ -766,11 +754,6 @@ class MDFDocumentsAdding(AccessControlMixin, LoginRequiredMixin, FormView):
         Handle form submission when the form is valid.
         Saves the document and sends notifications to users.
         """
-        logger = logging.getLogger(__name__)
-        logger.error("User being authenticated...")
-        if not self.request.user.is_authenticated:  # Ensure the user is authenticated
-            logger.error("User not authenticated.")
-            return self.form_invalid(form)
 
         # Fetch the document from the database
         document = Document.objects.get(doc_id=self.doc_id)
@@ -779,7 +762,6 @@ class MDFDocumentsAdding(AccessControlMixin, LoginRequiredMixin, FormView):
 
         # Retrieve the category from the form
         doc_category = form.cleaned_data['category']
-        logger.error(f"Document category: {doc_category}")
 
         document.category = doc_category  # Set the document category
         users = form.cleaned_data.get('contact_users', [])  # Get the users to be contacted
@@ -788,21 +770,27 @@ class MDFDocumentsAdding(AccessControlMixin, LoginRequiredMixin, FormView):
         if users:
             document.contact_users.set(users if isinstance(users, list) else list(users))
 
-        # Handling for different document categories
-        if doc_category == '1':  # Private document
-            logger.error("Private document...")
+
+        # Get groups
+        groups = form.cleaned_data.get('groups', [])
+        if groups:
+            document.groups.set(groups if isinstance(groups, list) else list(groups))
+        else:
             allusers_group = Group.objects.filter(name=string_constants.all_users_group_name).first()
             if allusers_group:
                 document.groups.set([allusers_group])
-            else:
-                logger.error("'allusers' group not found.")
+                document.save()
+
+        # Handling for different document categories
+        if doc_category == '1':  # Private document
             document.status = 'processed'
+
+
 
         elif doc_category == '2':  # Category 2 document
             document.status = 'processed'
 
         elif doc_category == '3':  # Category 3 document with a deadline
-            logger.error("Setting deadline for category 3 document...")
             deadline_date = form.cleaned_data.get('deadline')
             if deadline_date:
                 # Set the deadline time to 23:59

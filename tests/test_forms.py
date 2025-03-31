@@ -79,7 +79,22 @@ class FormTests(TestCase):
         self.assertTrue(form.is_valid(), f"Form errors: {form.errors}")
 
 
-    def test_invalid_url(self):
+    def test_invalid_document_form_name(self):
+        """Test invalid document name DocumentForm"""
+        form_data = {
+            'name': None,
+            'url': 'http://example.com/test-doc',
+            'contact_users': [self.user_admin.pk, self.user_author.pk],
+            'category': 3,  # Private documents
+            'groups': [self.group_admin.pk],
+            'deadline': (now() + timedelta(days=7)),
+            'message': string_constants.email_message_for_users(self.document.doc_name, self.document_link),
+        }
+        form = DocumentForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('name', form.errors)
+
+    def test_document_invalid_form_url(self):
         """Test invalid document url DocumentForm"""
         form_data = {
             'name': 'Invalid URL Document',
@@ -94,7 +109,7 @@ class FormTests(TestCase):
         self.assertIn('url', form.errors)
 
 
-    def test_missing_required_fields(self):
+    def test_document_form_missing_required_fields(self):
         """Test missing required field DocumentForm"""
         form_data = {
             'url': 'http://example.com/missing-fields',
@@ -105,7 +120,7 @@ class FormTests(TestCase):
         self.assertIn('name', form.errors)
         self.assertIn('category', form.errors)
 
-    def test_category_choices(self):
+    def test_document_fom_category_choices(self):
         """Test invalid category choice DocumentForm"""
         form_data = {
             'name': 'Test Invalid Category',
@@ -119,7 +134,7 @@ class FormTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('category', form.errors)
 
-    def test_deadline_format(self):
+    def test_document_from_deadline_format(self):
         """Test invalid deadline format DocumentForm"""
         form_data = {
             'name': 'Test Deadline',
@@ -175,9 +190,19 @@ class FormTests(TestCase):
             'document_name': self.document.doc_name,
             'document_url': self.document.doc_url,
         }
-        form = DocumentApprovalForm(data=form_data)
+        form = DocumentApprovalForm(data=form_data, document=self.document)
         self.assertFalse(form.is_valid())
         self.assertIn('responsible_users', form.errors)
+
+    def test_valid_document_approval_form_missing_responsible_users_waiting(self):
+        """Test invalid DocumentApprovalForm with missing responsible users"""
+        self.document.status = 'waiting'
+        form_data = {
+            'document_name': self.document.doc_name,
+            'document_url': self.document.doc_url,
+        }
+        form = DocumentApprovalForm(data=form_data, document=self.document)
+        self.assertTrue(form.is_valid(), f"Form errors: {form.errors}")
 
     def test_document_approval_form_readonly_fields(self):
         """Verify that the 'document_name' and 'document_url' fields have the readonly attribute"""
@@ -190,7 +215,7 @@ class FormTests(TestCase):
         form_data = {
             'document_name': self.document.doc_name,
             'document_path': self.document.doc_url,
-            'owner': self.user_admin.pk,
+            'owner': self.user_author.pk,
             'version': self.document.doc_ver,
             'document_category' : self.document.doc_category,
         }
@@ -256,4 +281,16 @@ class FormTests(TestCase):
         form = FileSearchForm(data=form_data)
         self.assertFalse(form.is_valid())
         self.assertIn('document_category', form.errors)
+
+    def test_invalid_file_search_form_user_without_permission(self):
+        """Test invalid FileSearchForm with user who is not in MDF_authors group"""
+        form_data = {
+            'document_name': self.document.doc_name,
+            'document_path': self.document.doc_url,
+            'owner': self.user_ordinary.pk,
+            'version': self.document.doc_ver,
+            'document_category' : self.document.doc_category,
+        }
+        form = FileSearchForm(data=form_data)
+        self.assertFalse(form.is_valid(), f"Form errors: {form.errors}")
 

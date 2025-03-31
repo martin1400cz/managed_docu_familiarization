@@ -13,9 +13,7 @@
          <span class="fw-bold">Management Document Familiarization 0.1.0</span>
        </a>
     </li>
-    <li class="nav-item active nav_li">
-      <a class="nav-link zf-nav-link" href="{% url 'emp:emp_people_overview' %}">EMP Overview <span class="sr-only">(current)</span></a>
-    </li>
+
     <li class="nav-item active nav_li">
       <a class="nav-link zf-nav-link" href="{% url 'mdf:base_page' %}">MDF Overview </a>
     </li>
@@ -49,7 +47,6 @@
     {% block modal %}{% endblock modal %}
     {% block footer %}
         <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-          <li class="nav-item zf-nav-link"><a class="nav-link px-2 text-body-secondary" href="{% url 'emp:emp_people_overview' %}">EMP Overview</a></li>
           <li class="nav-item zf-nav-link"><a class="nav-link px-2 text-body-secondary" href="{% url 'mdf:base_page' %}">MDF Overview</a></li>
           <li class="nav-item zf-nav-link"><a class="nav-link px-2 text-body-secondary" href="{% url 'mdf:admin_file_search_page'%}">MDF Admin</a></li>
         </ul>

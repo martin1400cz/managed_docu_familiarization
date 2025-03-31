@@ -8,18 +8,22 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from managed_docu_familiarization.static.Strings import string_constants
 
 
+# Form for document approval
 class DocumentApprovalForm(forms.Form):
+    # Field for document name (read-only)
     document_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
-                           max_length=255,
-                           required=True)
+                                    max_length=255,
+                                    required=True)
 
+    # Field for document URL (read-only, clickable to open in a new tab)
     document_url = forms.CharField(widget=forms.TextInput(
         attrs={'class': 'form-control', 'readonly': 'readonly', 'onclick': "window.open(this.value, '_blank')"}),
         max_length=500,
         required=True)
 
+    # Field for selecting responsible users (filtered select multiple widget)
     responsible_users = forms.ModelMultipleChoiceField(
-        queryset=User.objects.filter(groups__name="MDF_approvers"),
+        queryset=User.objects.filter(groups__name=string_constants.mdf_responsible_users_group_name),
         widget=FilteredSelectMultiple("Responsible_users", is_stacked=False,
                                       attrs={'class': 'form-select form-control'}),
         required=True,
@@ -27,14 +31,21 @@ class DocumentApprovalForm(forms.Form):
         help_text="Enter user IDs separated by commas.",
     )
 
+    def __init__(self, *args, document=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        # If the document is in 'waiting' status, responsible users are not required
+        if document and document.status == 'waiting':
+            self.fields['responsible_users'].required = False
+
     class Media:
         css = {
             'all': ['admin/css/widgets.css'],
         }
-        # Adding this javascript is crucial
+        # JavaScript for additional functionalities
         js = ['/admin/jsi18n/']
 
 
+# Form for searching files/documents
 class FileSearchForm(forms.Form):
     document_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control w-75'}),
                                     max_length=255,
@@ -45,7 +56,7 @@ class FileSearchForm(forms.Form):
                                     max_length=255,
                                     required=True)
     owner = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control w-75'}),
-                                   queryset=User.objects.all(),
+                                   queryset=User.objects.filter(groups__name=string_constants.mdf_authors_group_name),
                                    label=string_constants.admin_page_form_document_owner,
                                    required=True)
 
@@ -54,6 +65,7 @@ class FileSearchForm(forms.Form):
                               max_length=25,
                               required=True)
 
+    # Choices for document categories
     choices = [
         (1, "Standard"),
         (2, "Guideline"),
@@ -63,42 +75,43 @@ class FileSearchForm(forms.Form):
 
     document_category = forms.ChoiceField(
         choices=choices,
-        # widget=forms.RadioSelect(attrs={'class': 'form-check-input category-choice'}),
         widget=forms.RadioSelect,
         label="Document Category",
         required=True,
     )
 
 
+# Form for document management
 class DocumentForm(forms.Form):
     def __init__(self, *args, document_name=None, document_link=None, **kwargs):
         super().__init__(*args, **kwargs)
         if document_link:
             prefilled_text = (string_constants.email_message_for_users(document_name, document_link))
             self.fields['message'].initial = prefilled_text
-    #filter_horizontal = ('groups',)
 
+    # Document name (read-only)
     name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
                            max_length=255,
                            required=True)
-    url = forms.CharField(widget=forms.TextInput(
-                            attrs={'class': 'form-control', 'readonly': 'readonly'}),
-                            max_length=500,
-                            required=True)
 
+    # Document URL (read-only)
+    url = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'form-control', 'readonly': 'readonly'}),
+        max_length=500,
+        required=True)
+
+    # Field for selecting contact users
     contact_users = forms.ModelMultipleChoiceField(
-        #    widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         queryset=User.objects.all(),
         widget=FilteredSelectMultiple("Users", is_stacked=False, attrs={
-            'class': 'form-select form-control' ,
+            'class': 'form-select form-control',
             'id': 'id_contact_users'}),
-        required=False,  # It may be empty
+        required=False,  # Optional field
         label=string_constants.publishing_page_form_contact_users,
         help_text="Enter user IDs separated by commas.",
     )
 
-    #contact_users = forms.Textarea(queryset=User.objects.all(), attrs={'cols': 80, 'rows': 2})
-
+    # Choices for publication category
     choices = [
         (1, "Private documents"),
         (2, "Public documents"),
@@ -107,30 +120,30 @@ class DocumentForm(forms.Form):
 
     category = forms.ChoiceField(
         choices=choices,
-        #widget=forms.RadioSelect(attrs={'class': 'form-check-input category-choice'}),
         widget=forms.RadioSelect,
         label="Publication category",
         required=True,
     )
 
+    # Field for selecting user groups
     groups = forms.ModelMultipleChoiceField(
         label="Select Groups",
         queryset=Group.objects.all(),
-        #widget=forms.SelectMultiple(attrs={'class': 'admin-style-select'}),  # Customize styling as needed
         widget=FilteredSelectMultiple("Groups", is_stacked=False, attrs={'class': 'form-select form-control'}),
-        #filter_horizontal=['Groups'],
         required=False
     )
 
+    # Field for setting a deadline for document approval
     deadline = forms.DateTimeField(
         required=False,
-        #widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'dd.mm.yyyy', 'class': 'form-control col col-md-3', 'id': 'id_deadline'}),
-        input_formats=['%d.%m.%Y'],  # The format we expect
-        label='Set a deadline for this document',  # Custom label
-        help_text="Select a date and time when the document should be finalized."  # Help text
+        widget=forms.DateInput(attrs={'type': 'date', 'placeholder': 'dd.mm.yyyy', 'class': 'form-control col col-md-3',
+                                      'id': 'id_deadline'}),
+        input_formats=['%d.%m.%Y'],
+        label='Set a deadline for this document',
+        help_text="Select a date and time when the document should be finalized."
     )
 
+    # Field for an email message
     message = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
@@ -140,42 +153,32 @@ class DocumentForm(forms.Form):
             'id': 'id_message',
             'class': 'form-control',
         }),
-        #initial=string_constants.email_message_for_users,
         label="Email message:",
     )
 
     class Media:
         css = {
-            #'all': ['admin/css/widgets.css',
-            #        'css/uid-manage-form.css'],
             'all': ['admin/css/widgets.css'],
         }
-        # Adding this javascript is crucial
         js = ['/admin/jsi18n/']
-
-    #class Meta:
-    #    model = Document
-    #    fields = ['name', 'url',  'contact_users', 'category', 'groups', 'deadline']
 
     def save(self, commit=True):
         doc = super().save()
         return doc
-    #def __init__(self, *args, **kwargs):
-    #    super().__init__(*args, **kwargs)
-    #    self.fields['contact_users'].queryset = User.objects.all()
 
 
+# Admin form for Document model
 class DocumentFormAdmin(forms.ModelForm):
     class Meta:
         model = Document
         fields = ('doc_name', 'doc_url', 'owner', 'category')
 
-
     def save(self, commit=True):
         doc = super().save()
         return doc
 
 
+# Admin form for DocumentAgreement model
 class DocumentAgreementAdmin(forms.ModelForm):
     class Meta:
         model = DocumentAgreement

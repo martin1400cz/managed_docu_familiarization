@@ -117,21 +117,36 @@ class Document(models.Model):
 
     @property
     def is_waiting_owner(self):
+        """
+        :return: if document status is waiting_owner
+        """
         return self.status == 'waiting_owner'
 
     def is_waiting(self):
+        """
+        :return: if dokument status is waiting
+        """
         return self.status == 'waiting'
 
     @property
     def is_uploaded(self):
+        """
+        :return: if document status is uploaded
+        """
         return self.status == 'uploaded'
 
     def get_all_important_users(self):
+        """
+        :return: all users from responsible_users and owner
+        """
         all_users = set(self.responsible_users.all())
         all_users.add(self.owner)
         return list(all_users)
 
     def get_responsible_users(self):
+        """
+        :return: all users from responsible_users
+        """
         all_users = set(self.responsible_users.all())
         return list(all_users)
 
@@ -148,18 +163,27 @@ class Document(models.Model):
         return list(unique_set)
 
     def get_category_text(self):
+        """
+        :return: Name of category for publishing
+        """
         for key, value in FORMAT_CHOICES:
             if key == self.category:
                 return value
         return 'Unknown category'
 
     def get_document_category_text(self):
+        """
+        :return: name of document category
+        """
         for key, value in DOCUMENT_CATEGORY_CHOICES:
             if key == self.doc_category:
                 return value
         return 'Unknown document category'
 
     def get_document_status_text(self):
+        """
+        :return: name of document status
+        """
         for key, value in STATUS_CHOICES:
             if key == self.status:
                 return value
@@ -182,12 +206,15 @@ class Document(models.Model):
 
 
 class DocumentAgreement(models.Model):
-    id = models.AutoField(primary_key=True)
+    """
+    DocumentAgreement model - represents an agreement from user for certain document
+    """
+    id = models.AutoField(primary_key=True) # id of the agreement
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_stats')
     document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='agreements')
     agreed_at = models.DateTimeField(auto_now_add=True)  # Automatically saves the timestamp when a user agrees
-    reading_time = models.PositiveIntegerField(default=0)
-    open_count = models.PositiveIntegerField(default=0)
+    reading_time = models.PositiveIntegerField(default=0) # time user spend with reading the document
+    # open_count = models.PositiveIntegerField(default=0)
 
     class Meta:
         unique_together = ('user', 'document')  # Ensures one agreement per user per document

@@ -28,13 +28,13 @@ urlpatterns = [
     path('mdfdocuments/approvals/', MDFDocumentApprovalView.as_view(), name='document_approval'),
     path('mdfdocuments/approvals/<str:enc_doc_id>', MDFDocumentApprovalView.as_view(), name='document_approval'),
     path('mdfdocuments/approvals/open/<str:enc_doc_id>/', open_document_approval, name='open_document_approval'),
-
+    # user_stats
     path('mdfdocuments/user_stats/', MDFDocumentsUserDetailView.as_view(), name='user_stats'),
     path('mdfdocuments/user_stats/open/<str:user_id>/', open_document_user_detail, name='open_user_stats'),
-    #path('mdfdocuments/agreements/send-email/', MDFDocumentStatsView.as_view(), name='document_stats'),
+    # publishing_page
     path("mdfdocuments/overview/add/", MDFDocumentsAdding.as_view(), name="publishing_page"),
     path("mdfdocuments/overview/add/<str:file_name>/", MDFDocumentsAdding.as_view(), name="publishing_page"),
-
+    # admin pages
     path('mdfdocuments/admin-file-search/', MDFAdminDocumentList.as_view(), name='admin_file_search_page'),
     path('mdfdocuments/admin-file-search/open/<str:doc_id>', open_admin_add_document_page,name='open_admin_add_document_page'),
     path('mdfdocuments/admin-file-search/open/<str:doc_id><str:action>', open_admin_add_document_page, name='open_admin_add_document_page'),

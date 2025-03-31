@@ -9,9 +9,22 @@ class AccessControlMixin(LoginRequiredMixin, PermissionRequiredMixin):
     specific permissions, and optional group membership. This also includes logging
     and access testing for additional flexibility.
     """
-    group_required = None  # Define required group(s) for access
+    required_groups = None  # Define required group(s) for access
     permission_required = []  # Permissions required for access
     logger = logging.getLogger(__name__)
+
+    def dispatch(self, request, *args, **kwargs):
+        # First, perform the basic access control checks
+        access_response = self.test_user_access(request)
+        print(f"Access response: {access_response}")
+        if access_response:
+            return access_response
+
+        # Log user activity for debugging or monitoring purposes
+        self.log_user_activity(request)
+
+        # Proceed with the normal dispatch process if all checks pass
+        return super().dispatch(request, *args, **kwargs)
 
     def check_permissions(self, request):
         """
@@ -42,13 +55,13 @@ class AccessControlMixin(LoginRequiredMixin, PermissionRequiredMixin):
             return HttpResponseForbidden("You do not have the necessary permissions to access this page.")
 
         # Check if the user belongs to the required group(s)
-        if self.group_required:
-            if isinstance(self.group_required, str):
+        if self.required_groups:
+            if isinstance(self.required_groups, str):
                 # If a single group is provided as a string, convert it to a list
-                groups = [self.group_required]
+                groups = [self.required_groups]
             else:
                 # If multiple groups are provided, use them directly
-                groups = self.group_required
+                groups = self.required_groups
 
             # Verify if the user is a member of at least one of the required groups
             if not request.user.groups.filter(name__in=groups).exists():
@@ -63,9 +76,3 @@ class AccessControlMixin(LoginRequiredMixin, PermissionRequiredMixin):
         This method returns a list of permissions that are required for the view.
         """
         return self.permission_required
-
-    def check_user__groups(self, request):
-        """
-        Check if the user is in the required groups for this view.
-        """
-        return True

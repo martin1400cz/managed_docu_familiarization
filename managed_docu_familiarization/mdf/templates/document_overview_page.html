@@ -69,7 +69,7 @@
                     <td>{{ document.document.doc_name }}</td>
                     <td>{{ document.document.release_date|date:"d.m.Y" }}</td>
                     <td>{{ document.document_category }}</td>
-                    <td>{{ document.document.status }}</td>
+                    <td>{{ document.document_status }}</td>
                     <td><a class="bi bi-filetype-pdf" href="{% url 'mdf:open_document_view' document.encrypted_id %}"> Show</a></td>
                     <td>
                       {% if document.document.owner == request.user %}
@@ -89,6 +89,7 @@
                     <th>Name</th>
                     <th>Release Date</th>
                     <th>Category</th>
+                    <th>Status</th>
                     <th>Owner</th>
                 </tr>
             </thead>
@@ -98,6 +99,7 @@
                     <td><a href="{% url 'mdf:open_document_approval' document.encrypted_id%}">{{ document.document.doc_name }}</a></td>
                     <td>{{ document.document.release_date|date:"d.m.Y" }}</td>
                     <td>{{ document.document_category }}</td>
+                    <td>{{ document.document_status }}</td>
                     <td>{{ document.document.owner }}</td>
                 </tr>
                 {% empty %}
@@ -111,6 +113,7 @@
             <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Category</th>
                     <th>Release Date</th>
                     <th>Author</th>
                     <th>Familiarized with the document</th>
@@ -121,6 +124,7 @@
                 {% for document in documents_list %}
                 <tr>
                     <td>{{ document.document.doc_name }}</td>
+                    <td>{{ document.document_category }}</td>
                     <td>{{ document.document.release_date|date:"d.m.Y" }}</td>
                     <td>{{ document.document.owner.full_name }}</td> <!-- Adjust according to your User model -->
                     <td>{% if document.agree_exists == '-' %}
