@@ -1,0 +1,133 @@
+mdf.migrations package
+======================
+
+Submodules
+----------
+
+mdf.migrations.0001\_initial module
+-----------------------------------
+
+.. automodule:: mdf.migrations.0001_initial
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0002\_alter\_document\_release\_date module
+----------------------------------------------------------
+
+.. automodule:: mdf.migrations.0002_alter_document_release_date
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0003\_alter\_document\_groups module
+---------------------------------------------------
+
+.. automodule:: mdf.migrations.0003_alter_document_groups
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0004\_alter\_document\_doc\_url module
+-----------------------------------------------------
+
+.. automodule:: mdf.migrations.0004_alter_document_doc_url
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0005\_alter\_documentagreement\_options\_and\_more module
+------------------------------------------------------------------------
+
+.. automodule:: mdf.migrations.0005_alter_documentagreement_options_and_more
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0006\_alter\_documentagreement\_options\_document\_deadline\_and\_more module
+--------------------------------------------------------------------------------------------
+
+.. automodule:: mdf.migrations.0006_alter_documentagreement_options_document_deadline_and_more
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0007\_document\_status\_alter\_document\_groups module
+---------------------------------------------------------------------
+
+.. automodule:: mdf.migrations.0007_document_status_alter_document_groups
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0008\_documentagreement\_open\_count\_and\_more module
+---------------------------------------------------------------------
+
+.. automodule:: mdf.migrations.0008_documentagreement_open_count_and_more
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0009\_alter\_document\_status module
+---------------------------------------------------
+
+.. automodule:: mdf.migrations.0009_alter_document_status
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0010\_document\_responsible\_users module
+--------------------------------------------------------
+
+.. automodule:: mdf.migrations.0010_document_responsible_users
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0011\_alter\_document\_contact\_users\_alter\_document\_status module
+------------------------------------------------------------------------------------
+
+.. automodule:: mdf.migrations.0011_alter_document_contact_users_alter_document_status
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0012\_document\_doc\_ver\_document\_previous\_version module
+---------------------------------------------------------------------------
+
+.. automodule:: mdf.migrations.0012_document_doc_ver_document_previous_version
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0013\_document\_approved\_by\_users\_document\_doc\_category\_and\_more module
+---------------------------------------------------------------------------------------------
+
+.. automodule:: mdf.migrations.0013_document_approved_by_users_document_doc_category_and_more
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0014\_alter\_document\_category\_alter\_document\_doc\_ver\_and\_more module
+-------------------------------------------------------------------------------------------
+
+.. automodule:: mdf.migrations.0014_alter_document_category_alter_document_doc_ver_and_more
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mdf.migrations.0015\_remove\_documentagreement\_open\_count module
+------------------------------------------------------------------
+
+.. automodule:: mdf.migrations.0015_remove_documentagreement_open_count
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: mdf.migrations
+   :members:
+   :undoc-members:
+   :show-inheritance:

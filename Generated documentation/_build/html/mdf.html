@@ -1,0 +1,1865 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>mdf package &#8212; managed_docu_familiarization  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mdf" href="modules.html" />
+    <link rel="prev" title="Docker Remote Debugging" href="pycharm/configuration.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mdf-package">
+<span id="mdf"></span><h1>mdf package<a class="headerlink" href="#mdf-package" title="Permalink to this heading">¶</a></h1>
+<p>The MDF package contains the source codes of the module for working
+with company documentation.
+The module consists of a model (Document, DocumentAgreement),
+views describing the functioning of individual templates
+and the relationships between them.</p>
+<p>Every user accessing to this module must be logged!
+Subpackages
+———–</p>
+<div class="toctree-wrapper compound">
+</div>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="mdf-templates-module">
+<h2>mdf.templates module<a class="headerlink" href="#mdf-templates-module" title="Permalink to this heading">¶</a></h2>
+<p>The templates module contains individual templates that define the appearance of the page.
+.. automodule:: managed_docu_familiarization.mdf.templates</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">members<span class="colon">:</span></dt>
+<dd class="field-odd"><p>document_admin_adding_page.html
+document_admin_view_page.html
+document_approval_page.html
+document_author_page.html
+document_overview_page.html
+document_stats_page.html
+document_user_detail_page.html
+document_view_page.html</p>
+</dd>
+<dt class="field-even">undoc-members<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+<dt class="field-odd">show-inheritance<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="module-managed_docu_familiarization.mdf.AccessControlMixin">
+<span id="mdf-accesscontrolmixin-module"></span><h2>mdf.AccessControlMixin module<a class="headerlink" href="#module-managed_docu_familiarization.mdf.AccessControlMixin" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.AccessControlMixin.</span></span><span class="sig-name descname"><span class="pre">AccessControlMixin</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LoginRequiredMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">PermissionRequiredMixin</span></code></p>
+<p>”
+Mixin that extends access control by requiring user authentication,
+specific permissions, and optional group membership. This also includes logging
+and access testing for additional flexibility.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.check_permissions">
+<span class="sig-name descname"><span class="pre">check_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.check_permissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the user has the required permissions for this view.
+Override this method in the view to implement specific permission logic.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.dispatch">
+<span class="sig-name descname"><span class="pre">dispatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.dispatch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.get_permission_required">
+<span class="sig-name descname"><span class="pre">get_permission_required</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.get_permission_required" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the permission required for the view, can be overridden in the view.
+This method returns a list of permissions that are required for the view.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.log_user_activity">
+<span class="sig-name descname"><span class="pre">log_user_activity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.log_user_activity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log basic user activity like login status and role-based actions.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Logger</span> <span class="pre">managed_docu_familiarization.mdf.AccessControlMixin</span> <span class="pre">(INFO)&gt;</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.permission_required">
+<span class="sig-name descname"><span class="pre">permission_required</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.permission_required" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.required_groups">
+<span class="sig-name descname"><span class="pre">required_groups</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.required_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.test_user_access">
+<span class="sig-name descname"><span class="pre">test_user_access</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.test_user_access" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the user has access to the view.
+This method can be overridden in the view to add additional checks.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-managed_docu_familiarization.mdf.admin">
+<span id="mdf-admin-module"></span><h2>mdf.admin module<a class="headerlink" href="#module-managed_docu_familiarization.mdf.admin" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.admin.</span></span><span class="sig-name descname"><span class="pre">DocumentAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAdmin.add_form">
+<span class="sig-name descname"><span class="pre">add_form</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAdmin.add_form" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#managed_docu_familiarization.mdf.forms.DocumentFormAdmin" title="managed_docu_familiarization.mdf.forms.DocumentFormAdmin"><code class="xref py py-class docutils literal notranslate"><span class="pre">DocumentFormAdmin</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAdmin.filter_horizontal">
+<span class="sig-name descname"><span class="pre">filter_horizontal</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['groups']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAdmin.filter_horizontal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAdmin.get_form">
+<span class="sig-name descname"><span class="pre">get_form</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAdmin.get_form" title="Permalink to this definition">¶</a></dt>
+<dd><p>overrides some fields for permissions</p>
+<p><a class="reference external" href="https://realpython.com/manage-users-in-django-admin/#django-admin-and-model-permissions">https://realpython.com/manage-users-in-django-admin/#django-admin-and-model-permissions</a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['doc_name',</span> <span class="pre">'doc_url',</span> <span class="pre">'owner',</span> <span class="pre">'category']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAdmin.list_display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAdmin.list_filter">
+<span class="sig-name descname"><span class="pre">list_filter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['owner']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAdmin.list_filter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAdmin.media" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAdmin.ordering">
+<span class="sig-name descname"><span class="pre">ordering</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['-doc_name']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAdmin.ordering" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAdmin.search_fields">
+<span class="sig-name descname"><span class="pre">search_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['doc_name']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAdmin.search_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.admin.</span></span><span class="sig-name descname"><span class="pre">DocumentAgreementAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.add_form">
+<span class="sig-name descname"><span class="pre">add_form</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.add_form" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin" title="managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin"><code class="xref py py-class docutils literal notranslate"><span class="pre">DocumentAgreementAdmin</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.get_form">
+<span class="sig-name descname"><span class="pre">get_form</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.get_form" title="Permalink to this definition">¶</a></dt>
+<dd><p>overrides some fields for permissions</p>
+<p><a class="reference external" href="https://realpython.com/manage-users-in-django-admin/#django-admin-and-model-permissions">https://realpython.com/manage-users-in-django-admin/#django-admin-and-model-permissions</a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'user',</span> <span class="pre">'document']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.list_display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.list_filter">
+<span class="sig-name descname"><span class="pre">list_filter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['document']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.list_filter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.media" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.ordering">
+<span class="sig-name descname"><span class="pre">ordering</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['-id']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.ordering" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.search_fields">
+<span class="sig-name descname"><span class="pre">search_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.search_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-managed_docu_familiarization.mdf.apps">
+<span id="mdf-apps-module"></span><h2>mdf.apps module<a class="headerlink" href="#module-managed_docu_familiarization.mdf.apps" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.apps.MDFConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.apps.</span></span><span class="sig-name descname"><span class="pre">MDFConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_module</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.apps.MDFConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AppConfig</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.apps.MDFConfig.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'managed_docu_familiarization.mdf'</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.apps.MDFConfig.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.apps.MDFConfig.ready">
+<span class="sig-name descname"><span class="pre">ready</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.apps.MDFConfig.ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override this method in subclasses to run code when Django starts.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.apps.MDFConfig.verbose_name">
+<span class="sig-name descname"><span class="pre">verbose_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'MDF'</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.apps.MDFConfig.verbose_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-managed_docu_familiarization.mdf.forms">
+<span id="mdf-forms-module"></span><h2>mdf.forms module<a class="headerlink" href="#module-managed_docu_familiarization.mdf.forms" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.forms.</span></span><span class="sig-name descname"><span class="pre">DocumentAgreementAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id='id_%s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_class=&lt;class</span> <span class="pre">'django.forms.utils.ErrorList'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_suffix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_permitted=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_required_attribute=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderer=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ModelForm</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('user',</span> <span class="pre">'document')</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#managed_docu_familiarization.mdf.models.DocumentAgreement" title="managed_docu_familiarization.mdf.models.DocumentAgreement"><code class="xref py py-class docutils literal notranslate"><span class="pre">DocumentAgreement</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.base_fields">
+<span class="sig-name descname"><span class="pre">base_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'document':</span> <span class="pre">&lt;django.forms.models.ModelChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'user':</span> <span class="pre">&lt;django.forms.models.ModelChoiceField</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.base_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.declared_fields">
+<span class="sig-name descname"><span class="pre">declared_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.declared_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.media" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all media required to render the widgets on this form.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save this form’s self.instance object if commit=True. Otherwise, add
+a save_m2m() method to the form which can be called after the instance
+is saved manually at a later time. Return the model instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentApprovalForm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.forms.</span></span><span class="sig-name descname"><span class="pre">DocumentApprovalForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">document</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentApprovalForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Form</span></code></p>
+<p>Form for approvers to approve a document.
+Parameters document_name and document_url are automatically filled from GET parameters</p>
+<p>responsible_users is required parameter when document is in ‘waiting’ status</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentApprovalForm.Media">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Media</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentApprovalForm.Media" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentApprovalForm.Media.css">
+<span class="sig-name descname"><span class="pre">css</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'all':</span> <span class="pre">['admin/css/widgets.css']}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentApprovalForm.Media.css" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentApprovalForm.Media.js">
+<span class="sig-name descname"><span class="pre">js</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['/admin/jsi18n/']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentApprovalForm.Media.js" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentApprovalForm.base_fields">
+<span class="sig-name descname"><span class="pre">base_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'document_name':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'document_url':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'responsible_users':</span> <span class="pre">&lt;django.forms.models.ModelMultipleChoiceField</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentApprovalForm.base_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentApprovalForm.declared_fields">
+<span class="sig-name descname"><span class="pre">declared_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'document_name':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'document_url':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'responsible_users':</span> <span class="pre">&lt;django.forms.models.ModelMultipleChoiceField</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentApprovalForm.declared_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentApprovalForm.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentApprovalForm.media" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all media required to render the widgets on this form.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentForm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.forms.</span></span><span class="sig-name descname"><span class="pre">DocumentForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">document_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">document_link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Form</span></code></p>
+<p>Form for a document author(owner) to fill an information about document.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentForm.Media">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Media</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentForm.Media" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentForm.Media.css">
+<span class="sig-name descname"><span class="pre">css</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'all':</span> <span class="pre">['admin/css/widgets.css']}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentForm.Media.css" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentForm.Media.js">
+<span class="sig-name descname"><span class="pre">js</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['/admin/jsi18n/']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentForm.Media.js" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentForm.base_fields">
+<span class="sig-name descname"><span class="pre">base_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'category':</span> <span class="pre">&lt;django.forms.fields.ChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'contact_users':</span> <span class="pre">&lt;django.forms.models.ModelMultipleChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'deadline':</span> <span class="pre">&lt;django.forms.fields.DateTimeField</span> <span class="pre">object&gt;,</span> <span class="pre">'groups':</span> <span class="pre">&lt;django.forms.models.ModelMultipleChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'message':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'name':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'url':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentForm.base_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentForm.choices">
+<span class="sig-name descname"><span class="pre">choices</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[(1,</span> <span class="pre">'Private</span> <span class="pre">documents'),</span> <span class="pre">(2,</span> <span class="pre">'Public</span> <span class="pre">documents'),</span> <span class="pre">(3,</span> <span class="pre">'Documents</span> <span class="pre">for</span> <span class="pre">certain</span> <span class="pre">groups')]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentForm.choices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentForm.declared_fields">
+<span class="sig-name descname"><span class="pre">declared_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'category':</span> <span class="pre">&lt;django.forms.fields.ChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'contact_users':</span> <span class="pre">&lt;django.forms.models.ModelMultipleChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'deadline':</span> <span class="pre">&lt;django.forms.fields.DateTimeField</span> <span class="pre">object&gt;,</span> <span class="pre">'groups':</span> <span class="pre">&lt;django.forms.models.ModelMultipleChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'message':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'name':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'url':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentForm.declared_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentForm.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentForm.media" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all media required to render the widgets on this form.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentForm.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentForm.save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentFormAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.forms.</span></span><span class="sig-name descname"><span class="pre">DocumentFormAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id='id_%s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_class=&lt;class</span> <span class="pre">'django.forms.utils.ErrorList'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_suffix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_permitted=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_required_attribute=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderer=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentFormAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ModelForm</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentFormAdmin.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentFormAdmin.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('doc_name',</span> <span class="pre">'doc_url',</span> <span class="pre">'owner',</span> <span class="pre">'category')</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentFormAdmin.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#managed_docu_familiarization.mdf.models.Document" title="managed_docu_familiarization.mdf.models.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentFormAdmin.base_fields">
+<span class="sig-name descname"><span class="pre">base_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'category':</span> <span class="pre">&lt;django.forms.fields.TypedChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'doc_name':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'doc_url':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'owner':</span> <span class="pre">&lt;django.forms.models.ModelChoiceField</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.base_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentFormAdmin.declared_fields">
+<span class="sig-name descname"><span class="pre">declared_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.declared_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentFormAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.media" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all media required to render the widgets on this form.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.DocumentFormAdmin.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save this form’s self.instance object if commit=True. Otherwise, add
+a save_m2m() method to the form which can be called after the instance
+is saved manually at a later time. Return the model instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.FileSearchForm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.forms.</span></span><span class="sig-name descname"><span class="pre">FileSearchForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_id='id_%s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_class=&lt;class</span> <span class="pre">'django.forms.utils.ErrorList'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_suffix=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_permitted=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_order=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_required_attribute=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renderer=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.FileSearchForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Form</span></code></p>
+<p>Form for administrator to add a new document</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.FileSearchForm.base_fields">
+<span class="sig-name descname"><span class="pre">base_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'document_category':</span> <span class="pre">&lt;django.forms.fields.ChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'document_name':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'document_path':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'owner':</span> <span class="pre">&lt;django.forms.models.ModelChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'version':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.FileSearchForm.base_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.FileSearchForm.choices">
+<span class="sig-name descname"><span class="pre">choices</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[(1,</span> <span class="pre">'Standard'),</span> <span class="pre">(2,</span> <span class="pre">'Guideline'),</span> <span class="pre">(3,</span> <span class="pre">'Workflows'),</span> <span class="pre">(4,</span> <span class="pre">'Manual')]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.FileSearchForm.choices" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.FileSearchForm.declared_fields">
+<span class="sig-name descname"><span class="pre">declared_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'document_category':</span> <span class="pre">&lt;django.forms.fields.ChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'document_name':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'document_path':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;,</span> <span class="pre">'owner':</span> <span class="pre">&lt;django.forms.models.ModelChoiceField</span> <span class="pre">object&gt;,</span> <span class="pre">'version':</span> <span class="pre">&lt;django.forms.fields.CharField</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.FileSearchForm.declared_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.forms.FileSearchForm.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.forms.FileSearchForm.media" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all media required to render the widgets on this form.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-managed_docu_familiarization.mdf.models">
+<span id="mdf-models-module"></span><h2>mdf.models module<a class="headerlink" href="#module-managed_docu_familiarization.mdf.models" title="Permalink to this heading">¶</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DOCUMENT_CATEGORY_CHOICES">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.models.</span></span><span class="sig-name descname"><span class="pre">DOCUMENT_CATEGORY_CHOICES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">((1,</span> <span class="pre">'Standard'),</span> <span class="pre">(2,</span> <span class="pre">'Guideline'),</span> <span class="pre">(3,</span> <span class="pre">'Workflows'),</span> <span class="pre">(4,</span> <span class="pre">'Manual'))</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DOCUMENT_CATEGORY_CHOICES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Category formats</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.models.</span></span><span class="sig-name descname"><span class="pre">Document</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<p>Document model - represents a document using a reference to it</p>
+<p>Main parameters:</p>
+<p>doc_id - primary key - id of the document</p>
+<p>doc_name - name of the document</p>
+<p>doc_url - url (path) to the document</p>
+<p>doc_category - document category (type of the document)</p>
+<p>category - publishing category, i.e. category which is chosen by user when publishing document for other users</p>
+<p>release_date - automatically added when the document is created</p>
+<p>owner - foreign key to the managed_docu_familiarization.users.models.user - it represents an owner of the document (or author)</p>
+<p>responsible_users - ManyToMany parameter (for users). It represents users who were chosen to approve the document</p>
+<p>approved_by_users - ManyToMany parameter, users from responsible_users who approved the document</p>
+<p>contact_users - ManyToMany parameter, users who were chosen to answer questins, etc.</p>
+<p>deadline - timestamp added by user who chose the document to be category 3</p>
+<p>status - document status</p>
+<p>groups - ManyToMany parameter (for user.groups) - represents chosen groups of users</p>
+<p>doc_ver - version of document added by admin</p>
+<p>previos_version - foreign key to Document model - represents an previous version of the document</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.agreements">
+<span class="sig-name descname"><span class="pre">agreements</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.agreements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.approved_by_users">
+<span class="sig-name descname"><span class="pre">approved_by_users</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.approved_by_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the forward and reverse sides of
+a many-to-many relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pizza</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">toppings</span> <span class="o">=</span> <span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Topping</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;pizzas&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Pizza.toppings</span></code> and <code class="docutils literal notranslate"><span class="pre">Topping.pizzas</span></code> are <code class="docutils literal notranslate"><span class="pre">ManyToManyDescriptor</span></code>
+instances.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.category">
+<span class="sig-name descname"><span class="pre">category</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.category" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.contact_users">
+<span class="sig-name descname"><span class="pre">contact_users</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.contact_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the forward and reverse sides of
+a many-to-many relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pizza</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">toppings</span> <span class="o">=</span> <span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Topping</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;pizzas&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Pizza.toppings</span></code> and <code class="docutils literal notranslate"><span class="pre">Topping.pizzas</span></code> are <code class="docutils literal notranslate"><span class="pre">ManyToManyDescriptor</span></code>
+instances.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.deadline">
+<span class="sig-name descname"><span class="pre">deadline</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.deadline" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.doc_category">
+<span class="sig-name descname"><span class="pre">doc_category</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.doc_category" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.doc_id">
+<span class="sig-name descname"><span class="pre">doc_id</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.doc_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.doc_name">
+<span class="sig-name descname"><span class="pre">doc_name</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.doc_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.doc_url">
+<span class="sig-name descname"><span class="pre">doc_url</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.doc_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.doc_ver">
+<span class="sig-name descname"><span class="pre">doc_ver</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.doc_ver" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.document_set">
+<span class="sig-name descname"><span class="pre">document_set</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.document_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_all_important_users">
+<span class="sig-name descname"><span class="pre">get_all_important_users</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_all_important_users" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>all users from responsible_users and owner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_all_versions">
+<span class="sig-name descname"><span class="pre">get_all_versions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_all_versions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all versions of a document.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_category_display">
+<span class="sig-name descname"><span class="pre">get_category_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.PositiveSmallIntegerField:</span> <span class="pre">category&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_category_display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_category_text">
+<span class="sig-name descname"><span class="pre">get_category_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_category_text" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Name of category for publishing</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_doc_category_display">
+<span class="sig-name descname"><span class="pre">get_doc_category_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.PositiveSmallIntegerField:</span> <span class="pre">doc_category&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_doc_category_display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_document_category_text">
+<span class="sig-name descname"><span class="pre">get_document_category_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_document_category_text" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>name of document category</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_document_status_text">
+<span class="sig-name descname"><span class="pre">get_document_status_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_document_status_text" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>name of document status</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_latest_documents">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_latest_documents</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_latest_documents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns latest version documents</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_latest_version">
+<span class="sig-name descname"><span class="pre">get_latest_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_latest_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the latest version of the document.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_next_by_release_date">
+<span class="sig-name descname"><span class="pre">get_next_by_release_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">release_date&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_next_by_release_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_previous_by_release_date">
+<span class="sig-name descname"><span class="pre">get_previous_by_release_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">release_date&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_previous_by_release_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_responsible_users">
+<span class="sig-name descname"><span class="pre">get_responsible_users</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_responsible_users" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>all users from responsible_users</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_status_display">
+<span class="sig-name descname"><span class="pre">get_status_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.CharField:</span> <span class="pre">status&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_status_display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.get_users_from_groups">
+<span class="sig-name descname"><span class="pre">get_users_from_groups</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.get_users_from_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Functions returns a list of users from certain groups, if some users are in more than one group, they are picked only once.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.groups">
+<span class="sig-name descname"><span class="pre">groups</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the forward and reverse sides of
+a many-to-many relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pizza</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">toppings</span> <span class="o">=</span> <span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Topping</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;pizzas&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Pizza.toppings</span></code> and <code class="docutils literal notranslate"><span class="pre">Topping.pizzas</span></code> are <code class="docutils literal notranslate"><span class="pre">ManyToManyDescriptor</span></code>
+instances.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.is_uploaded">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_uploaded</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.is_uploaded" title="Permalink to this definition">¶</a></dt>
+<dd><p>if document status is uploaded</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>return</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.is_waiting">
+<span class="sig-name descname"><span class="pre">is_waiting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.is_waiting" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>if dokument status is waiting</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.is_waiting_owner">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_waiting_owner</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.is_waiting_owner" title="Permalink to this definition">¶</a></dt>
+<dd><p>if document status is waiting_owner</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>return</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.owner">
+<span class="sig-name descname"><span class="pre">owner</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.owner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.owner_id">
+<span class="sig-name descname"><span class="pre">owner_id</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.owner_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.part_title">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">part_title</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.part_title" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.previous_version">
+<span class="sig-name descname"><span class="pre">previous_version</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.previous_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.previous_version_id">
+<span class="sig-name descname"><span class="pre">previous_version_id</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.previous_version_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.release_date">
+<span class="sig-name descname"><span class="pre">release_date</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.release_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.responsible_users">
+<span class="sig-name descname"><span class="pre">responsible_users</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.responsible_users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the forward and reverse sides of
+a many-to-many relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pizza</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">toppings</span> <span class="o">=</span> <span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Topping</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;pizzas&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Pizza.toppings</span></code> and <code class="docutils literal notranslate"><span class="pre">Topping.pizzas</span></code> are <code class="docutils literal notranslate"><span class="pre">ManyToManyDescriptor</span></code>
+instances.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current instance. Override this in a subclass if you want to
+control the saving process.</p>
+<p>The ‘force_insert’ and ‘force_update’ parameters can be used to insist
+that the “save” must be an SQL insert or update (or equivalent for
+non-SQL backends), respectively. Normally, they should not be set.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.save_new_version">
+<span class="sig-name descname"><span class="pre">save_new_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_doc_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_doc_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_owner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">responsible_users</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_doc_version</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.save_new_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new version of document</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.Document.status">
+<span class="sig-name descname"><span class="pre">status</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.Document.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.models.</span></span><span class="sig-name descname"><span class="pre">DocumentAgreement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<p>DocumentAgreement model - represents an agreement from user for certain document</p>
+<p>Main parameters:</p>
+<p>document - foreign key to Document model</p>
+<p>user - foreign key to managed_docu_model.users.models.user</p>
+<p>agreet_at - automatically added timestamp when a user agrees</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.DoesNotExist">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.MultipleObjectsReturned">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.agreed_at">
+<span class="sig-name descname"><span class="pre">agreed_at</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.agreed_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.document">
+<span class="sig-name descname"><span class="pre">document</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.document" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.document_id">
+<span class="sig-name descname"><span class="pre">document_id</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.document_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.get_next_by_agreed_at">
+<span class="sig-name descname"><span class="pre">get_next_by_agreed_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">agreed_at&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.get_next_by_agreed_at" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.get_previous_by_agreed_at">
+<span class="sig-name descname"><span class="pre">get_previous_by_agreed_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field=&lt;django.db.models.fields.DateTimeField:</span> <span class="pre">agreed_at&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_next=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.get_previous_by_agreed_at" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.objects">
+<span class="sig-name descname"><span class="pre">objects</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;django.db.models.manager.Manager</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.reading_time">
+<span class="sig-name descname"><span class="pre">reading_time</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.reading_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current instance. Override this in a subclass if you want to
+control the saving process.</p>
+<p>The ‘force_insert’ and ‘force_update’ parameters can be used to insist
+that the “save” must be an SQL insert or update (or equivalent for
+non-SQL backends), respectively. Normally, they should not be set.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.user">
+<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentAgreement.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentAgreement.user_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentsManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.models.</span></span><span class="sig-name descname"><span class="pre">DocumentsManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentsManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Manager</span></code></p>
+<p>A custom manager for the Document model.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentsManager.for_user">
+<span class="sig-name descname"><span class="pre">for_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentsManager.for_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.DocumentsManager.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.models.DocumentsManager.get_queryset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new QuerySet object. Subclasses can override this method to
+customize the behavior of the Manager.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.models.FORMAT_CHOICES">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.models.</span></span><span class="sig-name descname"><span class="pre">FORMAT_CHOICES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">((1,</span> <span class="pre">'Private</span> <span class="pre">documents'),</span> <span class="pre">(2,</span> <span class="pre">'Public</span> <span class="pre">documents'),</span> <span class="pre">(3,</span> <span class="pre">'Documents</span> <span class="pre">for</span> <span class="pre">certain</span> <span class="pre">groups'))</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.models.FORMAT_CHOICES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Document’s status</p>
+</dd></dl>
+
+</section>
+<section id="module-managed_docu_familiarization.mdf.signals">
+<span id="mdf-signals-module"></span><h2>mdf.signals module<a class="headerlink" href="#module-managed_docu_familiarization.mdf.signals" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.signals.on_mdf_pre_save">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.signals.</span></span><span class="sig-name descname"><span class="pre">on_mdf_pre_save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.signals.on_mdf_pre_save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.signals.on_mdf_save">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.signals.</span></span><span class="sig-name descname"><span class="pre">on_mdf_save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sender</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.signals.on_mdf_save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-managed_docu_familiarization.mdf.tasks">
+<span id="mdf-tasks-module"></span><h2>mdf.tasks module<a class="headerlink" href="#module-managed_docu_familiarization.mdf.tasks" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-managed_docu_familiarization.mdf.urls">
+<span id="mdf-urls-module"></span><h2>mdf.urls module<a class="headerlink" href="#module-managed_docu_familiarization.mdf.urls" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-managed_docu_familiarization.mdf.utils">
+<span id="mdf-utils-module"></span><h2>mdf.utils module<a class="headerlink" href="#module-managed_docu_familiarization.mdf.utils" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.document_progress_chart">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">document_progress_chart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.document_progress_chart" title="Permalink to this definition">¶</a></dt>
+<dd><p>The method processes data for a progress chart
+:param document: The document for which the data is intended
+:return: Dictionary for context</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.exists_users_agreement">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">exists_users_agreement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.exists_users_agreement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns if user has send an agreement
+:param user:
+:param document:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.extract_document_id_from_embed_url_sharepoint">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">extract_document_id_from_embed_url_sharepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.extract_document_id_from_embed_url_sharepoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the unique document ID (if needed) from a relative or absolute URL.
+Prerequisite: Documents are at an absolute URL that contains the sourcedoc ID</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.fix_sharepoint_download_url">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">fix_sharepoint_download_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.fix_sharepoint_download_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opraví SharePoint URL tak, aby soubor byl přímo stažen místo otevření v prohlížeči.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.generate_document_link">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">generate_document_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.generate_document_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function generates a link for a document
+:param request:
+:param document:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.generate_document_link_task">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">generate_document_link_task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'https'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.generate_document_link_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>function generates a link for document to document view page</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.generate_preview_link">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">generate_preview_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.generate_preview_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a preview link based on a shared Google Drive link.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.generate_secure_id">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">generate_secure_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.generate_secure_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns encrypted id
+:param n_id:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.generate_secure_link">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">generate_secure_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.generate_secure_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns encrypted doc_id
+:param doc_id:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.getDirectDownloadLink">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">getDirectDownloadLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileId</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.getDirectDownloadLink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for getting a direct link to file saved on Google drive</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.getFileIdFromLink">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">getFileIdFromLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sharedLink</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.getFileIdFromLink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns a file id from url - Google drive</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.get_document_id_from_sharepoint">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">get_document_id_from_sharepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.get_document_id_from_sharepoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns an ID of file on SharePoint
+:param document:
+:return: Document id from document url</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.get_documents_by_category">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">get_documents_by_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.get_documents_by_category" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns a documents by publishing category
+:param category:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.get_embed_url_sharepoint">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">get_embed_url_sharepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.get_embed_url_sharepoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a URL obtained from SharePoint into an Embed URL.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.get_sharepoint_url">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">get_sharepoint_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.get_sharepoint_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns transformed document url from Sharepoint
+:param document:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.get_users_accepted">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">get_users_accepted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.get_users_accepted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns users who has sent an agreement
+:param document:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.get_users_accepted_count">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">get_users_accepted_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.get_users_accepted_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns a count of users who has sent an agreement
+:param document:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.get_users_without_agreements">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">get_users_without_agreements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.get_users_without_agreements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns users who have not sent an agreement
+:param document:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.is_from_google">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">is_from_google</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.is_from_google" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns if a document is from Google Drive
+:param document:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.notify_owner_about_document_deadline">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">notify_owner_about_document_deadline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.notify_owner_about_document_deadline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to send notifications to document owner about the expiration of a document.
+:param document: Document from which the necessary data is obtained</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.notify_users_about_document_deadline">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">notify_users_about_document_deadline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.notify_users_about_document_deadline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to send notifications to users about the expiration of a document.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.sendLinksToUsers">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">sendLinksToUsers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generated_link</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mess</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.sendLinksToUsers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function send emails with link to users
+:param document:
+:param generated_link:
+:param mess:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.send_agreement">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">send_agreement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_spent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.send_agreement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function creates a new record of a document agreement
+:param document:
+:param user:
+:param time_spent:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.send_link_to_complete_document">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">send_link_to_complete_document</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generated_link</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.send_link_to_complete_document" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for sending a generated link with document url to a document author for adding other informations</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.send_mail_to_multiple_user">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">send_mail_to_multiple_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">users</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.send_mail_to_multiple_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function sends email to multiple users using send_email_to_user function
+:param users: list of users
+:param subject: email subject
+:param message: email message</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.send_mail_to_user">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">send_mail_to_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.send_mail_to_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function sends an email to an user
+:param user:
+:param subject:
+:param message:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.user_is_admin">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">user_is_admin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.user_is_admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checking if the user is a member of the administrators group.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.verify_secure_id">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">verify_secure_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signed_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.verify_secure_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns decrypted id
+:param signed_id:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.utils.verify_secure_link">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.utils.</span></span><span class="sig-name descname"><span class="pre">verify_secure_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signed_doc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.utils.verify_secure_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function returns decrypted doc_id
+:param signed_doc_id:
+:return:</p>
+</dd></dl>
+
+</section>
+<section id="module-managed_docu_familiarization.mdf.views">
+<span id="mdf-views-module"></span><h2>mdf.views module<a class="headerlink" href="#module-managed_docu_familiarization.mdf.views" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">MDFAdminDocumentAdd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin" title="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AccessControlMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">LoginRequiredMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">FormView</span></code></p>
+<p>View with a form for the admin to add a new document. After submitting the form the new document is created and added to database
+An email to an owner is sent after the document is added.</p>
+<p>required groups: string_constants.mdf_admin_group_name</p>
+<p>templates: template.document_admin_adding_page.html</p>
+<p>form: FileSearchForm</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.action">
+<span class="sig-name descname"><span class="pre">action</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.dispatch">
+<span class="sig-name descname"><span class="pre">dispatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.dispatch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.document">
+<span class="sig-name descname"><span class="pre">document</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.document" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.form_class">
+<span class="sig-name descname"><span class="pre">form_class</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.form_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#managed_docu_familiarization.mdf.forms.FileSearchForm" title="managed_docu_familiarization.mdf.forms.FileSearchForm"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSearchForm</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.generated_link">
+<span class="sig-name descname"><span class="pre">generated_link</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.generated_link" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.get_context_data">
+<span class="sig-name descname"><span class="pre">get_context_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.get_context_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the context for the template to display the document details and generated link.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.get_initial">
+<span class="sig-name descname"><span class="pre">get_initial</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.get_initial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the initial data to use for forms on this view.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.permission_required">
+<span class="sig-name descname"><span class="pre">permission_required</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.permission_required" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle POST requests: instantiate a form instance with the passed
+POST variables and then check if it’s valid.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.required_groups">
+<span class="sig-name descname"><span class="pre">required_groups</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['MDF_admin']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.required_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.template_name">
+<span class="sig-name descname"><span class="pre">template_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'document_admin_adding_page.html'</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentList">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">MDFAdminDocumentList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin" title="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AccessControlMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">LoginRequiredMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateView</span></code></p>
+<p>View for the admin to search for a document, add a document, or update/delete a document.
+Administrator can display all document in database (only latest documents)</p>
+<p>required groups: string_constants.mdf_admin_group_name</p>
+<p>template: templates.document_admin_view_page.html</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentList.dispatch">
+<span class="sig-name descname"><span class="pre">dispatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.dispatch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentList.generated_link">
+<span class="sig-name descname"><span class="pre">generated_link</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.generated_link" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentList.get_context_data">
+<span class="sig-name descname"><span class="pre">get_context_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.get_context_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentList.permission_required">
+<span class="sig-name descname"><span class="pre">permission_required</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.permission_required" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentList.required_groups">
+<span class="sig-name descname"><span class="pre">required_groups</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['MDF_admin']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.required_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFAdminDocumentList.template_name">
+<span class="sig-name descname"><span class="pre">template_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'document_admin_view_page.html'</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">MDFDocumentApprovalView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin" title="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AccessControlMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">LoginRequiredMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">FormView</span></code></p>
+<p>View for responsible users to approve a document.
+This view handles the approval of a document by responsible users,
+checking permissions, and sending emails for further actions.</p>
+<p>required groups: string_constants.mdf_admin_group_name, string_constants.mdf_authors_group_name, string_constants.mdf_responsible_users_group_name</p>
+<p>form: DocumentApprovalForm</p>
+<p>template: templates.document_approval_page.html</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.dispatch">
+<span class="sig-name descname"><span class="pre">dispatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.dispatch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.doc_id">
+<span class="sig-name descname"><span class="pre">doc_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.doc_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.document">
+<span class="sig-name descname"><span class="pre">document</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.document" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.form_class">
+<span class="sig-name descname"><span class="pre">form_class</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.form_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#managed_docu_familiarization.mdf.forms.DocumentApprovalForm" title="managed_docu_familiarization.mdf.forms.DocumentApprovalForm"><code class="xref py py-class docutils literal notranslate"><span class="pre">DocumentApprovalForm</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.generated_link">
+<span class="sig-name descname"><span class="pre">generated_link</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.generated_link" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.get_context_data">
+<span class="sig-name descname"><span class="pre">get_context_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.get_context_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert the form into the context dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.get_form_kwargs">
+<span class="sig-name descname"><span class="pre">get_form_kwargs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.get_form_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass additional arguments to the form (document).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.get_initial">
+<span class="sig-name descname"><span class="pre">get_initial</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.get_initial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the initial data to use for forms on this view.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.is_approver">
+<span class="sig-name descname"><span class="pre">is_approver</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.is_approver" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.is_author">
+<span class="sig-name descname"><span class="pre">is_author</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.is_author" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.permission_required">
+<span class="sig-name descname"><span class="pre">permission_required</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.permission_required" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle POST requests: instantiate a form instance with the passed
+POST variables and then check if it’s valid.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.required_groups">
+<span class="sig-name descname"><span class="pre">required_groups</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['MDF_admin',</span> <span class="pre">'MDF_authors',</span> <span class="pre">'MDF_approvers']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.required_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.template_name">
+<span class="sig-name descname"><span class="pre">template_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'document_approval_page.html'</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentStatsView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">MDFDocumentStatsView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentStatsView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin" title="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AccessControlMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">LoginRequiredMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateView</span></code></p>
+<p>View for administrators and authors of documents to add details about document agreements.
+This view shows the document’s agreement status, the users who have agreed to it,
+and provides the ability to send notifications.</p>
+<p>required groups: string_constants.mdf_admin_group_name, string_constants.mdf_authors_group_name</p>
+<p>template: templates.document_stats_page.html</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentStatsView.document">
+<span class="sig-name descname"><span class="pre">document</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.document" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentStatsView.get_context_data">
+<span class="sig-name descname"><span class="pre">get_context_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.get_context_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentStatsView.permission_required">
+<span class="sig-name descname"><span class="pre">permission_required</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.permission_required" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentStatsView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.post" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentStatsView.required_groups">
+<span class="sig-name descname"><span class="pre">required_groups</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['MDF_admin',</span> <span class="pre">'MDF_authors']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.required_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentStatsView.template_name">
+<span class="sig-name descname"><span class="pre">template_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'document_stats_page.html'</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">MDFDocumentView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin" title="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AccessControlMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">LoginRequiredMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateView</span></code></p>
+<p>View for user to display a document and send consent or download the document.
+If document is from Google Drive it is displayed in a template. Otherwise there is a button with link to the document (via its doc_url)</p>
+<p>required groups: None</p>
+<p>template: templates.document_view_page.html</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentView.doc_time">
+<span class="sig-name descname"><span class="pre">doc_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentView.doc_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentView.get_context_data">
+<span class="sig-name descname"><span class="pre">get_context_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentView.get_context_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentView.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentView.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#managed_docu_familiarization.mdf.models.Document" title="managed_docu_familiarization.mdf.models.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentView.permission_required">
+<span class="sig-name descname"><span class="pre">permission_required</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentView.permission_required" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentView.post" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentView.required_groups">
+<span class="sig-name descname"><span class="pre">required_groups</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentView.required_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentView.template_name">
+<span class="sig-name descname"><span class="pre">template_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'document_view_page.html'</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentView.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">MDFDocumentsAdding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin" title="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AccessControlMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">LoginRequiredMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">FormView</span></code></p>
+<p>View for owners to add a document to the database and add additional information.
+After completing a form program sends an email with link to the document to each user from certain groups chosen in the form</p>
+<p>required groups: string_constants.mdf_admin_group_name, string_constants.mdf_authors_group_name</p>
+<p>template: templates.document_author_page.html</p>
+<p>form: DocumentForm</p>
+<p>After success: redirect to base_page (document_overview_page.html)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.dispatch">
+<span class="sig-name descname"><span class="pre">dispatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.dispatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the incoming request. Ensures the user is an author and has access to the document.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.doc_id">
+<span class="sig-name descname"><span class="pre">doc_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.doc_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.document">
+<span class="sig-name descname"><span class="pre">document</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.document" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.form_class">
+<span class="sig-name descname"><span class="pre">form_class</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.form_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#managed_docu_familiarization.mdf.forms.DocumentForm" title="managed_docu_familiarization.mdf.forms.DocumentForm"><code class="xref py py-class docutils literal notranslate"><span class="pre">DocumentForm</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.form_invalid">
+<span class="sig-name descname"><span class="pre">form_invalid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">form</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.form_invalid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle form submission when the form is invalid.
+Logs form errors for debugging.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.form_valid">
+<span class="sig-name descname"><span class="pre">form_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">form</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.form_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle form submission when the form is valid.
+Saves the document and sends notifications to users.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.generated_link">
+<span class="sig-name descname"><span class="pre">generated_link</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.generated_link" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.get_context_data">
+<span class="sig-name descname"><span class="pre">get_context_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.get_context_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass additional context data to the template.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.get_form_kwargs">
+<span class="sig-name descname"><span class="pre">get_form_kwargs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.get_form_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass additional arguments to the form (document link and name).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.get_initial">
+<span class="sig-name descname"><span class="pre">get_initial</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.get_initial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the form with the document’s URL and name.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.permission_required">
+<span class="sig-name descname"><span class="pre">permission_required</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.permission_required" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.required_groups">
+<span class="sig-name descname"><span class="pre">required_groups</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['MDF_admin',</span> <span class="pre">'MDF_authors']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.required_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.success_url">
+<span class="sig-name descname"><span class="pre">success_url</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/mdf/mdfdocuments/overview/'</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.success_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsAdding.template_name">
+<span class="sig-name descname"><span class="pre">template_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'document_author_page.html'</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsOverview">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">MDFDocumentsOverview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsOverview" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin" title="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AccessControlMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">LoginRequiredMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">View</span></code></p>
+<p>View for displaying a table of documents.
+Each user will only see documents relevant to them.
+Owners see their documents, they can display stats about documents
+Approvers see documents for approval</p>
+<p>required_groups: None</p>
+<p>template: templates.document_overview_page.html</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsOverview.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsOverview.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsOverview.permission_required">
+<span class="sig-name descname"><span class="pre">permission_required</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsOverview.permission_required" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsOverview.required_groups">
+<span class="sig-name descname"><span class="pre">required_groups</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsOverview.required_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsOverview.template_name">
+<span class="sig-name descname"><span class="pre">template_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'document_overview_page.html'</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsOverview.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">MDFDocumentsUserDetailView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin" title="managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AccessControlMixin</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">LoginRequiredMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateView</span></code></p>
+<p>View for administrators to display details about a user’s document agreements.
+Admins can see the documents a user has agreed to and their agreement details.</p>
+<p>Required groups: string_constants.mdf_admin_group_name</p>
+<p>template: templates.document_user_detail_page.html</p>
+<p>model: models.Document</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.get_context_data">
+<span class="sig-name descname"><span class="pre">get_context_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.get_context_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the context data for rendering the page, including the user’s document agreements.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#managed_docu_familiarization.mdf.models.Document" title="managed_docu_familiarization.mdf.models.Document"><code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.permission_required">
+<span class="sig-name descname"><span class="pre">permission_required</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.permission_required" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.required_groups">
+<span class="sig-name descname"><span class="pre">required_groups</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['MDF_admin']</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.required_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.template_name">
+<span class="sig-name descname"><span class="pre">template_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'document_user_detail_page.html'</span></em><a class="headerlink" href="#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.open_admin_add_document_page">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">open_admin_add_document_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.open_admin_add_document_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function saves value doc_id to request.session and redirects to mdf:admin_add_document_page template</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – </p></li>
+<li><p><strong>doc_id</strong> – document id (doc_id)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirect to a page admin_add_document_page</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.open_document_approval">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">open_document_approval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enc_doc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.open_document_approval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function saves value enc_doc_id to request.session and redirects to mdf:document_page template</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – </p></li>
+<li><p><strong>enc_doc_id</strong> – encrypted document id (doc_id)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirect to a page document_approval</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.open_document_base_page">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">open_document_base_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enc_doc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.open_document_base_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function saves value enc_doc_id to request.session and redirects to mdf:document_page template</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – </p></li>
+<li><p><strong>enc_doc_id</strong> – encrypted document id (doc_id)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirect to a page document_page</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.open_document_stats">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">open_document_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enc_doc_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.open_document_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function saves value enc_doc_id to request.session and redirects to mdf:document_stats template</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – </p></li>
+<li><p><strong>enc_doc_id</strong> – encrypted document id (doc_id)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirect to a page document_stats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="managed_docu_familiarization.mdf.views.open_document_user_detail">
+<span class="sig-prename descclassname"><span class="pre">managed_docu_familiarization.mdf.views.</span></span><span class="sig-name descname"><span class="pre">open_document_user_detail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#managed_docu_familiarization.mdf.views.open_document_user_detail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function saves value enc_doc_id to request.session and redirects to mdf:document_stats template</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – </p></li>
+<li><p><strong>user_id</strong> – user id (zf_id)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Redirect to a page user_stats</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-managed_docu_familiarization.mdf">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-managed_docu_familiarization.mdf" title="Permalink to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">managed_docu_familiarization</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="howto.html">How To - Project Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pycharm/configuration.html">Docker Remote Debugging</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">mdf package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mdf-templates-module">mdf.templates module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-managed_docu_familiarization.mdf.AccessControlMixin">mdf.AccessControlMixin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-managed_docu_familiarization.mdf.admin">mdf.admin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-managed_docu_familiarization.mdf.apps">mdf.apps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-managed_docu_familiarization.mdf.forms">mdf.forms module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-managed_docu_familiarization.mdf.models">mdf.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-managed_docu_familiarization.mdf.signals">mdf.signals module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-managed_docu_familiarization.mdf.tasks">mdf.tasks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-managed_docu_familiarization.mdf.urls">mdf.urls module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-managed_docu_familiarization.mdf.utils">mdf.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-managed_docu_familiarization.mdf.views">mdf.views module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-managed_docu_familiarization.mdf">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">mdf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="users.html">Users</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="pycharm/configuration.html" title="previous chapter">Docker Remote Debugging</a></li>
+      <li>Next: <a href="modules.html" title="next chapter">mdf</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Martin Uhlir.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 6.2.1</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/mdf.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>mdf &#8212; managed_docu_familiarization  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Users" href="users.html" />
+    <link rel="prev" title="mdf package" href="mdf.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="mdf">
+<h1>mdf<a class="headerlink" href="#mdf" title="Permalink to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mdf.html">mdf package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#mdf-templates-module">mdf.templates module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#module-managed_docu_familiarization.mdf.AccessControlMixin">mdf.AccessControlMixin module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin"><code class="docutils literal notranslate"><span class="pre">AccessControlMixin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.check_permissions"><code class="docutils literal notranslate"><span class="pre">AccessControlMixin.check_permissions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.dispatch"><code class="docutils literal notranslate"><span class="pre">AccessControlMixin.dispatch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.get_permission_required"><code class="docutils literal notranslate"><span class="pre">AccessControlMixin.get_permission_required()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.log_user_activity"><code class="docutils literal notranslate"><span class="pre">AccessControlMixin.log_user_activity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.logger"><code class="docutils literal notranslate"><span class="pre">AccessControlMixin.logger</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.permission_required"><code class="docutils literal notranslate"><span class="pre">AccessControlMixin.permission_required</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.required_groups"><code class="docutils literal notranslate"><span class="pre">AccessControlMixin.required_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.AccessControlMixin.AccessControlMixin.test_user_access"><code class="docutils literal notranslate"><span class="pre">AccessControlMixin.test_user_access()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#module-managed_docu_familiarization.mdf.admin">mdf.admin module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAdmin"><code class="docutils literal notranslate"><span class="pre">DocumentAdmin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAdmin.add_form"><code class="docutils literal notranslate"><span class="pre">DocumentAdmin.add_form</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAdmin.filter_horizontal"><code class="docutils literal notranslate"><span class="pre">DocumentAdmin.filter_horizontal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAdmin.get_form"><code class="docutils literal notranslate"><span class="pre">DocumentAdmin.get_form()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAdmin.list_display"><code class="docutils literal notranslate"><span class="pre">DocumentAdmin.list_display</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAdmin.list_filter"><code class="docutils literal notranslate"><span class="pre">DocumentAdmin.list_filter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAdmin.media"><code class="docutils literal notranslate"><span class="pre">DocumentAdmin.media</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAdmin.ordering"><code class="docutils literal notranslate"><span class="pre">DocumentAdmin.ordering</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAdmin.search_fields"><code class="docutils literal notranslate"><span class="pre">DocumentAdmin.search_fields</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.add_form"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.add_form</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.get_form"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.get_form()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.list_display"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.list_display</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.list_filter"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.list_filter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.media"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.media</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.ordering"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.ordering</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.admin.DocumentAgreementAdmin.search_fields"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.search_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#module-managed_docu_familiarization.mdf.apps">mdf.apps module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.apps.MDFConfig"><code class="docutils literal notranslate"><span class="pre">MDFConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.apps.MDFConfig.name"><code class="docutils literal notranslate"><span class="pre">MDFConfig.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.apps.MDFConfig.ready"><code class="docutils literal notranslate"><span class="pre">MDFConfig.ready()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.apps.MDFConfig.verbose_name"><code class="docutils literal notranslate"><span class="pre">MDFConfig.verbose_name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#module-managed_docu_familiarization.mdf.forms">mdf.forms module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.Meta"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.Meta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.base_fields"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.base_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.declared_fields"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.declared_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.media"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.media</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentAgreementAdmin.save"><code class="docutils literal notranslate"><span class="pre">DocumentAgreementAdmin.save()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentApprovalForm"><code class="docutils literal notranslate"><span class="pre">DocumentApprovalForm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentApprovalForm.Media"><code class="docutils literal notranslate"><span class="pre">DocumentApprovalForm.Media</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentApprovalForm.base_fields"><code class="docutils literal notranslate"><span class="pre">DocumentApprovalForm.base_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentApprovalForm.declared_fields"><code class="docutils literal notranslate"><span class="pre">DocumentApprovalForm.declared_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentApprovalForm.media"><code class="docutils literal notranslate"><span class="pre">DocumentApprovalForm.media</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentForm"><code class="docutils literal notranslate"><span class="pre">DocumentForm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentForm.Media"><code class="docutils literal notranslate"><span class="pre">DocumentForm.Media</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentForm.base_fields"><code class="docutils literal notranslate"><span class="pre">DocumentForm.base_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentForm.choices"><code class="docutils literal notranslate"><span class="pre">DocumentForm.choices</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentForm.declared_fields"><code class="docutils literal notranslate"><span class="pre">DocumentForm.declared_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentForm.media"><code class="docutils literal notranslate"><span class="pre">DocumentForm.media</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentForm.save"><code class="docutils literal notranslate"><span class="pre">DocumentForm.save()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentFormAdmin"><code class="docutils literal notranslate"><span class="pre">DocumentFormAdmin</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.Meta"><code class="docutils literal notranslate"><span class="pre">DocumentFormAdmin.Meta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.base_fields"><code class="docutils literal notranslate"><span class="pre">DocumentFormAdmin.base_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.declared_fields"><code class="docutils literal notranslate"><span class="pre">DocumentFormAdmin.declared_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.media"><code class="docutils literal notranslate"><span class="pre">DocumentFormAdmin.media</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.DocumentFormAdmin.save"><code class="docutils literal notranslate"><span class="pre">DocumentFormAdmin.save()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.FileSearchForm"><code class="docutils literal notranslate"><span class="pre">FileSearchForm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.FileSearchForm.base_fields"><code class="docutils literal notranslate"><span class="pre">FileSearchForm.base_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.FileSearchForm.choices"><code class="docutils literal notranslate"><span class="pre">FileSearchForm.choices</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.FileSearchForm.declared_fields"><code class="docutils literal notranslate"><span class="pre">FileSearchForm.declared_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.forms.FileSearchForm.media"><code class="docutils literal notranslate"><span class="pre">FileSearchForm.media</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#module-managed_docu_familiarization.mdf.models">mdf.models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DOCUMENT_CATEGORY_CHOICES"><code class="docutils literal notranslate"><span class="pre">DOCUMENT_CATEGORY_CHOICES</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document"><code class="docutils literal notranslate"><span class="pre">Document</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">Document.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">Document.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.agreements"><code class="docutils literal notranslate"><span class="pre">Document.agreements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.approved_by_users"><code class="docutils literal notranslate"><span class="pre">Document.approved_by_users</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.category"><code class="docutils literal notranslate"><span class="pre">Document.category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.contact_users"><code class="docutils literal notranslate"><span class="pre">Document.contact_users</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.deadline"><code class="docutils literal notranslate"><span class="pre">Document.deadline</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.doc_category"><code class="docutils literal notranslate"><span class="pre">Document.doc_category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.doc_id"><code class="docutils literal notranslate"><span class="pre">Document.doc_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.doc_name"><code class="docutils literal notranslate"><span class="pre">Document.doc_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.doc_url"><code class="docutils literal notranslate"><span class="pre">Document.doc_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.doc_ver"><code class="docutils literal notranslate"><span class="pre">Document.doc_ver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.document_set"><code class="docutils literal notranslate"><span class="pre">Document.document_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_all_important_users"><code class="docutils literal notranslate"><span class="pre">Document.get_all_important_users()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_all_versions"><code class="docutils literal notranslate"><span class="pre">Document.get_all_versions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_category_display"><code class="docutils literal notranslate"><span class="pre">Document.get_category_display()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_category_text"><code class="docutils literal notranslate"><span class="pre">Document.get_category_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_doc_category_display"><code class="docutils literal notranslate"><span class="pre">Document.get_doc_category_display()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_document_category_text"><code class="docutils literal notranslate"><span class="pre">Document.get_document_category_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_document_status_text"><code class="docutils literal notranslate"><span class="pre">Document.get_document_status_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_latest_documents"><code class="docutils literal notranslate"><span class="pre">Document.get_latest_documents()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_latest_version"><code class="docutils literal notranslate"><span class="pre">Document.get_latest_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_next_by_release_date"><code class="docutils literal notranslate"><span class="pre">Document.get_next_by_release_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_previous_by_release_date"><code class="docutils literal notranslate"><span class="pre">Document.get_previous_by_release_date()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_responsible_users"><code class="docutils literal notranslate"><span class="pre">Document.get_responsible_users()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_status_display"><code class="docutils literal notranslate"><span class="pre">Document.get_status_display()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.get_users_from_groups"><code class="docutils literal notranslate"><span class="pre">Document.get_users_from_groups()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.groups"><code class="docutils literal notranslate"><span class="pre">Document.groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.is_uploaded"><code class="docutils literal notranslate"><span class="pre">Document.is_uploaded</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.is_waiting"><code class="docutils literal notranslate"><span class="pre">Document.is_waiting()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.is_waiting_owner"><code class="docutils literal notranslate"><span class="pre">Document.is_waiting_owner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.objects"><code class="docutils literal notranslate"><span class="pre">Document.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.owner"><code class="docutils literal notranslate"><span class="pre">Document.owner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.owner_id"><code class="docutils literal notranslate"><span class="pre">Document.owner_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.part_title"><code class="docutils literal notranslate"><span class="pre">Document.part_title</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.previous_version"><code class="docutils literal notranslate"><span class="pre">Document.previous_version</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.previous_version_id"><code class="docutils literal notranslate"><span class="pre">Document.previous_version_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.release_date"><code class="docutils literal notranslate"><span class="pre">Document.release_date</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.responsible_users"><code class="docutils literal notranslate"><span class="pre">Document.responsible_users</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.save"><code class="docutils literal notranslate"><span class="pre">Document.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.save_new_version"><code class="docutils literal notranslate"><span class="pre">Document.save_new_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.Document.status"><code class="docutils literal notranslate"><span class="pre">Document.status</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.DoesNotExist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.MultipleObjectsReturned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.agreed_at"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.agreed_at</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.document"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.document_id"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.document_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.get_next_by_agreed_at"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.get_next_by_agreed_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.get_previous_by_agreed_at"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.get_previous_by_agreed_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.id"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.objects"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.objects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.reading_time"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.reading_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.save"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.user"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.user</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentAgreement.user_id"><code class="docutils literal notranslate"><span class="pre">DocumentAgreement.user_id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentsManager"><code class="docutils literal notranslate"><span class="pre">DocumentsManager</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentsManager.for_user"><code class="docutils literal notranslate"><span class="pre">DocumentsManager.for_user()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.DocumentsManager.get_queryset"><code class="docutils literal notranslate"><span class="pre">DocumentsManager.get_queryset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.models.FORMAT_CHOICES"><code class="docutils literal notranslate"><span class="pre">FORMAT_CHOICES</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#module-managed_docu_familiarization.mdf.signals">mdf.signals module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.signals.on_mdf_pre_save"><code class="docutils literal notranslate"><span class="pre">on_mdf_pre_save()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.signals.on_mdf_save"><code class="docutils literal notranslate"><span class="pre">on_mdf_save()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#module-managed_docu_familiarization.mdf.tasks">mdf.tasks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#module-managed_docu_familiarization.mdf.urls">mdf.urls module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#module-managed_docu_familiarization.mdf.utils">mdf.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.document_progress_chart"><code class="docutils literal notranslate"><span class="pre">document_progress_chart()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.exists_users_agreement"><code class="docutils literal notranslate"><span class="pre">exists_users_agreement()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.extract_document_id_from_embed_url_sharepoint"><code class="docutils literal notranslate"><span class="pre">extract_document_id_from_embed_url_sharepoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.fix_sharepoint_download_url"><code class="docutils literal notranslate"><span class="pre">fix_sharepoint_download_url()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.generate_document_link"><code class="docutils literal notranslate"><span class="pre">generate_document_link()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.generate_document_link_task"><code class="docutils literal notranslate"><span class="pre">generate_document_link_task()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.generate_preview_link"><code class="docutils literal notranslate"><span class="pre">generate_preview_link()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.generate_secure_id"><code class="docutils literal notranslate"><span class="pre">generate_secure_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.generate_secure_link"><code class="docutils literal notranslate"><span class="pre">generate_secure_link()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.getDirectDownloadLink"><code class="docutils literal notranslate"><span class="pre">getDirectDownloadLink()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.getFileIdFromLink"><code class="docutils literal notranslate"><span class="pre">getFileIdFromLink()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.get_document_id_from_sharepoint"><code class="docutils literal notranslate"><span class="pre">get_document_id_from_sharepoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.get_documents_by_category"><code class="docutils literal notranslate"><span class="pre">get_documents_by_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.get_embed_url_sharepoint"><code class="docutils literal notranslate"><span class="pre">get_embed_url_sharepoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.get_sharepoint_url"><code class="docutils literal notranslate"><span class="pre">get_sharepoint_url()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.get_users_accepted"><code class="docutils literal notranslate"><span class="pre">get_users_accepted()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.get_users_accepted_count"><code class="docutils literal notranslate"><span class="pre">get_users_accepted_count()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.get_users_without_agreements"><code class="docutils literal notranslate"><span class="pre">get_users_without_agreements()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.is_from_google"><code class="docutils literal notranslate"><span class="pre">is_from_google()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.notify_owner_about_document_deadline"><code class="docutils literal notranslate"><span class="pre">notify_owner_about_document_deadline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.notify_users_about_document_deadline"><code class="docutils literal notranslate"><span class="pre">notify_users_about_document_deadline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.sendLinksToUsers"><code class="docutils literal notranslate"><span class="pre">sendLinksToUsers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.send_agreement"><code class="docutils literal notranslate"><span class="pre">send_agreement()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.send_link_to_complete_document"><code class="docutils literal notranslate"><span class="pre">send_link_to_complete_document()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.send_mail_to_multiple_user"><code class="docutils literal notranslate"><span class="pre">send_mail_to_multiple_user()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.send_mail_to_user"><code class="docutils literal notranslate"><span class="pre">send_mail_to_user()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.user_is_admin"><code class="docutils literal notranslate"><span class="pre">user_is_admin()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.verify_secure_id"><code class="docutils literal notranslate"><span class="pre">verify_secure_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.utils.verify_secure_link"><code class="docutils literal notranslate"><span class="pre">verify_secure_link()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#module-managed_docu_familiarization.mdf.views">mdf.views module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.action"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd.action</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.dispatch"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd.dispatch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.document"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd.document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.form_class"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd.form_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.generated_link"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd.generated_link</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.get_context_data"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd.get_context_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.get_initial"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd.get_initial()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.permission_required"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd.permission_required</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.post"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd.post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.required_groups"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd.required_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentAdd.template_name"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentAdd.template_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentList"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentList</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.dispatch"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentList.dispatch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.generated_link"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentList.generated_link</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.get_context_data"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentList.get_context_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.permission_required"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentList.permission_required</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.required_groups"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentList.required_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFAdminDocumentList.template_name"><code class="docutils literal notranslate"><span class="pre">MDFAdminDocumentList.template_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.dispatch"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.dispatch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.doc_id"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.doc_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.document"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.form_class"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.form_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.generated_link"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.generated_link</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.get_context_data"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.get_context_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.get_form_kwargs"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.get_form_kwargs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.get_initial"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.get_initial()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.is_approver"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.is_approver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.is_author"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.is_author</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.permission_required"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.permission_required</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.post"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.required_groups"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.required_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentApprovalView.template_name"><code class="docutils literal notranslate"><span class="pre">MDFDocumentApprovalView.template_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentStatsView"><code class="docutils literal notranslate"><span class="pre">MDFDocumentStatsView</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.document"><code class="docutils literal notranslate"><span class="pre">MDFDocumentStatsView.document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.get_context_data"><code class="docutils literal notranslate"><span class="pre">MDFDocumentStatsView.get_context_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.permission_required"><code class="docutils literal notranslate"><span class="pre">MDFDocumentStatsView.permission_required</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.post"><code class="docutils literal notranslate"><span class="pre">MDFDocumentStatsView.post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.required_groups"><code class="docutils literal notranslate"><span class="pre">MDFDocumentStatsView.required_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentStatsView.template_name"><code class="docutils literal notranslate"><span class="pre">MDFDocumentStatsView.template_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentView"><code class="docutils literal notranslate"><span class="pre">MDFDocumentView</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentView.doc_time"><code class="docutils literal notranslate"><span class="pre">MDFDocumentView.doc_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentView.get_context_data"><code class="docutils literal notranslate"><span class="pre">MDFDocumentView.get_context_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentView.model"><code class="docutils literal notranslate"><span class="pre">MDFDocumentView.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentView.permission_required"><code class="docutils literal notranslate"><span class="pre">MDFDocumentView.permission_required</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentView.post"><code class="docutils literal notranslate"><span class="pre">MDFDocumentView.post()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentView.required_groups"><code class="docutils literal notranslate"><span class="pre">MDFDocumentView.required_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentView.template_name"><code class="docutils literal notranslate"><span class="pre">MDFDocumentView.template_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.dispatch"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.dispatch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.doc_id"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.doc_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.document"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.form_class"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.form_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.form_invalid"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.form_invalid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.form_valid"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.form_valid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.generated_link"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.generated_link</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.get_context_data"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.get_context_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.get_form_kwargs"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.get_form_kwargs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.get_initial"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.get_initial()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.permission_required"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.permission_required</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.required_groups"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.required_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.success_url"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.success_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsAdding.template_name"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsAdding.template_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsOverview"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsOverview</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsOverview.get"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsOverview.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsOverview.permission_required"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsOverview.permission_required</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsOverview.required_groups"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsOverview.required_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsOverview.template_name"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsOverview.template_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsUserDetailView</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.get_context_data"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsUserDetailView.get_context_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.model"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsUserDetailView.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.permission_required"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsUserDetailView.permission_required</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.required_groups"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsUserDetailView.required_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.MDFDocumentsUserDetailView.template_name"><code class="docutils literal notranslate"><span class="pre">MDFDocumentsUserDetailView.template_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.open_admin_add_document_page"><code class="docutils literal notranslate"><span class="pre">open_admin_add_document_page()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.open_document_approval"><code class="docutils literal notranslate"><span class="pre">open_document_approval()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.open_document_base_page"><code class="docutils literal notranslate"><span class="pre">open_document_base_page()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.open_document_stats"><code class="docutils literal notranslate"><span class="pre">open_document_stats()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mdf.html#managed_docu_familiarization.mdf.views.open_document_user_detail"><code class="docutils literal notranslate"><span class="pre">open_document_user_detail()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html#module-managed_docu_familiarization.mdf">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">managed_docu_familiarization</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="howto.html">How To - Project Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pycharm/configuration.html">Docker Remote Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mdf.html">mdf package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">mdf</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mdf.html">mdf package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="users.html">Users</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="mdf.html" title="previous chapter">mdf package</a></li>
+      <li>Next: <a href="users.html" title="next chapter">Users</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Martin Uhlir.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 6.2.1</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
