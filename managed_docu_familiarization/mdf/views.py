@@ -31,8 +31,11 @@ from django.core.exceptions import PermissionDenied
 def open_document_base_page(request, enc_doc_id):
     """
     Function saves value enc_doc_id to request.session and redirects to mdf:document_page template
+
     :param request:
+
     :param enc_doc_id: encrypted document id (doc_id)
+
     :return: Redirect to a page document_page
     """
     request.session['selected_doc_id'] = enc_doc_id
@@ -41,8 +44,11 @@ def open_document_base_page(request, enc_doc_id):
 def open_document_stats(request, enc_doc_id):
     """
     Function saves value enc_doc_id to request.session and redirects to mdf:document_stats template
+
     :param request:
+
     :param enc_doc_id: encrypted document id (doc_id)
+
     :return: Redirect to a page document_stats
     """
     request.session['selected_doc_id'] = enc_doc_id
@@ -51,8 +57,11 @@ def open_document_stats(request, enc_doc_id):
 def open_document_user_detail(request, user_id):
     """
     Function saves value enc_doc_id to request.session and redirects to mdf:document_stats template
+
     :param request:
+
     :param user_id: user id (zf_id)
+
     :return: Redirect to a page user_stats
     """
     request.session['selected_user_id'] = user_id
@@ -61,8 +70,11 @@ def open_document_user_detail(request, user_id):
 def open_admin_add_document_page(request, doc_id):
     """
     Function saves value doc_id to request.session and redirects to mdf:admin_add_document_page template
+
     :param request:
+
     :param doc_id: document id (doc_id)
+
     :return: Redirect to a page admin_add_document_page
     """
     request.session['selected_doc_id_update'] = doc_id
@@ -75,8 +87,11 @@ def open_admin_add_document_page(request, doc_id):
 def open_document_approval(request, enc_doc_id):
     """
     Function saves value enc_doc_id to request.session and redirects to mdf:document_page template
+
     :param request:
+
     :param enc_doc_id: encrypted document id (doc_id)
+
     :return: Redirect to a page document_approval
     """
     request.session['selected_doc_id'] = enc_doc_id
@@ -88,6 +103,12 @@ class MDFDocumentApprovalView(AccessControlMixin, LoginRequiredMixin, FormView):
     View for responsible users to approve a document.
     This view handles the approval of a document by responsible users,
     checking permissions, and sending emails for further actions.
+
+    required groups: string_constants.mdf_admin_group_name, string_constants.mdf_authors_group_name, string_constants.mdf_responsible_users_group_name
+
+    form: DocumentApprovalForm
+
+    template: templates.document_approval_page.html
     """
     template_name = 'document_approval_page.html'
 
@@ -227,13 +248,17 @@ class MDFDocumentApprovalView(AccessControlMixin, LoginRequiredMixin, FormView):
 class MDFDocumentView(AccessControlMixin, LoginRequiredMixin, TemplateView):
     """
     View for user to display a document and send consent or download the document.
-    User must be logged.
+    If document is from Google Drive it is displayed in a template. Otherwise there is a button with link to the document (via its doc_url)
+
+    required groups: None
+
+    template: templates.document_view_page.html
     """
     model = Document  # Document model
     template_name = 'document_view_page.html'
     doc_time = None  # Time of reading document
     permission_required = []  # Required permissions (if any)
-    group_required = []  # Required user groups (if any)
+    required_groups = []  # Required user groups (if any)
 
     def __init__(self, **kwargs):
         # Initialize reading time to the current time
@@ -309,6 +334,10 @@ class MDFDocumentStatsView(AccessControlMixin, LoginRequiredMixin, TemplateView)
     View for administrators and authors of documents to add details about document agreements.
     This view shows the document's agreement status, the users who have agreed to it,
     and provides the ability to send notifications.
+
+    required groups: string_constants.mdf_admin_group_name, string_constants.mdf_authors_group_name
+
+    template: templates.document_stats_page.html
     """
     template_name = 'document_stats_page.html'
     document = None
@@ -431,9 +460,14 @@ class MDFDocumentStatsView(AccessControlMixin, LoginRequiredMixin, TemplateView)
 
 class MDFAdminDocumentAdd(AccessControlMixin, LoginRequiredMixin, FormView):
     """
-    View for the admin to search for a document and generate a link for the owner.
-    v0.1 - Demo version: without using emails, just displays the link.
-    v0.2 - Advanced version: displays the link and sends the link to the owner.
+    View with a form for the admin to add a new document. After submitting the form the new document is created and added to database
+    An email to an owner is sent after the document is added.
+
+    required groups: string_constants.mdf_admin_group_name
+
+    templates: template.document_admin_adding_page.html
+
+    form: FileSearchForm
     """
 
     template_name = 'document_admin_adding_page.html'
@@ -566,6 +600,11 @@ class MDFAdminDocumentAdd(AccessControlMixin, LoginRequiredMixin, FormView):
 class MDFAdminDocumentList(AccessControlMixin, LoginRequiredMixin, TemplateView):
     """
     View for the admin to search for a document, add a document, or update/delete a document.
+    Administrator can display all document in database (only latest documents)
+
+    required groups: string_constants.mdf_admin_group_name
+
+    template: templates.document_admin_view_page.html
     """
 
     template_name = 'document_admin_view_page.html'
@@ -604,8 +643,14 @@ class MDFAdminDocumentList(AccessControlMixin, LoginRequiredMixin, TemplateView)
 
 class MDFDocumentsOverview(AccessControlMixin, LoginRequiredMixin, View):
     """
-    View for displaying a table of documents. Each user will only see documents relevant to them.
-    Owners will also see their documents, while admins can view all documents.
+    View for displaying a table of documents.
+    Each user will only see documents relevant to them.
+    Owners see their documents, they can display stats about documents
+    Approvers see documents for approval
+
+    required_groups: None
+
+    template: templates.document_overview_page.html
     """
 
     template_name = 'document_overview_page.html'  # Template for rendering the document overview page
@@ -687,7 +732,15 @@ class MDFDocumentsOverview(AccessControlMixin, LoginRequiredMixin, View):
 class MDFDocumentsAdding(AccessControlMixin, LoginRequiredMixin, FormView):
     """
     View for owners to add a document to the database and add additional information.
-    After adding a document, the program will choose certain users and send them an email (this feature will be added later).
+    After completing a form program sends an email with link to the document to each user from certain groups chosen in the form
+
+    required groups: string_constants.mdf_admin_group_name, string_constants.mdf_authors_group_name
+
+    template: templates.document_author_page.html
+
+    form: DocumentForm
+
+    After success: redirect to base_page (document_overview_page.html)
     """
     template_name = 'document_author_page.html'  # Template for rendering the page
 
@@ -825,6 +878,12 @@ class MDFDocumentsUserDetailView(AccessControlMixin, LoginRequiredMixin, Templat
     """
     View for administrators to display details about a user's document agreements.
     Admins can see the documents a user has agreed to and their agreement details.
+
+    Required groups: string_constants.mdf_admin_group_name
+
+    template: templates.document_user_detail_page.html
+
+    model: models.Document
     """
     template_name = 'document_user_detail_page.html'  # Template for rendering the page
     model = Document  # Model to use (Document in this case)

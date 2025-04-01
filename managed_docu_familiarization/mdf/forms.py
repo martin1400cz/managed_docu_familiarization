@@ -10,6 +10,13 @@ from managed_docu_familiarization.static.Strings import string_constants
 
 # Form for document approval
 class DocumentApprovalForm(forms.Form):
+    """
+    Form for approvers to approve a document.
+    Parameters document_name and document_url are automatically filled from GET parameters
+
+    responsible_users is required parameter when document is in 'waiting' status
+    """
+
     # Field for document name (read-only)
     document_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
                                     max_length=255,
@@ -47,6 +54,9 @@ class DocumentApprovalForm(forms.Form):
 
 # Form for searching files/documents
 class FileSearchForm(forms.Form):
+    """
+    Form for administrator to add a new document
+    """
     document_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control w-75'}),
                                     max_length=255,
                                     required=True,
@@ -83,6 +93,9 @@ class FileSearchForm(forms.Form):
 
 # Form for document management
 class DocumentForm(forms.Form):
+    """
+    Form for a document author(owner) to fill an information about document.
+    """
     def __init__(self, *args, document_name=None, document_link=None, **kwargs):
         super().__init__(*args, **kwargs)
         if document_link:

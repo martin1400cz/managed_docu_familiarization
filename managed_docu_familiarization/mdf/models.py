@@ -11,7 +11,7 @@ from managed_docu_familiarization.users.models import Group as Group
 
 class DocumentsManager(models.Manager):
     """
-    A custom manager for the document model.
+    A custom manager for the Document model.
     """
     def get_queryset(self):
         related_fields = [
@@ -23,7 +23,9 @@ class DocumentsManager(models.Manager):
     def for_user(self, user):
         return self.filter(owner=user)
 
-
+"""
+Document category choices (document types)
+"""
 DOCUMENT_CATEGORY_CHOICES = (
     (1, "Standard"),
     (2, "Guideline"),
@@ -31,14 +33,18 @@ DOCUMENT_CATEGORY_CHOICES = (
     (4, "Manual"),
 )
 
-# Category formats
+"""
+Category formats
+"""
 FORMAT_CHOICES = (
     (1, 'Private documents'),
     (2, 'Public documents'),
     (3, 'Documents for certain groups'),
 )
 
-# Document's status
+"""
+Document's status
+"""
 STATUS_CHOICES = (
     ('uploaded', 'Uploaded'),
     ('waiting_owner', 'Waiting for owner'),
@@ -51,6 +57,38 @@ STATUS_CHOICES = (
 class Document(models.Model):
     """
     Document model - represents a document using a reference to it
+
+    Main parameters:
+
+    doc_id - primary key - id of the document
+
+    doc_name - name of the document
+
+    doc_url - url (path) to the document
+
+    doc_category - document category (type of the document)
+
+    category - publishing category, i.e. category which is chosen by user when publishing document for other users
+
+    release_date - automatically added when the document is created
+
+    owner - foreign key to the managed_docu_familiarization.users.models.user - it represents an owner of the document (or author)
+
+    responsible_users - ManyToMany parameter (for users). It represents users who were chosen to approve the document
+
+    approved_by_users - ManyToMany parameter, users from responsible_users who approved the document
+
+    contact_users - ManyToMany parameter, users who were chosen to answer questins, etc.
+
+    deadline - timestamp added by user who chose the document to be category 3
+
+    status - document status
+
+    groups - ManyToMany parameter (for user.groups) - represents chosen groups of users
+
+    doc_ver - version of document added by admin
+
+    previos_version - foreign key to Document model - represents an previous version of the document
     """
     doc_id = models.AutoField(primary_key=True) # Document id
     doc_name = models.CharField(max_length=255) # Document name
@@ -208,6 +246,14 @@ class Document(models.Model):
 class DocumentAgreement(models.Model):
     """
     DocumentAgreement model - represents an agreement from user for certain document
+
+    Main parameters:
+
+    document - foreign key to Document model
+
+    user - foreign key to managed_docu_model.users.models.user
+
+    agreet_at - automatically added timestamp when a user agrees
     """
     id = models.AutoField(primary_key=True) # id of the agreement
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='document_stats')

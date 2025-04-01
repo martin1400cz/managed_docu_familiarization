@@ -15,7 +15,7 @@ urlpatterns = [
     # document_page - view to display the document
     path("mdfdocuments/document/", MDFDocumentView.as_view(), name="document_page"),
     path("mdfdocuments/document/<str:enc_doc_id>", MDFDocumentView.as_view(), name="document_page"),
-    path("mdfdocuments/overview/open/<str:enc_doc_id>/", open_document_base_page, name="open_document_view"),
+    path("mdfdocuments/document/open/<str:enc_doc_id>/", open_document_base_page, name="open_document_view"),
 
     # base_page - documents overview
     path("mdfdocuments/overview/", MDFDocumentsOverview.as_view(), name="base_page"),

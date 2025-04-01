@@ -7,6 +7,8 @@ Familiarization with document management
 
 License: MIT
 
+Documentation for Managed_docu_familiarization module is in /docs/build/html/index.html
+
 ## Settings
 
 Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings.html).

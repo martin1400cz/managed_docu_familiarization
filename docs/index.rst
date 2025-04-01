@@ -12,6 +12,8 @@ Welcome to managed_docu_familiarization's documentation!
 
    howto
    pycharm/configuration
+   mdf
+   modules
    users
 
 
